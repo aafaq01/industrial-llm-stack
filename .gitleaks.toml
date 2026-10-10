@@ -1,0 +1,10 @@
+# Default rules plus one narrow allowlist: vLLM server logs print the public Hugging Face
+# tokenizer revision sha (listed in docs/VERSIONS.md), which gitleaks flags as generic-api-key.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "public HF tokenizer revision shas in vLLM server logs"
+# "match" (not "line"): only the revision itself is allowlisted, so other secrets on the same log line still fire.
+regexTarget = "match"
+regexes = ['''^tokenizer_revision['"]: ['"][0-9a-f]{40}['"]$''']

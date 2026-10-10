@@ -1,0 +1,43 @@
+{
+ "schema": 1,
+ "workload": "vision-accuracy",
+ "label": "trt-fp16",
+ "model": "yolov8n-fp16-b1.engine",
+ "model_sha256": "c9b34364c8b5089c4cdc9c7d844dc4fb18ab670523dc2a72e24ed22d7cc47acb",
+ "precision": "fp16",
+ "started_utc": "2026-10-10T13:01:21+00:00",
+ "finished_utc": "2026-10-10T13:01:28+00:00",
+ "dataset": {
+  "name": "COCO val2017, first 500 sorted image names",
+  "images": 500,
+  "manifest_sha256": "2e49efde9e4b16ea53a3978943c78ad7fad01c2ab9503b820017413871ed0f4f"
+ },
+ "val_args": {
+  "imgsz": 640,
+  "batch": 1,
+  "rect": false,
+  "conf": 0.001,
+  "iou": 0.7,
+  "plots": false,
+  "verbose": false
+ },
+ "env": {
+  "hardware": "1x Tesla T4 (Kaggle)",
+  "git_commit": "0a80992e5b1024978905e325362f2ad37aa30d72",
+  "ultralytics": "8.4.174",
+  "torch": "2.13.0+cu129"
+ },
+ "metrics": {
+  "metrics/precision(B)": 0.6235971946136956,
+  "metrics/recall(B)": 0.515542331498042,
+  "metrics/mAP50(B)": 0.5550427123263678,
+  "metrics/mAP50-95(B)": 0.40100439381936354,
+  "fitness": 0.40100439381936354
+ },
+ "speed_ms": {
+  "preprocess": 1.0118569060073241,
+  "inference": 2.573726004000946,
+  "loss": 0.008839597997393867,
+  "postprocess": 1.40540179400341
+ }
+}

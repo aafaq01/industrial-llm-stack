@@ -1,0 +1,5 @@
+* text=auto eol=lf
+# Raw Kaggle output stays byte-exact (evidence).
+benchmark/results/raw/kaggle-*/** -text
+docs/evidence/phase5b-ci/** -text
+docs/evidence/v3-openshift-okd/** -text

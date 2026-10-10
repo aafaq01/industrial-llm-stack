@@ -1,0 +1,5 @@
+T                      OBJ           UID                                    MSG
+2026-10-09T09:35:35Z   rag-ingest    8f503179-b6ba-4f37-afc0-bd57b2442d38   Created pod: rag-ingest-gqn5n
+2026-10-09T09:45:02Z   rag-ingest    8f503179-b6ba-4f37-afc0-bd57b2442d38   Job completed
+2026-10-09T09:34:55Z   rag-migrate   8106a80a-af3a-4a57-9ce5-8f3238c8c902   Created pod: rag-migrate-gbp5r
+2026-10-09T09:35:34Z   rag-migrate   8106a80a-af3a-4a57-9ce5-8f3238c8c902   Job completed

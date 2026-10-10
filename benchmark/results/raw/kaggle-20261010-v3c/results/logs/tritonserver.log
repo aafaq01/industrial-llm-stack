@@ -1,0 +1,60 @@
+I1010 09:47:25.463872 348 pinned_memory_manager.cc:277] "Pinned memory pool is created at '0x7ed3bc000000' with size 268435456"
+I1010 09:47:25.469512 348 cuda_memory_manager.cc:107] "CUDA memory pool is created on device 0 with size 67108864"
+I1010 09:47:25.478474 348 server.cc:604] 
++------------------+------+
+| Repository Agent | Path |
++------------------+------+
++------------------+------+
+
+I1010 09:47:25.478531 348 server.cc:631] 
++---------+------+--------+
+| Backend | Path | Config |
++---------+------+--------+
++---------+------+--------+
+
+I1010 09:47:25.478543 348 server.cc:674] 
++-------+---------+--------+
+| Model | Version | Status |
++-------+---------+--------+
++-------+---------+--------+
+
+I1010 09:47:25.604267 348 metrics.cc:877] "Collecting metrics for GPU 0: Tesla T4"
+I1010 09:47:25.624650 348 metrics.cc:770] "Collecting CPU metrics"
+I1010 09:47:25.626000 348 tritonserver.cc:2598] 
++----------------------------------+------------------------------------------+
+| Option                           | Value                                    |
++----------------------------------+------------------------------------------+
+| server_id                        | triton                                   |
+| server_version                   | 2.51.0                                   |
+| server_extensions                | classification sequence model_repository |
+|                                  |  model_repository(unload_dependents) sch |
+|                                  | edule_policy model_configuration system_ |
+|                                  | shared_memory cuda_shared_memory binary_ |
+|                                  | tensor_data parameters statistics trace  |
+|                                  | logging                                  |
+| model_repository_path[0]         | /root/.cache/pytriton/workspace_4a4sn2_i |
+|                                  | /model-store                             |
+| model_control_mode               | MODE_EXPLICIT                            |
+| startup_models_0                 | *                                        |
+| strict_model_config              | 0                                        |
+| model_config_name                |                                          |
+| rate_limit                       | OFF                                      |
+| pinned_memory_pool_byte_size     | 268435456                                |
+| cuda_memory_pool_byte_size{0}    | 67108864                                 |
+| min_supported_compute_capability | 6.0                                      |
+| strict_readiness                 | 1                                        |
+| exit_timeout                     | 30                                       |
+| cache_enabled                    | 0                                        |
++----------------------------------+------------------------------------------+
+
+I1010 09:47:25.627757 348 grpc_server.cc:2558] "Started GRPCInferenceService at 0.0.0.0:8001"
+I1010 09:47:25.627962 348 http_server.cc:4713] "Started HTTPService at 0.0.0.0:8000"
+I1010 09:47:25.676511 348 http_server.cc:362] "Started Metrics Service at 0.0.0.0:8002"
+E1010 09:47:27.751375 348 model_repository_manager.cc:470] "Failed to set config modification time: model_config_content_name_ is empty"
+I1010 09:47:27.753287 348 model_lifecycle.cc:472] "loading: yolov8n_b1:1"
+E1010 09:47:27.982223 348 model_lifecycle.cc:642] "failed to load 'yolov8n_b1' version 1: Internal: ModuleNotFoundError: No module named '_contextvars'\n\nAt:\n  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/contextvars.py(1): <module>\n  <frozen importlib._bootstrap>(488): _call_with_frames_removed\n  <frozen importlib._bootstrap_external>(995): exec_module\n  <frozen importlib._bootstrap>(950): _load_unlocked\n  <frozen importlib._bootstrap>(1333): _find_and_load_unlocked\n  <frozen importlib._bootstrap>(1360): _find_and_load\n  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/events.py(18): <module>\n  <frozen importlib._bootstrap>(488): _call_with_frames_removed\n  <frozen importlib._bootstrap_external>(995): exec_module\n  <frozen importlib._bootstrap>(950): _load_unlocked\n  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked\n  <frozen importlib._bootstrap>(1360): _find_and_load\n  <frozen importlib._bootstrap>(488): _call_with_frames_removed\n  <frozen importlib._bootstrap>(1423): _handle_fromlist\n  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py(40): <module>\n  <frozen importlib._bootstrap>(488): _call_with_frames_removed\n  <frozen importlib._bootstrap_external>(995): exec_module\n  <frozen importlib._bootstrap>(950): _load_unlocked\n  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked\n  <frozen importlib._bootstrap>(1360): _find_and_load\n  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/__init__.py(8): <module>\n  <frozen importlib._bootstrap>(488): _call_with_frames_removed\n  <frozen importlib._bootstrap_external>(995): exec_module\n  <frozen importlib._bootstrap>(950): _load_unlocked\n  <frozen importlib._bootstrap>(1333): _find_and_load_unlocked\n  <frozen importlib._bootstrap>(1360): _find_and_load\n  /tmp/folderOdBhb4/1/model.py(19): <module>\n  <frozen importlib._bootstrap>(488): _call_with_frames_removed\n  <frozen importlib._bootstrap_external>(995): exec_module\n  <frozen importlib._bootstrap>(950): _load_unlocked\n  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked\n  <frozen importlib._bootstrap>(1360): _find_and_load\n"
+I1010 09:47:27.982288 348 model_lifecycle.cc:777] "failed to load 'yolov8n_b1'"
+I1010 09:47:27.986514 348 server.cc:305] "Waiting for in-flight requests to complete."
+I1010 09:47:27.986542 348 server.cc:321] "Timeout 30: Found 0 model versions that have in-flight inferences"
+I1010 09:47:27.986594 348 server.cc:336] "All models are stopped, unloading models"
+I1010 09:47:27.986599 348 server.cc:345] "Timeout 30: Found 0 live models and 0 in-flight non-inference requests"

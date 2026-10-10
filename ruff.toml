@@ -1,0 +1,8 @@
+# Explicit rule set so a ruff upgrade cannot silently change what is enforced.
+target-version = "py312"
+
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# E501: line length is left to `ruff format`.
+ignore = ["E501"]

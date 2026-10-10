@@ -1,0 +1,272 @@
+# Phase 2 CPU benchmark matrix (llama.cpp, Qwen2.5-1.5B-Instruct GGUF Q4_K_M, concurrency 1, 4, 8, 3 repeats)
+Superseded as the CPU headline by docs/evidence/phase2-cpu-rerun.txt (session cpu-20261009, 3 cold + 3 warm repeats).
+date: 2026-10-08 UTC (2026-10-09 local, UTC+5)
+host: Windows 11 Pro 10.0.26200, AMD Ryzen 7 7730U (8C/16T laptop CPU), Docker Desktop WSL2, Git Bash
+git describe --always --dirty (before the run): 4df89c0  (HEAD 4df89c0c1eef16dde4035dd3cbf3037b0a3f413a, clean)
+server: compose service llamacpp, ghcr.io/ggml-org/llama.cpp:server-b11459, flags unchanged:
+  --host 0.0.0.0 --port 8080 --metrics -m /models/qwen2.5-1.5b-instruct-q4_k_m.gguf --ctx-size 4096 --parallel 2 --threads 4
+
+## Idle state before the run
+No other agents running. llamacpp-judge, judge-init, rag-migrate, model-init: Exited (0); no rag-ingest container.
+Nothing was stopped. buildx_buildkit_default (idle BuildKit builder) was running and stayed up.
+Interactive desktop apps were open on the host (Godot, Unity, Cursor, Zoom, Chrome); they were idle in the
+per-process sample below but were not closed, so the host was quiet, not dedicated. Host % Processor Time
+before the run was 7 to 43% (15 samples), mostly WSL2 (vmmemwsl: Docker containers) and system services.
+docker ps and docker stats --no-stream:
+2026-10-08T19:20:37Z
+industrial-llm-platform-rag-api-1	Up 6 minutes (healthy)
+industrial-llm-platform-otel-collector-1	Up 6 minutes
+industrial-llm-platform-tempo-1	Up 6 minutes
+industrial-llm-platform-prometheus-1	Up 6 minutes (healthy)
+industrial-llm-platform-grafana-1	Up 2 minutes (healthy)
+industrial-llm-platform-llamacpp-1	Up 31 hours (healthy)
+industrial-llm-platform-postgres-1	Up 31 hours (healthy)
+industrial-llm-platform-elasticsearch-1	Up 31 hours (healthy)
+buildx_buildkit_default	Up 33 hours
+
+NAME                                       CPU %     MEM USAGE / LIMIT
+industrial-llm-platform-rag-api-1          0.39%     503.2MiB / 31.02GiB
+industrial-llm-platform-otel-collector-1   0.14%     48.41MiB / 31.02GiB
+industrial-llm-platform-tempo-1            0.50%     94.02MiB / 31.02GiB
+industrial-llm-platform-prometheus-1       0.70%     56.06MiB / 31.02GiB
+industrial-llm-platform-grafana-1          10.29%    267.3MiB / 31.02GiB
+industrial-llm-platform-llamacpp-1         0.00%     2.885GiB / 31.02GiB
+industrial-llm-platform-postgres-1         6.33%     61.88MiB / 31.02GiB
+industrial-llm-platform-elasticsearch-1    5.70%     1.944GiB / 31.02GiB
+buildx_buildkit_default                    0.00%     19.69MiB / 31.02GiB
+
+## host \Processor(_Total)\% Processor Time, 5 samples 2 s apart (local time, UTC+5)
+2026-10-09T00:20:44 16.9%
+2026-10-09T00:20:46 23.0%
+2026-10-09T00:20:48 43.1%
+2026-10-09T00:20:50 34.6%
+2026-10-09T00:20:52 34.9%
+
+## Get-Process top 8 by cumulative CPU seconds since process start (not current load)
+Name                               CPU
+----                               ---
+Godot_v4.7.2-stable_win64 29068.171875
+Unity                        15811.125
+explorer                    12503.8125
+Docker Desktop             6409.203125
+Zoom                          6246.375
+chrome                     6073.796875
+com.docker.backend         5012.984375
+Cursor                     4642.015625
+
+
+
+## per-process CPU (3 s sample, % of whole host), top 12
+vmmemwsl                                    3.0%
+svchost                                     1.7%
+docker desktop                              1.4%
+godot_v4.7.2-stable_win64                   1.2%
+claude                                      0.5%
+msmpeng                                     0.4%
+system                                      0.4%
+com.docker.backend                          0.2%
+claude                                      0.2%
+svchost                                     0.2%
+cursor                                      0.1%
+unity                                       0.1%
+## host % Processor Time, 10 samples 2 s apart
+27.1%  15.0%  21.4%  21.3%  23.7%  10.6%  13.7%  24.1%  15.3%  6.7%
+
+## Cache handling
+llama.cpp keeps prompts in its prompt cache (cache_prompt defaults to on) and the server flags were not changed.
+The llamacpp container was restarted (docker restart) before each concurrency level, so repeat 1 of every level
+starts with an empty cache and repeats 2 and 3 run with the cache filled by the earlier repeats. This needed one
+run.py call per concurrency level instead of one call with --concurrency 1 4 8; every other argument is the same.
+The loadgen does not record cached tokens per request (it keeps usage.prompt_tokens and completion_tokens only, and
+llama.cpp timings are not stored). The cache share per repeat is computed by report.py from the /metrics snapshots
+the loadgen already stores around the measured window:
+  share = d(llamacpp:prompt_tokens_cached_total) / (d(llamacpp:prompt_tokens_total) + d(llamacpp:prompt_tokens_cached_total))
+Check that prompt_tokens_total counts only processed tokens: processed + cached = 15485 in every repeat, which equals
+the sum of usage.prompt_tokens over the 64 measured requests (also checked on the smoke files: 80 + 1857 = 1937).
+The same sum in all 9 runs, and exactly 8192 = 64 x 128 decoded tokens, also show no other completion traffic
+reached llamacpp during any measured window (Prometheus scrapes of /metrics and Docker healthchecks of /health did run).
+Repeat 1 is not 0% cached: every prompt shares the Qwen chat-template prefix, and the warmup requests (last 2, 4 or 8
+prompts of the list) are measured again later in the same run, which is why c8 r1 (8 warmups) has the highest share.
+
+## Exact commands
+Driver script (scratchpad, not committed), run in the background:
+# Phase 2 CPU matrix: restart llamacpp before each concurrency level so repeat 1 starts with an empty prompt cache.
+set -euo pipefail
+cd /c/Users/<user>/Desktop/work/industrial-llm-platform
+C=industrial-llm-platform-llamacpp-1
+echo "matrix start $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+for conc in 1 4 8; do
+  echo "== c$conc: docker restart $C at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  docker restart "$C" >/dev/null
+  for i in $(seq 1 120); do
+    [ "$(docker inspect -f '{{.State.Health.Status}}' $C)" = healthy ] && break; sleep 2
+  done
+  echo "healthy at $(date -u +%Y-%m-%dT%H:%M:%SZ); metrics after restart:"
+  curl -fs http://127.0.0.1:8080/metrics | grep -E '^llamacpp:prompt_tokens(_cached)?_total'
+  benchmark/.venv/Scripts/python benchmark/loadgen/run.py --base-url http://127.0.0.1:8080/v1 \
+    --model qwen2.5-1.5b-instruct-q4_k_m \
+    --model-revision sha256:6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e \
+    --engine llama.cpp --engine-version b11459 --precision gguf-q4_k_m --label llamacpp-cpu-1.5b-q4km \
+    --hardware "Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2" \
+    --concurrency $conc --repeats 3 --metrics-url http://127.0.0.1:8080/metrics \
+    --server-args "llama-server --host 0.0.0.0 --port 8080 --metrics -m /models/qwen2.5-1.5b-instruct-q4_k_m.gguf --ctx-size 4096 --parallel 2 --threads 4" \
+    --notes "Phase 2 CPU matrix. llamacpp container restarted before each concurrency level: repeat 1 starts with an empty prompt cache, repeats 2 and 3 run with the cache warmed by earlier repeats (cache_prompt default on)." \
+    --out-dir benchmark/results/raw
+done
+echo "matrix end $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+## Run log (start 2026-10-08T19:21:53Z, end 2026-10-08T20:26:56Z, 65 min 03 s wall clock)
+matrix start 2026-10-08T19:21:53Z
+== c1: docker restart industrial-llm-platform-llamacpp-1 at 2026-10-08T19:21:53Z
+healthy at 2026-10-08T19:22:10Z; metrics after restart:
+llamacpp:prompt_tokens_total 0
+llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c1-r1-20261008T192211Z.json: ok 64/64 out_tok/s 15.456128803830513 ttft_p50 0.2988305000000011 e2e_p95 16.836132199999994
+llamacpp-cpu-1.5b-q4km-c1-r2-20261008T193114Z.json: ok 64/64 out_tok/s 22.92021379847848 ttft_p50 0.2271890000000063 e2e_p95 6.063619850000002
+llamacpp-cpu-1.5b-q4km-c1-r3-20261008T193722Z.json: ok 64/64 out_tok/s 21.656125726350936 ttft_p50 0.2322770000000105 e2e_p95 8.324123550000023
+== c4: docker restart industrial-llm-platform-llamacpp-1 at 2026-10-08T19:43:51Z
+healthy at 2026-10-08T19:43:58Z; metrics after restart:
+llamacpp:prompt_tokens_total 0
+llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c4-r1-20261008T194359Z.json: ok 64/64 out_tok/s 16.73693810694998 ttft_p50 18.92217199999999 e2e_p95 47.44389885
+llamacpp-cpu-1.5b-q4km-c4-r2-20261008T195245Z.json: ok 64/64 out_tok/s 27.486995651377445 ttft_p50 9.458640500000001 e2e_p95 19.514222100000005
+llamacpp-cpu-1.5b-q4km-c4-r3-20261008T195804Z.json: ok 64/64 out_tok/s 27.787851382714766 ttft_p50 9.463802499999986 e2e_p95 20.923434300000036
+== c8: docker restart industrial-llm-platform-llamacpp-1 at 2026-10-08T20:03:17Z
+healthy at 2026-10-08T20:03:24Z; metrics after restart:
+llamacpp:prompt_tokens_total 0
+llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c8-r1-20261008T200325Z.json: ok 64/64 out_tok/s 18.901106030797955 ttft_p50 38.27192749999999 e2e_p95 76.44532220000002
+llamacpp-cpu-1.5b-q4km-c8-r2-20261008T201157Z.json: ok 64/64 out_tok/s 22.31680299331094 ttft_p50 35.71226849999999 e2e_p95 54.68290285
+llamacpp-cpu-1.5b-q4km-c8-r3-20261008T201840Z.json: ok 64/64 out_tok/s 18.618889251342054 ttft_p50 41.094798999999995 e2e_p95 66.28007645000001
+matrix end 2026-10-08T20:26:56Z
+
+## Report
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q  -> 7 passed (new: test_cache_share_from_llamacpp_metrics_deltas)
+benchmark/.venv/Scripts/python benchmark/report.py
+wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 9 runs, 0 accuracy rows
+report.py changes in this run: prompt cache share per repeat in the "Raw files and flags" list, a new per-repeat
+table (so cold and warm repeats are shown separately, not only as mean ± stdev), and the cache formula in the
+flag-rules note. Numbers in benchmark/RESULTS.md come only from the 9 raw files listed there.
+
+## Per-run diagnostics (from the raw files; script in this session's scratchpad)
+"decode slot-s" = d(llamacpp:tokens_predicted_seconds_total), summed over both slots. Container CPU is the single
+docker stats snapshot the loadgen takes at the start of the measured window.
+file | git_commit | cache | prompt tok processed+cached | prefill s | decode slot-s | n_decode | wall s | out tok/s | ITL p50/p95 ms | llamacpp CPU at start | other containers >2% at start
+llamacpp-cpu-1.5b-q4km-c1-r1-20261008T192211Z.json | 4df89c0-dirty | 0.103 | 13890+1595 | 175.1 | 351.8 | 8192 | 530 | 15.46 | 41.4/56.5 | 405.22% | {'rag-api-1': '3.52%', 'grafana-1': '2.05%'}
+llamacpp-cpu-1.5b-q4km-c1-r2-20261008T193114Z.json | 4df89c0-dirty | 0.958 | 650+14835 | 11.3 | 344.0 | 8192 | 357 | 22.92 | 40.6/54.8 | 396.30% | {'grafana-1': '2.16%', 'elasticsearch-1': '6.47%'}
+llamacpp-cpu-1.5b-q4km-c1-r3-20261008T193722Z.json | 4df89c0-dirty | 0.958 | 650+14835 | 12.1 | 364.9 | 8192 | 378 | 21.66 | 41.6/66.0 | 397.41% | {'rag-api-1': '56.91%', 'prometheus-1': '2.21%', 'grafana-1': '2.17%'}
+llamacpp-cpu-1.5b-q4km-c4-r1-20261008T194359Z.json | 4df89c0-dirty | 0.158 | 13036+2449 | 177.4 | 621.2 | 4096 | 489 | 16.74 | 69.0/115.7 | 393.54% | {'grafana-1': '2.04%'}
+llamacpp-cpu-1.5b-q4km-c4-r2-20261008T195245Z.json | 4df89c0-dirty | 0.959 | 635+14850 | 11.0 | 570.4 | 4096 | 298 | 27.49 | 65.9/94.9 | 397.10% | {'grafana-1': '2.76%'}
+llamacpp-cpu-1.5b-q4km-c4-r3-20261008T195804Z.json | 4df89c0-dirty | 0.959 | 636+14849 | 11.4 | 565.5 | 4096 | 295 | 27.79 | 65.7/95.0 | 402.00% | {'grafana-1': '3.00%'}
+llamacpp-cpu-1.5b-q4km-c8-r1-20261008T200325Z.json | 4df89c0-dirty | 0.265 | 11385+4100 | 146.0 | 572.3 | 4096 | 433 | 18.90 | 65.6/92.8 | 397.73% | -
+llamacpp-cpu-1.5b-q4km-c8-r2-20261008T201157Z.json | 4df89c0-dirty | 0.959 | 641+14844 | 14.9 | 701.4 | 4096 | 367 | 22.32 | 76.3/144.6 | 398.93% | -
+llamacpp-cpu-1.5b-q4km-c8-r3-20261008T201840Z.json | 4df89c0-dirty | 0.959 | 638+14847 | 17.6 | 842.2 | 4096 | 440 | 18.62 | 92.4/179.0 | 399.27% | {'prometheus-1': '6.00%', 'grafana-1': '8.16%', 'postgres-1': '7.79%'}
+
+## Flagged cells and explanations (round 0: cells averaged over r1 to r3; superseded by the regime split below)
+c1 FLAGS: CV 0.20 out tok/s, CV 0.16 TTFT p50, CV 0.55 E2E p95, "warmup effect" r1 15.5 vs 22.3 tok/s.
+  Cause: prompt cache, not warmup length. r1 had 10% cache hits and spent 175 s of its 530 s in prefill (13890
+  prompt tokens processed); r2 and r3 had 96% and spent 11 to 12 s. Decode speed is the same in all three (ITL p50
+  41.4, 40.6, 41.6 ms), so the gap is prefill. TTFT p95 10.8 s (r1) vs 0.31 and 0.32 s (r2, r3) is the long prompts being
+  prefilled cold vs served from cache. TTFT p50 moves less (0.30 vs 0.23 s) because most prompts are short.
+c4 FLAGS: CV 0.26 out tok/s, CV 0.43 TTFT p50, CV 0.54 E2E p95, "warmup effect" r1 16.7 vs 27.6 tok/s.
+  Same cause: r1 16% cached, 177 s prefill; r2 and r3 96% cached, 11 s prefill. r2 and r3 agree closely
+  (27.5 vs 27.8 tok/s, TTFT p50 9.46 s both). With --parallel 2, two of four requests wait in the queue, which is
+  why TTFT p50 is about 9.5 s even with a warm cache.
+c8 FLAGS: CV 0.10 (0.104) out tok/s, CV 0.17 E2E p95. No warmup flag, but this cell is suspicious in a different way:
+  r3 (96% cached) was slower than r2 (96% cached): 18.6 vs 22.3 tok/s, ITL p50 92.4 vs 76.3 ms, decode slot-s
+  842 vs 701 for the same 8192 tokens. Prefill does not explain it (17.6 vs 14.9 s). No other completion traffic
+  hit llamacpp (token sums above). The start-of-window snapshot shows prometheus 6%, grafana 8%, postgres 8% for r3 (all under
+  3% in r2), which is small next to llamacpp's ~400%. Cause not proven. ITL p50 per third of the measured window
+  (round 1, below) is 99.6 / 93.3 / 82.4 ms in r3 vs 71.9 / 79.2 / 78.8 ms in r2: the slowdown is largest at the
+  start of r3 and fades, which fits a burst of contention at the start of r3 (from outside Docker or the small
+  container bump above; host CPU was not sampled during the runs) better than thermal throttling, which would
+  build up over time. Thermal or power throttling of the 15 W laptop CPU is therefore the less likely explanation. Cold r1 (26% cached)
+  landed at 18.9 tok/s, close to r3, because at c8 queueing dominates and prefill is a smaller share of wall time;
+  so r1 vs r3 being equal is not evidence that the cache does not matter at c8.
+All cells: 0 errors in 576 measured requests; token counts from server usage in every record.
+Not a flag but worth knowing: aggregate out tok/s barely scales (warm repeats: c1 22.9 and 21.7, c4 27.5 and 27.8, c8 22.3 and 18.6 tok/s)
+because llama.cpp runs 2 slots on 4 threads; extra concurrency only adds queueing (TTFT p50 0.23 s, 9.5 s, 36 to 41 s).
+c8 warm is lower than c4 warm, but c8 is also the cell with the unexplained r3 slowdown.
+
+## git_commit "-dirty" in the raw files
+All 9 raw files record 4df89c0c1eef16dde4035dd3cbf3037b0a3f413a-dirty. The tree was clean when checked before the
+run. It became dirty during the run because (a) I edited benchmark/report.py and benchmark/tests/test_metrics.py
+after starting the script and before run.py read git status for c1, and (b) the raw JSON files written by earlier
+levels are untracked files for c4 and c8. Neither is code the loadgen runs:
+  git diff --quiet 4df89c0 -- benchmark/loadgen docker-compose.yml -> identical
+so the loadgen, prompts and server config are exactly 4df89c0.
+
+## Not done
+No accuracy run (lm-eval) in this session; the GSM8K accuracy cells belong to the GPU run. No GPU numbers.
+No host CPU or temperature sampling during the runs; add a sampler if the c8 r3 slowdown needs to be explained.
+
+## pre-commit (changed paths staged with git add, then git reset -q; nothing committed)
+uvx --python 3.12 pre-commit@4.6.2 run --files <report.py, test_metrics.py, RESULTS.md, charts png, README.md, this file, 9 raw JSON>
+2026-10-08T20:30:18Z
+first pass: ruff format reformatted report.py and test_metrics.py; tests and report.py rerun after it (7 passed,
+9 runs, RESULTS.md regenerated). Second pass: all hooks Passed (yaml, yamllint, hadolint skipped: no such files), exit 0.
+
+# Review round 1 (2026-10-08T20:39:41Z). No load rerun (Phase 5 was building on this machine); report and docs only.
+
+## D1: cells split by prompt-cache regime
+report.py now classifies each repeat by its measured prompt-cache share: >= 50% = warm cache, else cold cache.
+Every r1 here is 10 to 26% (cold) and every r2/r3 is 96% (warm), so the rule matches "r1 after a restart = cold"
+on this data without depending on repeat numbers. Runs without llama.cpp cache counters (vLLM) are not split.
+The headline table holds warm rows (n=2), a second table holds cold rows (n=1), and RESULTS.md states that no regime
+cell has 3 comparable repeats, so none meets the 3-repeat criterion; a rerun (restart before every repeat for
+cold, or 3 warm repeats) is pending an idle machine. The chart draws cold and warm as separate lines.
+
+## D2: host disclosure in RESULTS.md
+Under the table, from the raw env: CPU model, logical CPUs, hardware label, platform. The "not dedicated" text and
+the link to this file come from HOST_NOTES in report.py (keyed by run label, cites this file).
+
+## Flags after the split (RESULTS.md)
+cold c1, c4, c8: only 1 repeat. warm c1, c4: only 2 repeats; warm c1 also CV 0.22 on E2E p95 (8.3 vs 6.1 s, r3 vs r2,
+see N2 below). warm c8: only 2 repeats, CV 0.13 out tok/s, CV 0.14 E2E p95 (the r3 slowdown, see N1).
+The round 0 "warmup effect" flags on c1 and c4 are gone: they came from mixing cold r1 with warm r2/r3.
+The flag is renamed for llama.cpp cells to "rN slower (llama.cpp: check the prompt cache share)" (N3).
+
+## N1: c8 r3 slowdown by thirds of the measured window
+ITL p50 (ms) per third of the measured window. "time thirds" puts each inter-token gap in the third where its later
+token arrived; "request-start thirds" splits the 64 requests by start time. Script: scratchpad thirds.py.
+llamacpp-cpu-1.5b-q4km-c1-r2-20261008T193114Z.json time thirds [41.3, 40.2, 40.5] request-start thirds [41.3, 40.1, 40.6]
+llamacpp-cpu-1.5b-q4km-c1-r3-20261008T193722Z.json time thirds [41.3, 40.0, 46.3] request-start thirds [41.3, 40.0, 45.0]
+llamacpp-cpu-1.5b-q4km-c8-r2-20261008T201157Z.json time thirds [71.9, 79.2, 78.8] request-start thirds [72.4, 76.3, 80.2]
+llamacpp-cpu-1.5b-q4km-c8-r3-20261008T201840Z.json time thirds [99.6, 93.3, 82.4] request-start thirds [99.5, 93.0, 82.9]
+c8: r3 starts 28 ms above r2 and ends 4 ms above it; the slowdown is front-loaded and fades, which fits a burst of
+contention at the start of r3 rather than thermal throttling (that would build up). Thermal is demoted above.
+Matches the reviewer's figures (r3 99.6 / 93.3 / 82.4; r2 72.0 / 79.3 / 78.8, within 0.1 ms on r2).
+
+## N2: c1 r3 vs r2
+c1 r3 has ITL p95 66.0 vs 54.8 ms (r2) and E2E p95 8.3 vs 6.1 s; rag-api was at 56.9% CPU in the start-of-window
+snapshot. The thirds show the slowdown in the last third (46.3 vs 40.5 ms ITL p50), not at the start, so the rag-api
+snapshot at the start does not explain it; cause unknown, same caveat as c8 r3 (host not sampled).
+
+## N6: llama.cpp prompt cache is server-wide, not per slot
+docker exec industrial-llm-platform-llamacpp-1 /app/llama-server --version -> build 11459, commit f498f864f
+docker exec industrial-llm-platform-llamacpp-1 /app/llama-server --help (excerpts):
+  -cram, --cache-ram N      set the maximum cache size in MiB (default: 8192, -1 - no limit, 0 - disable)
+                            [(more info)](https://github.com/ggml-org/llama.cpp/pull/16391)
+  --cache-idle-slots        save idle slots to the prompt cache on new task, and clear them when using unified KV
+                            (default: enabled, requires cache-ram)
+  --cache-prompt            whether to enable prompt caching (default: enabled)
+  --cache-reuse N           min chunk size to attempt reusing from the cache via KV shifting (default: 0)
+Server log: n_slots = 2, n_ctx_slot = 2048, kv_unified = 'false'. inference/README.md now says this, citing the help
+text, instead of "per-slot prompt cache".
+
+## N7: run.py records the prompts file sha256
+config.prompts_sha256 = sha256 of the prompts file bytes (72fb01ab9477... for prompts.jsonl today). report.py
+CONFIG_KEYS checks it (None for the 9 existing runs, which predate it). Checked with a dead port: run.py hashes
+the prompts and then fails at GET /models as expected. run.py is embedded in the Kaggle notebook; the notebook was
+NOT rebuilt (coordinator rebuilds after committing).
+
+## Other evidence edits: N4 ("no other completion traffic"), N5 ("0.31 and 0.32 s").
+
+## Checks
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q -> 7 passed
+benchmark/.venv/Scripts/python benchmark/report.py
+wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 9 runs, 0 accuracy rows
+pre-commit on changed paths: first pass ruff format reformatted report.py; tests and report rerun (RESULTS.md
+byte-identical). Final pass below.
+2026-10-08T20:39:56Z final pass: fix end of files, trim trailing whitespace, check json, check for added large files,
+ruff check, ruff format, gitleaks: Passed (yaml, yamllint, hadolint skipped: no such files). Staged paths reset with git reset -q.

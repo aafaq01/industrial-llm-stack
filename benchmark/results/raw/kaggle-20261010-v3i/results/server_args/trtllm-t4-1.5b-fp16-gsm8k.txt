@@ -1,0 +1,1 @@
+/tmp/venvs/trtllm/bin/python /kaggle/working/bench/inference/trtllm/serve.py /tmp/trtllm/engine-fp16-gsm8k --tokenizer /tmp/trtllm/hf --served-model-name Qwen/Qwen2.5-1.5B-Instruct --openai-server-dir /tmp/trtllm-example --port 8000 --kv-cache-free-gpu-memory-fraction 0.9

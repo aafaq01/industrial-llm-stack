@@ -1,0 +1,66 @@
+[07:04:20Z] ScaledObject and HPA before load
+NAME                            SCALETARGETKIND      SCALETARGETNAME   MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+scaledobject.keda.sh/llamacpp   apps/v1.Deployment   llamacpp          1     3     True    False    False      False    prometheus                     25m
+
+NAME                                                    REFERENCE             TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/keda-hpa-llamacpp   Deployment/llamacpp   0/2 (avg)   1         3         1          25m
+[07:04:20Z] load: concurrency 6, 60 requests, 128 tokens each
+07:04:21Z inflight=0 hpa_desired/current=1/1 pods=[ 54cjd:1/1:Running ]
+07:04:32Z inflight=6 hpa_desired/current=1/1 pods=[ 54cjd:1/1:Running ]
+07:04:43Z inflight=4 hpa_desired/current=2/1 pods=[ 54cjd:1/1:Running fnd9b:0/1:Init:0/1 ]
+07:04:54Z inflight=2 hpa_desired/current=2/2 pods=[ 54cjd:1/1:Running fnd9b:0/1:Running ]
+07:05:05Z inflight=2 hpa_desired/current=2/2 pods=[ 54cjd:1/1:Running fnd9b:1/1:Running ]
+07:05:16Z inflight=2 hpa_desired/current=2/2 pods=[ 54cjd:1/1:Running fnd9b:1/1:Running ]
+07:05:28Z inflight=6 hpa_desired/current=2/2 pods=[ 54cjd:1/1:Running fnd9b:1/1:Running ]
+07:05:39Z inflight=5 hpa_desired/current=3/2 pods=[ 54cjd:1/1:Running 7hd8b:0/1:Init:0/1 fnd9b:1/1:Running ]
+07:05:51Z inflight=5 hpa_desired/current=3/2 pods=[ 54cjd:1/1:Running 7hd8b:0/1:Init:0/1 fnd9b:1/1:Running ]
+07:06:02Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:0/1:Running fnd9b:1/1:Running ]
+07:06:14Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:06:25Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:06:37Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:06:48Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:07:00Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:07:12Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:07:23Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:07:35Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:07:46Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:07:58Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:08:10Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:08:21Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:08:33Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:08:45Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:08:56Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:09:08Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:09:19Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:09:31Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:09:43Z inflight=4 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:09:54Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:10:06Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:10:17Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:10:29Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:10:41Z inflight=6 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:10:52Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:11:04Z inflight=5 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:11:15Z inflight=3 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:11:26Z inflight=2 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+kind-keda-c6-r1-20261009T070422Z.json: ok 60/60 out_tok/s 20.589206192833235 ttft_p50 14.369428000000006 e2e_p95 63.574401349999995
+[07:11:34Z] load finished, waiting for scale-down to 1 replica
+07:11:37Z inflight=0 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:11:48Z inflight=0 hpa_desired/current=3/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running fnd9b:1/1:Running ]
+07:11:58Z inflight=0 hpa_desired/current=2/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running ]
+07:12:09Z inflight=0 hpa_desired/current=2/3 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running ]
+07:12:20Z inflight=0 hpa_desired/current=2/2 pods=[ 54cjd:1/1:Running 7hd8b:1/1:Running ]
+07:12:31Z inflight=0 hpa_desired/current=1/2 pods=[ 54cjd:1/1:Running ]
+[07:12:36Z] after
+NAME                            SCALETARGETKIND      SCALETARGETNAME   MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+scaledobject.keda.sh/llamacpp   apps/v1.Deployment   llamacpp          1     3     True    False    False      False    prometheus                     34m
+
+NAME                                                    REFERENCE             TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/keda-hpa-llamacpp   Deployment/llamacpp   0/2 (avg)   1         3         2          34m
+NAME                        READY   STATUS    RESTARTS   AGE
+llamacpp-685c695698-54cjd   1/1     Running   0          34m
+LAST                   MSG
+2026-10-09T07:04:38Z   New size: 2; reason: external metric s0-prometheus(&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: llamacpp,},MatchExpressions:[]LabelSelectorRequirement{},}) above target
+2026-10-09T07:05:38Z   New size: 3; reason: external metric s0-prometheus(&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: llamacpp,},MatchExpressions:[]LabelSelectorRequirement{},}) above target
+2026-10-09T07:11:55Z   New size: 2; reason: All metrics below target
+2026-10-09T07:12:25Z   New size: 1; reason: All metrics below target

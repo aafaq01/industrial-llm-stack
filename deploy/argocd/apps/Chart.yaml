@@ -1,0 +1,5 @@
+apiVersion: v2
+name: apps
+description: App-of-apps. One ArgoCD Application per chart in deploy/helm, ordered by sync wave.
+type: application
+version: 0.1.0

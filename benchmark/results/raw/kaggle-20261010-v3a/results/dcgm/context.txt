@@ -1,0 +1,20 @@
+uid=0(root) gid=0(root) groups=0(root)
+CapInh:	0000000000000000
+CapPrm:	00000000a80425fb
+CapEff:	00000000a80425fb
+CapBnd:	00000000a80425fb
+RmProfilingAdminOnly: 1
+Version : 4.7.0
+Build ID : 25549
+Build Date : 2026-10-06
+Build Type : RelWithDebInfo
+Commit ID : bc60101a5b114ff9b9e7b6ae0db33c8555ef682b
+Branch Name : v4.7.0
+CPU Arch : x86_64
+Build Platform : Linux 7.0.0-31-generic #31~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Aug 10 09:38:02
+UTC 2 x86_64
+CRC : 8447e7845bb330960f77559028c742cf
+
+
+dcgmi  version: 4.7.0
+

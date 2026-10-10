@@ -1,0 +1,104 @@
+# Multi-window, multi-burn-rate alerts (Google SRE workbook, ch. 5, approach 6).
+# Burn rate 1 spends exactly the 30d budget in 30d. Threshold = burn rate x (1 - SLO target).
+#   page:   1h and 5m above 14.4x (2% of budget in 1h)  or  6h and 30m above 6x (5% in 6h)
+#   ticket: 1d and 2h above 3x   (10% of budget in 1d)  or  3d and 6h above 1x (10% in 3d)
+# The short window makes the alert stop soon after the burn stops. Details: observability/SLOs.md.
+groups:
+  - name: slo-rag-availability-alerts
+    rules:
+      - alert: RagAvailabilityErrorBudgetBurnFast
+        expr: |
+          (
+            slo:sli_error:ratio_rate1h{slo="rag-availability"} > (14.4 * 0.01)
+            and
+            slo:sli_error:ratio_rate5m{slo="rag-availability"} > (14.4 * 0.01)
+          )
+          or
+          (
+            slo:sli_error:ratio_rate6h{slo="rag-availability"} > (6 * 0.01)
+            and
+            slo:sli_error:ratio_rate30m{slo="rag-availability"} > (6 * 0.01)
+          )
+        labels:
+          severity: page
+          slo: rag-availability
+        annotations:
+          summary: "rag-availability SLO: error budget burning fast"
+          description: "Error ratio is above 14.4x (1h/5m) or 6x (6h/30m) the budget rate. At this rate the 30d budget is gone in under 5 days."
+          runbook: observability/SLOs.md
+      - alert: RagAvailabilityErrorBudgetBurnSlow
+        expr: |
+          (
+            slo:sli_error:ratio_rate1d{slo="rag-availability"} > (3 * 0.01)
+            and
+            slo:sli_error:ratio_rate2h{slo="rag-availability"} > (3 * 0.01)
+          )
+          or
+          (
+            slo:sli_error:ratio_rate3d{slo="rag-availability"} > (1 * 0.01)
+            and
+            slo:sli_error:ratio_rate6h{slo="rag-availability"} > (1 * 0.01)
+          )
+        labels:
+          severity: ticket
+          slo: rag-availability
+        annotations:
+          summary: "rag-availability SLO: error budget burning"
+          description: "Error ratio is above 3x (1d/2h) or 1x (3d/6h) the budget rate. The 30d budget will run out before the window ends."
+          runbook: observability/SLOs.md
+
+  - name: slo-rag-ttft-alerts
+    rules:
+      - alert: RagTTFTErrorBudgetBurnFast
+        expr: |
+          (
+            slo:sli_error:ratio_rate1h{slo="rag-ttft"} > (14.4 * 0.05)
+            and
+            slo:sli_error:ratio_rate5m{slo="rag-ttft"} > (14.4 * 0.05)
+          )
+          or
+          (
+            slo:sli_error:ratio_rate6h{slo="rag-ttft"} > (6 * 0.05)
+            and
+            slo:sli_error:ratio_rate30m{slo="rag-ttft"} > (6 * 0.05)
+          )
+        labels:
+          severity: page
+          slo: rag-ttft
+        annotations:
+          summary: "rag-ttft SLO: error budget burning fast"
+          description: "Error ratio is above 14.4x (1h/5m) or 6x (6h/30m) the budget rate. At this rate the 30d budget is gone in under 5 days."
+          runbook: observability/SLOs.md
+      - alert: RagTTFTErrorBudgetBurnSlow
+        expr: |
+          (
+            slo:sli_error:ratio_rate1d{slo="rag-ttft"} > (3 * 0.05)
+            and
+            slo:sli_error:ratio_rate2h{slo="rag-ttft"} > (3 * 0.05)
+          )
+          or
+          (
+            slo:sli_error:ratio_rate3d{slo="rag-ttft"} > (1 * 0.05)
+            and
+            slo:sli_error:ratio_rate6h{slo="rag-ttft"} > (1 * 0.05)
+          )
+        labels:
+          severity: ticket
+          slo: rag-ttft
+        annotations:
+          summary: "rag-ttft SLO: error budget burning"
+          description: "Error ratio is above 3x (1d/2h) or 1x (3d/6h) the budget rate. The 30d budget will run out before the window ends."
+          runbook: observability/SLOs.md
+
+  - name: rag-api-up
+    rules:
+      # The availability SLI only counts requests that reach the API, so a dead API looks healthy to it.
+      - alert: RagApiDown
+        expr: up{job="rag-api"} == 0
+        for: 2m
+        labels:
+          severity: page
+        annotations:
+          summary: "rag-api scrape target is down"
+          description: "Prometheus cannot scrape rag-api:8000/metrics for 2m. The availability SLI is blind while this fires."
+          runbook: observability/SLOs.md

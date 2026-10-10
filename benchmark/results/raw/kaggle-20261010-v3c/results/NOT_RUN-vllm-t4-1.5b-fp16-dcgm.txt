@@ -1,0 +1,1 @@
+not run: DCGM profiling fails on Kaggle for every field with 'DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root'; basic fields worked. Evidence: benchmark/results/raw/kaggle-20261010-v3a/results/dcgm/ (notebook built at 19ccae8)

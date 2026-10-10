@@ -1,0 +1,4 @@
+# graphify (knowledge graph for agents): skip raw evidence data, keep code, configs and written docs.
+benchmark/results/raw/
+docs/evidence/*/
+graphify-out/

@@ -1,0 +1,9 @@
+# kind: image from the local registry; emulate an OpenShift-style arbitrary UID with group 0.
+image: localhost:5001/industrial-llm-platform/rag:0.1.0
+podSecurityContext:
+  runAsUser: 1000650000
+  runAsGroup: 0
+ingress:
+  enabled: true
+  className: traefik
+  host: rag-api.localhost

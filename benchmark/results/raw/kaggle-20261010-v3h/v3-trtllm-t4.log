@@ -1,0 +1,136 @@
+[{"stream_name":"stderr","time":6.054556503,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.054628086,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.054633658,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.054637392,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":6.628847715,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.6288847650000005,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.628919398,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.628924541,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":7.756457236,"data":"wrote 11 files to /kaggle/working/bench\n"}
+,{"stream_name":"stdout","time":8.715631112,"data":"Sat Oct 10 14:19:05 2026       \n"}
+,{"stream_name":"stdout","time":8.715660798,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":8.715666151,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":8.715670409,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":8.715674284,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":8.715678093,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":8.715681912,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":8.715685812,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":8.715689642,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":8.715693405,"data":"| N/A   60C    P8             12W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":8.715697219,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":8.715700924,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":8.715704684,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":8.715708608,"data":"| N/A   61C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":8.715712561,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":8.71571638,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":8.715720272,"data":"\n"}
+,{"stream_name":"stdout","time":8.715723741,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":8.715727802,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":8.715742264,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":8.715746304,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":8.715750032,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":8.715753853,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":8.715758958,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":8.7157628,"data":"\n"}
+,{"stream_name":"stdout","time":11.20671991,"data":"GPU_COUNT = 2\n"}
+,{"stream_name":"stdout","time":11.761577364,"data":"preflight OK: 2 GPU(s), reachable: https://pypi.org/simple/, https://pypi.nvidia.com/tensorrt-llm/, https://github.com, https://huggingface.co, https://raw.githubusercontent.com/NVIDIA/TensorRT-LLM/b0880169d0fb8cd0363049d91aa548e58a41be07/examples/apps/openai_server.py\n"}
+,{"stream_name":"stdout","time":20.165846677,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.0/27.0 MB 10.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":20.165880249,"data":"uv 0.11.32 (x86_64-unknown-linux-gnu)\n"}
+,{"stream_name":"stdout","time":20.165885355,"data":"\n"}
+,{"stream_name":"stdout","time":32.888871333,"data":"install-base: 21s\n"}
+,{"stream_name":"stdout","time":365.211639456,"data":"\n"}
+,{"stream_name":"stdout","time":365.211682067,"data":"install-vllm: 332s\n"}
+,{"stream_name":"stdout","time":530.258824393,"data":"vllm-t4-1.5b-fp16: server ready in 165s\n"}
+,{"stream_name":"stdout","time":1122.957735134,"data":"vllm-t4-1.5b-fp16-c1-r1-20261010T142748Z.json: ok 64/64 out_tok/s 59.23679564136353 ttft_p50 0.032876500000007525 e2e_p95 2.409860300000001\n"}
+,{"stream_name":"stdout","time":1122.957768648,"data":"vllm-t4-1.5b-fp16-c1-r2-20261010T143011Z.json: ok 64/64 out_tok/s 58.62760869420528 ttft_p50 0.03299050000000392 e2e_p95 2.312813299999998\n"}
+,{"stream_name":"stdout","time":1122.95777447,"data":"vllm-t4-1.5b-fp16-c1-r3-20261010T143236Z.json: ok 64/64 out_tok/s 58.740110811584195 ttft_p50 0.03308850000000074 e2e_p95 2.310498450000002\n"}
+,{"stream_name":"stdout","time":1122.957779364,"data":"vllm-t4-1.5b-fp16-c8-r1-20261010T143500Z.json: ok 64/64 out_tok/s 363.7266979259098 ttft_p50 0.2872955000000008 e2e_p95 3.6450627999999994\n"}
+,{"stream_name":"stdout","time":1122.957784086,"data":"vllm-t4-1.5b-fp16-c8-r2-20261010T143526Z.json: ok 64/64 out_tok/s 364.44922388598076 ttft_p50 0.27701500000000046 e2e_p95 3.6473062000000005\n"}
+,{"stream_name":"stdout","time":1122.957788685,"data":"vllm-t4-1.5b-fp16-c8-r3-20261010T143552Z.json: ok 64/64 out_tok/s 363.40151089323973 ttft_p50 0.2842669999999998 e2e_p95 3.694140000000001\n"}
+,{"stream_name":"stdout","time":1122.957793318,"data":"vllm-t4-1.5b-fp16-c32-r1-20261010T143617Z.json: ok 128/128 out_tok/s 744.4380585415294 ttft_p50 1.2018094999999995 e2e_p95 5.821696500000001\n"}
+,{"stream_name":"stdout","time":1122.957798345,"data":"vllm-t4-1.5b-fp16-c32-r2-20261010T143645Z.json: ok 128/128 out_tok/s 741.7830011261664 ttft_p50 1.000812999999999 e2e_p95 6.0698503\n"}
+,{"stream_name":"stdout","time":1122.957802942,"data":"vllm-t4-1.5b-fp16-c32-r3-20261010T143712Z.json: ok 128/128 out_tok/s 743.7898270761287 ttft_p50 1.0080239999999998 e2e_p95 6.0414691000000005\n"}
+,{"stream_name":"stdout","time":1122.957807597,"data":"\n"}
+,{"stream_name":"stdout","time":1288.896685011,"data":"/250 [02:20\u003c00:01,  4.51it/s]\n"}
+,{"stream_name":"stdout","time":1288.896722809,"data":"Requesting API:  98%|█████████▊| 245/250 [02:20\u003c00:01,  3.23it/s]\n"}
+,{"stream_name":"stdout","time":1288.896729543,"data":"Requesting API:  98%|█████████▊| 246/250 [02:21\u003c00:01,  3.13it/s]\n"}
+,{"stream_name":"stdout","time":1288.896735033,"data":"Requesting API:  99%|█████████▉| 247/250 [02:21\u003c00:00,  3.29it/s]\n"}
+,{"stream_name":"stdout","time":1288.896745025,"data":"Requesting API:  99%|█████████▉| 248/250 [02:21\u003c00:00,  3.03it/s]\n"}
+,{"stream_name":"stdout","time":1288.896748359,"data":"Requesting API: 100%|█████████▉| 249/250 [02:21\u003c00:00,  3.33it/s]\n"}
+,{"stream_name":"stdout","time":1288.89675157,"data":"Requesting API: 100%|██████████| 250/250 [02:22\u003c00:00,  2.14it/s]\n"}
+,{"stream_name":"stdout","time":1288.89675484,"data":"Requesting API: 100%|██████████| 250/250 [02:22\u003c00:00,  1.75it/s]\n"}
+,{"stream_name":"stdout","time":1288.896757913,"data":"fatal: not a git repository (or any parent up to mount point /kaggle)\n"}
+,{"stream_name":"stdout","time":1288.896760907,"data":"Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"}
+,{"stream_name":"stdout","time":1288.896763825,"data":"2026-10-10:14:40:25 INFO     [loggers.evaluation_tracker:247] Saving results aggregated\n"}
+,{"stream_name":"stdout","time":1288.896766892,"data":"2026-10-10:14:40:25 INFO     [loggers.evaluation_tracker:119] Saving per-task samples to /kaggle/working/results/raw/accuracy/gsm8k-vllm-1.5b-fp16/Qwen__Qwen2.5-1.5B-Instruct/*.jsonl\n"}
+,{"stream_name":"stdout","time":1288.896774436,"data":"local-chat-completions ({'model': 'Qwen/Qwen2.5-1.5B-Instruct', 'base_url': 'http://127.0.0.1:8000/v1/chat/completions', 'num_concurrent': 16, 'max_retries': 3, 'timeout': 600, 'tokenizer_backend': None}), gen_kwargs: ({}), limit: 250.0, num_fewshot: None, batch_size: 1\n"}
+,{"stream_name":"stdout","time":1288.896794379,"data":"|   Tasks    |Version|     Filter     |n-shot|  Metric   |   |Value|   |Stderr|\n"}
+,{"stream_name":"stdout","time":1288.896799779,"data":"|------------|------:|----------------|-----:|-----------|---|----:|---|-----:|\n"}
+,{"stream_name":"stdout","time":1288.896804815,"data":"|gsm8k_pinned|      3|flexible-extract|     5|exact_match|↑  |0.620|±  |0.0308|\n"}
+,{"stream_name":"stdout","time":1288.896810222,"data":"|            |       |strict-match    |     5|exact_match|↑  |0.344|±  |0.0301|\n"}
+,{"stream_name":"stdout","time":1288.896814807,"data":"\n"}
+,{"stream_name":"stdout","time":1288.896818993,"data":"\n"}
+,{"stream_name":"stdout","time":1289.544458908,"data":"vllm-t4-1.5b-fp16: GPU memory.used MiB after stop [0, 0] (0s)\n"}
+,{"stream_name":"stdout","time":1289.544487149,"data":"vllm-t4-1.5b-fp16: 925s\n"}
+,{"stream_name":"stdout","time":1289.544492371,"data":"vllm-t4-1.5b-fp16: 925s\n"}
+,{"stream_name":"stdout","time":1289.744288364,"data":"triton-tensorrtllm-backend not run: Triton's TensorRT-LLM backend ships only in the NGC tritonserver:\u003cver\u003e-trtllm-python-py3 container image, which needs Docker; Kaggle has no Docker. TensorRT-LLM is served with its own OpenAI server instead (inference/trtllm/serve.py)\n"}
+,{"stream_name":"stdout","time":1296.503530314,"data":"mpirun (Open MPI) 4.1.6\n"}
+,{"stream_name":"stdout","time":1296.503569136,"data":"\n"}
+,{"stream_name":"stdout","time":1296.503575256,"data":"Report bugs to http://www.open-mpi.org/community/help/\n"}
+,{"stream_name":"stdout","time":1296.503586144,"data":"W: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.\n"}
+,{"stream_name":"stdout","time":1296.503605346,"data":"W: Skipping acquire of configured file 'main/source/Sources' as repository 'https://r2u.stat.illinois.edu/ubuntu noble InRelease' does not seem to provide it (sources.list entry misspelt?)\n"}
+,{"stream_name":"stdout","time":1296.503608251,"data":"\n"}
+,{"stream_name":"stdout","time":1443.626008965,"data":"Downloading cpython-3.10.20-linux-x86_64-gnu (download) (28.1MiB)\n"}
+,{"stream_name":"stdout","time":1443.626042661,"data":" Downloaded cpython-3.10.20-linux-x86_64-gnu (download)\n"}
+,{"stream_name":"stdout","time":1443.626053151,"data":"Installed Python 3.10.20 in 1.47s\n"}
+,{"stream_name":"stdout","time":1443.626056323,"data":" + cpython-3.10.20-linux-x86_64-gnu (python3.10)\n"}
+,{"stream_name":"stdout","time":1443.626059275,"data":"warning: `/root/.local/bin` is not on your PATH. To use installed Python executables, run `export PATH=\"/root/.local/bin:$PATH\"` or `uv python update-shell`.\n"}
+,{"stream_name":"stdout","time":1443.626062526,"data":"\n"}
+,{"stream_name":"stdout","time":1443.626065191,"data":"exit=0\n"}
+,{"stream_name":"stdout","time":1443.626067941,"data":"Using Python 3.10.20 environment at: /tmp/venvs/trtllm\n"}
+,{"stream_name":"stdout","time":1443.626070756,"data":"Checked 115 packages in 2ms\n"}
+,{"stream_name":"stdout","time":1443.626073465,"data":"All installed packages are compatible\n"}
+,{"stream_name":"stdout","time":1443.626076158,"data":"\n"}
+,{"stream_name":"stdout","time":1459.807661488,"data":"[TensorRT-LLM] TensorRT-LLM version: 0.14.0\n"}
+,{"stream_name":"stdout","time":1459.807699093,"data":"0.14.0 10.4.0 2.4.0+cu124 12.4 (7, 5)\n"}
+,{"stream_name":"stdout","time":1459.807703101,"data":"The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.\n"}
+,{"stream_name":"stdout","time":1459.807708864,"data":"\n"}
+,{"stream_name":"stdout","time":1459.807712302,"data":"0it [00:00, ?it/s]\n"}
+,{"stream_name":"stdout","time":1459.807730381,"data":"0it [00:00, ?it/s]\n"}
+,{"stream_name":"stdout","time":1459.807735896,"data":"\n"}
+,{"stream_name":"stdout","time":1459.807740366,"data":"install: 170s\n"}
+,{"stream_name":"stdout","time":1462.331295971,"data":"/tmp/trtllm/hf\n"}
+,{"stream_name":"stdout","time":1462.331331846,"data":"\n"}
+,{"stream_name":"stdout","time":1462.331338429,"data":"Fetching 10 files:   0%|          | 0/10 [00:00\u003c?, ?it/s]\n"}
+,{"stream_name":"stdout","time":1462.331344537,"data":"Fetching 10 files:  80%|████████  | 8/10 [00:00\u003c00:00, 25.25it/s]\n"}
+,{"stream_name":"stdout","time":1462.331352118,"data":"Fetching 10 files: 100%|██████████| 10/10 [00:02\u003c00:00,  4.94it/s]\n"}
+,{"stream_name":"stdout","time":1462.33135766,"data":"\n"}
+,{"stream_name":"stdout","time":1462.331362412,"data":"download: 3s\n"}
+,{"stream_name":"stdout","time":1536.430589377,"data":"build-engine FAILED, see results/FAILED-build-engine.txt\n"}
+,{"stream_name":"stdout","time":1536.430759891,"data":"build-engine: 74s\n"}
+,{"stream_name":"stdout","time":1536.430768817,"data":"trtllm-t4-1.5b-fp16 not run: an earlier TensorRT-LLM step failed or was skipped (see FAILED-*/NOT_RUN-*)\n"}
+,{"stream_name":"stdout","time":1536.62536675,"data":"raw/accuracy/gsm8k-vllm-1.5b-fp16/Qwen__Qwen2.5-1.5B-Instruct/results_2026-10-10T14-40-25.736734.json null\n"}
+,{"stream_name":"stdout","time":1536.625413755,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c1-r1-20261010T142748Z.json {\"requests\": 64, \"ok\": 64, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 138.29242299999999, \"output_tokens\": 8192, \"output_tok_s\": 59.23679564136353, \"request_s\": 0.46278746594815257, \"ttft_s\": {\"mean\": 0.08522812499999904, \"p50\": 0.032876500000007525, \"p95\": 0.25078680000000875, \"p99\": 0.2528972200000\n"}
+,{"stream_name":"stdout","time":1536.625467275,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c1-r2-20261010T143011Z.json {\"requests\": 64, \"ok\": 64, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 139.72939, \"output_tokens\": 8192, \"output_tok_s\": 58.62760869420528, \"request_s\": 0.45802819292347874, \"ttft_s\": {\"mean\": 0.0865772187499992, \"p50\": 0.03299050000000392, \"p95\": 0.25243459999999873, \"p99\": 0.25445498999999283}, \"itl\n"}
+,{"stream_name":"stdout","time":1536.625475267,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c1-r3-20261010T143236Z.json {\"requests\": 64, \"ok\": 64, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 139.461773, \"output_tokens\": 8192, \"output_tok_s\": 58.740110811584195, \"request_s\": 0.4589071157155015, \"ttft_s\": {\"mean\": 0.0861841250000016, \"p50\": 0.03308850000000074, \"p95\": 0.2516189000000132, \"p99\": 0.2549797599999987}, \"itl_\n"}
+,{"stream_name":"stdout","time":1536.625482075,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c32-r1-20261010T143617Z.json {\"requests\": 128, \"ok\": 128, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 22.008547, \"output_tokens\": 16384, \"output_tok_s\": 744.4380585415294, \"request_s\": 5.815922332355698, \"ttft_s\": {\"mean\": 1.1388750078125, \"p50\": 1.2018094999999995, \"p95\": 2.11856605, \"p99\": 2.1201295099999995}, \"itl_s\": {\"mean\":\n"}
+,{"stream_name":"stdout","time":1536.625489205,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c32-r2-20261010T143645Z.json {\"requests\": 128, \"ok\": 128, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 22.087322, \"output_tokens\": 16384, \"output_tok_s\": 741.7830011261664, \"request_s\": 5.795179696298175, \"ttft_s\": {\"mean\": 1.1192806640625, \"p50\": 1.000812999999999, \"p95\": 2.1521883500000003, \"p99\": 2.1547607199999996}, \"itl_s\": {\n"}
+,{"stream_name":"stdout","time":1536.625497367,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c32-r3-20261010T143712Z.json {\"requests\": 128, \"ok\": 128, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 22.027728, \"output_tokens\": 16384, \"output_tok_s\": 743.7898270761287, \"request_s\": 5.810858024032256, \"ttft_s\": {\"mean\": 1.090613828125, \"p50\": 1.0080239999999998, \"p95\": 2.1353469500000006, \"p99\": 2.13778289}, \"itl_s\": {\"mean\": \n"}
+,{"stream_name":"stdout","time":1536.625504478,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c8-r1-20261010T143500Z.json {\"requests\": 64, \"ok\": 64, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 22.522405, \"output_tokens\": 8192, \"output_tok_s\": 363.7266979259098, \"request_s\": 2.84161482754617, \"ttft_s\": {\"mean\": 0.34141704687499974, \"p50\": 0.2872955000000008, \"p95\": 0.7492975999999996, \"p99\": 1.1476846}, \"itl_s\": {\"mean\": \n"}
+,{"stream_name":"stdout","time":1536.62551136,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c8-r2-20261010T143526Z.json {\"requests\": 64, \"ok\": 64, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 22.477754, \"output_tokens\": 8192, \"output_tok_s\": 364.44922388598076, \"request_s\": 2.8472595616092247, \"ttft_s\": {\"mean\": 0.3406085000000001, \"p50\": 0.27701500000000046, \"p95\": 0.7513445000000004, \"p99\": 1.15203762}, \"itl_s\": {\"mea\n"}
+,{"stream_name":"stdout","time":1536.625517977,"data":"raw/vllm-t4-1.5b-fp16/vllm-t4-1.5b-fp16-c8-r3-20261010T143552Z.json {\"requests\": 64, \"ok\": 64, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 22.542559, \"output_tokens\": 8192, \"output_tok_s\": 363.40151089323973, \"request_s\": 2.8390743038534354, \"ttft_s\": {\"mean\": 0.33412031250000007, \"p50\": 0.2842669999999998, \"p95\": 0.5485546499999999, \"p99\": 1.1444269200000001}, \"itl_s\n"}
+,{"stream_name":"stdout","time":1536.625528988,"data":"/kaggle/working/results/FAILED-build-engine.txt\n"}
+,{"stream_name":"stdout","time":1536.625533807,"data":"/kaggle/working/results/NOT_RUN-triton-tensorrtllm-backend.txt\n"}
+,{"stream_name":"stdout","time":1536.625538285,"data":"/kaggle/working/results/NOT_RUN-trtllm-t4-1.5b-fp16.txt\n"}
+,{"stream_name":"stdout","time":1536.625542592,"data":"\n"}
+,{"stream_name":"stdout","time":1536.62554677,"data":"summary: 0s\n"}
+,{"stream_name":"stdout","time":1536.85135415,"data":"session used 1525 s of the 10200 s budget\n"}
+,{"stream_name":"stderr","time":1539.858034174,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1539.858071182,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1540.122499805,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1540.122527368,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1541.224944366,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1541.320094958,"data":"[NbConvertApp] Writing 181692 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1544.046720205,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1544.87254226,"data":"[NbConvertApp] Writing 732313 bytes to __results__.html\n"}
+]

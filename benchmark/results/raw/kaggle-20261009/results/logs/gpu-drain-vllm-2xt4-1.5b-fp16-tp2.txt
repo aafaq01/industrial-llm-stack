@@ -1,0 +1,1 @@
+vllm-2xt4-1.5b-fp16-tp2: GPU memory.used MiB after stop [0, 0] (0s)

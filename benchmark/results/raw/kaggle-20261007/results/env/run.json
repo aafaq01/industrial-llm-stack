@@ -1,0 +1,8 @@
+{
+ "git_commit": "3953d846e91055dcf07e0ec2218b6db50a724749",
+ "gpu_count": 0,
+ "vllm_version": "0.31.0",
+ "started_utc": "2026-10-07T16:28:49Z",
+ "kaggle_docker_image": "gcr.io/kaggle-images/python@sha256:81b1e7c4b4f0f2a7e0a33943c95754b1b7af6b30d65221633a284b6b601cd84a",
+ "kaggle_kernel_run_type": "Batch"
+}

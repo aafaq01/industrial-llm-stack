@@ -1,0 +1,73 @@
+[{"stream_name":"stderr","time":6.9443847850000004,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.944436958,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.944441596,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.944444368,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":7.568452666,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.568500543,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.568506025,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.568510961,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":8.760828874,"data":"wrote 10 files to /kaggle/working/bench\n"}
+,{"stream_name":"stdout","time":9.726721529,"data":"Sat Oct 10 07:18:59 2026       \n"}
+,{"stream_name":"stdout","time":9.726752262,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":9.726757856999999,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":9.726761783,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":9.726765932,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":9.726769907,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":9.726773791,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":9.726777716,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":9.726781799,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":9.726785976,"data":"| N/A   40C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":9.726790002,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":9.726794124,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":9.726798046999999,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":9.726802056,"data":"| N/A   38C    P8             14W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":9.726806096,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":9.726810102,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":9.726814279,"data":"\n"}
+,{"stream_name":"stdout","time":9.72681802,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":9.726822097,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":9.726839776,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":9.726844176,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":9.726848144,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":9.726852132,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":9.726857767,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":9.726862355,"data":"\n"}
+,{"stream_name":"stdout","time":12.462264643,"data":"GPU_COUNT = 2\n"}
+,{"stream_name":"stdout","time":12.915362218,"data":"preflight OK: 2 GPU(s), reachable: https://pypi.org/simple/, https://pypi.nvidia.com/tensorrt-llm/, https://github.com, https://huggingface.co, https://raw.githubusercontent.com/NVIDIA/TensorRT-LLM/b0880169d0fb8cd0363049d91aa548e58a41be07/examples/apps/openai_server.py\n"}
+,{"stream_name":"stdout","time":18.446162504,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.0/27.0 MB 65.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":18.446197385,"data":"uv 0.11.32 (x86_64-unknown-linux-gnu)\n"}
+,{"stream_name":"stdout","time":18.44620242,"data":"\n"}
+,{"stream_name":"stdout","time":29.898375317,"data":"install-base: 17s\n"}
+,{"stream_name":"stdout","time":29.963839931,"data":"install-vllm FAILED, see results/FAILED-install-vllm.txt\n"}
+,{"stream_name":"stdout","time":29.963879826,"data":"install-vllm: 0s\n"}
+,{"stream_name":"stdout","time":30.099118994,"data":"triton-tensorrtllm-backend not run: Triton's TensorRT-LLM backend ships only in the NGC tritonserver:\u003cver\u003e-trtllm-python-py3 container image, which needs Docker; Kaggle has no Docker. TensorRT-LLM is served with its own OpenAI server instead (inference/trtllm/serve.py)\n"}
+,{"stream_name":"stdout","time":96.222888664,"data":"mpirun (Open MPI) 4.1.6\n"}
+,{"stream_name":"stdout","time":96.222919994,"data":"\n"}
+,{"stream_name":"stdout","time":96.222926051,"data":"Report bugs to http://www.open-mpi.org/community/help/\n"}
+,{"stream_name":"stdout","time":96.222931191,"data":"W: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.\n"}
+,{"stream_name":"stdout","time":96.222937128,"data":"W: Skipping acquire of configured file 'main/source/Sources' as repository 'https://r2u.stat.illinois.edu/ubuntu noble InRelease' does not seem to provide it (sources.list entry misspelt?)\n"}
+,{"stream_name":"stdout","time":96.222942851,"data":"W: Failed to fetch https://r2u.stat.illinois.edu/ubuntu/dists/noble/main/binary-amd64/Packages  500  Internal Server Error [IP: 192.17.190.167 443]\n"}
+,{"stream_name":"stdout","time":96.222951885,"data":"W: Some index files failed to download. They have been ignored, or old ones used instead.\n"}
+,{"stream_name":"stdout","time":96.222955523,"data":"\n"}
+,{"stream_name":"stdout","time":127.792055981,"data":"install FAILED, see results/FAILED-install.txt\n"}
+,{"stream_name":"stdout","time":127.792089927,"data":"install: 98s\n"}
+,{"stream_name":"stdout","time":127.792096683,"data":"download not run: an earlier TensorRT-LLM step failed or was skipped (see FAILED-*/NOT_RUN-*)\n"}
+,{"stream_name":"stdout","time":127.792122384,"data":"build-engine not run: an earlier TensorRT-LLM step failed or was skipped (see FAILED-*/NOT_RUN-*)\n"}
+,{"stream_name":"stdout","time":127.792125992,"data":"trtllm-t4-1.5b-fp16 not run: an earlier TensorRT-LLM step failed or was skipped (see FAILED-*/NOT_RUN-*)\n"}
+,{"stream_name":"stdout","time":127.986856181,"data":"/kaggle/working/results/FAILED-install.txt\n"}
+,{"stream_name":"stdout","time":127.986881827,"data":"/kaggle/working/results/FAILED-install-vllm.txt\n"}
+,{"stream_name":"stdout","time":127.986904193,"data":"/kaggle/working/results/NOT_RUN-build-engine.txt\n"}
+,{"stream_name":"stdout","time":127.986908209,"data":"/kaggle/working/results/NOT_RUN-download.txt\n"}
+,{"stream_name":"stdout","time":127.986912341,"data":"/kaggle/working/results/NOT_RUN-triton-tensorrtllm-backend.txt\n"}
+,{"stream_name":"stdout","time":127.986916371,"data":"/kaggle/working/results/NOT_RUN-trtllm-t4-1.5b-fp16.txt\n"}
+,{"stream_name":"stdout","time":127.986919882,"data":"\n"}
+,{"stream_name":"stdout","time":128.160174803,"data":"session used 115 s of the 10200 s budget\n"}
+,{"stream_name":"stderr","time":130.807990881,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":130.808035269,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":130.990382523,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":130.990410579,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":131.809201492,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":131.895879392,"data":"[NbConvertApp] Writing 155615 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":134.999605323,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":135.645518549,"data":"[NbConvertApp] Writing 677011 bytes to __results__.html\n"}
+]

@@ -1,0 +1,131 @@
+Phase 5b CI evidence, 2026-10-09 (UTC), dev machine (Windows 11, Docker Desktop 29.6.2). Three Jenkins builds,
+all SUCCESS; kind-up clean run, re-run and progress-deadline recovery after the review fixes.
+
+Raw logs in phase5b-ci/ (byte-exact: excluded from the pre-commit fixers and from git eol conversion):
+  jenkins-build-{1,2,3}.log      Jenkins console logs, from jobs/industrial-llm-platform/builds/N/log in the
+                                 jenkins-home volume with only Jenkins' hidden console notes (ESC[8mha:...ESC[0m) removed
+  stages-build-{1,2,3}.txt       stage start times and durations, read from the Jenkins flow graph
+  kind-up-before.log             kind-up at b8dacd5, before build #1
+  kind-up-after.log              kind-up at 161b359, after build #1
+  kind-up-clean-attempt-*.log    three failed clean runs that led to fixes (see "Fixes")
+  kind-up-clean-a290dea.log      clean run (after kind-down) that passed first time
+  kind-up-rerun-a290dea.log      immediate re-run
+  recovery-steps.log             how KEDA was put into ProgressDeadlineExceeded, and the old waits failing on it
+  recovery-kind-up.log           kind-up run that recovered it
+  kind-up-e1c067a.log            kind-up at e1c067a (archive fix), before build #3
+  kind-up-final-e1c067a.log      kind-up at e1c067a after build #3 (cluster back at HEAD, not a CI commit)
+  secret-probe-build.log         throwaway pipeline that checked what a build step sees of the admin password
+Secrets: the admin password (random, only in the git-ignored ci/jenkins/.env) occurs in no log (grep count 0).
+The pipeline itself uses no credentials; the test Postgres runs with trust auth on a per-build network.
+
+== Versions
+Jenkins 2.580.1 (industrial-llm-platform/jenkins:2.580.1 from ci/jenkins/Dockerfile), 63 plugins loaded, 0 SEVERE or
+"Failed Loading" lines. Other pins: docs/VERSIONS.md "Phase 5b CI". First `docker compose ... up -d --build --wait`:
+3m36s from cold. `docker exec jenkins docker version`: client 29.6.2, server 29.6.2; jenkins runs as uid 1000 with
+groups 1000,0. /repo is read-only ("Read-only file system" on touch); the nested /repo/.tools mount is writable.
+Trivy 0.75.0 with vulnerability DB UpdatedAt 2026-10-08T19:05:21Z (DownloadedAt 2026-10-08T20:42Z, cached in the
+trivy-cache volume; the same DB served all three builds).
+
+== Build #1 (main dc6c21e, before the review): SUCCESS, 2471 s
+Stages: checkout 7 s, lint 76 s, charts 26 s, test 448 s, build 595 s, scan 51 s, push 3 s, bump 0 s, argocd sync
+1243 s, post 2 s.
+  lint     pre-commit all passed (git 2.47.3 in the uv image); gitleaks 21 commits, no leaks; hadolint on 3 Dockerfiles;
+           actionlint, no findings
+  charts   kubeconform v0.8.0 downloaded into the workspace .tools/bin; every chart passes for kind and openshift values
+  test     benchmark 9 passed; rag 7 passed (test_api 5 against the throwaway Postgres, test_chunking 2); promtool
+           check config and rule unit tests SUCCESS; Python 3.12.13
+  scan     --severity CRITICAL --exit-code 1: 0 findings (debian 13.7 and the Python packages), exit 0
+  push     rag@sha256:156f889fc3dfda4502b63966f05ee11d479da574e6fdc0041f48c877c1c3999e
+  bump     CI commit 3f8c68a12a6077fd77a5bdea675dca809960eca3 "ci: rag-api chart 0.1.0+ci.1, image sha256:156f889f..."
+  deploy   all four apps Synced/Healthy at 3f8c68a at 13:20:26Z (rag-api rolled, ingest Job recreated)
+Digest differed from kind-up's (c07aa644...). Cause (found in review): kind-up built from the Windows working tree,
+where Docker gives every file mode 0755, the Linux checkout has 0644, and mtimes differ; the build cache missed at
+`COPY pyproject.toml uv.lock` and every later layer was rebuilt. Fixed by building both from git archive (below).
+Ingest Job in that rollout: 2 failed attempts (exit 1, 13:02:44-13:04:14Z) before it succeeded; restartPolicy
+OnFailure had dropped their logs. Likely cause, not proven: the corpus download hit NTRS 503 responses (4 retries
+seen); Elasticsearch shows no index delete before 13:10:55Z, so the failures came before indexing.
+
+Re-index window: the ingest Job deletes the `corpus` index and builds a new one (rag/app/ingest.py), so chat has
+NO index while it runs: in build #1's rollout the index was deleted at 13:10:55Z and recreated about 9 minutes later
+(13:20:05Z). An alias swap (index into corpus-<timestamp>, then move a `corpus` alias) needs a change in
+rag/app/ingest.py and the index name the API reads; not made here.
+
+== Review fixes (commits) and the failures they address
+50a9ece  kind-up: pre-pull every cluster image on the host and load it into the node (list rendered from the installed
+         manifests); no helm --wait; wait_rollout retries `rollout status` past the 600 s progress deadline (30 min
+         budget per resource); kind-up and ci/run.sh build the rag image from git archive; ingest Job restartPolicy
+         Never (backoffLimit 3); Jenkins admin password as a compose secret; raw CI logs excluded from fixers.
+0076b92  kind load docker-image failed on Docker Desktop's containerd image store ("ctr: content digest ... not found",
+         kind-up-clean-attempt-1-kind-load.log); now docker save --platform linux/amd64 | ctr import, skipping images
+         the node has.
+7e95146  A clean run failed on a reset connection while helm fetched the Traefik repo index
+         (kind-up-clean-attempt-2-traefik-fetch.log); downloads are retried and the pinned charts and ArgoCD manifest
+         are cached in .tools/downloads.
+a290dea  After a network change, CoreDNS's UDP queries to Docker's DNS on the kind gateway timed out while TCP answered,
+         so the llama.cpp init container could not resolve huggingface.co (kind-up-clean-attempt-3-dns.log; its last
+         lines are from the next cluster, which that run's wait loop polled until its 3600 s deadline). kind-up sets
+         force_tcp on CoreDNS; the model download resumes a partial file (curl -C -, checksum decides); the final
+         ArgoCD wait allows 3 hours (KIND_UP_TIMEOUT) because a first run downloads the 1.1 GB model in the cluster.
+e1c067a  `git archive --mtime=@0` is read by git as "now", and Git for Windows (core.autocrlf=true) converted rag/
+         text files to CRLF because rag/ alone has no .gitattributes. Now core.autocrlf=false and an explicit date;
+         the archive of a290dea:rag is byte-identical from Git for Windows 2.53 and git 2.47 in Jenkins (sha256
+         daeb8c97...). Only the CRLF difference changed the image: BuildKit's cache key ignores mtimes.
+
+The ArgoCD wait (scripts/gitops-publish.sh) fails only when its deadline passes (3600 s by default, 3 hours from
+kind-up), not early when an app is Degraded: a Degraded app that later becomes Healthy still passes.
+
+== Clean run and re-run (a290dea)
+kind-down, then kind-up: rc=0, 1726 s (28m46s) wall, first attempt. All 12 images were already on the host from the
+failed attempts, so no pulls; importing them into the node took 4m20s, the rag image build 11 s (cached), model
+download about 5.5 minutes, ingest Job about 12 minutes (1 pod, Completed). All four apps Synced/Healthy at a290dea.
+Immediate re-run: rc=0, 60 s.
+
+== Recovery from a progress-deadline-exceeded Deployment (a290dea), recovery-steps.log + recovery-kind-up.log
+1. Blocked ghcr.io pulls in the node (containerd hosts.toml to 127.0.0.1:9), removed the three KEDA images,
+   restarted the KEDA Deployments and deleted their pods: all ImagePullBackOff.
+2. After 600 s all three: Available=False, Progressing=False/ProgressDeadlineExceeded.
+   `kubectl rollout status deploy/keda-operator` failed at once ("exceeded its progress deadline", rc=1);
+   `helm upgrade --install keda ... --wait` (kind-up before 50a9ece) failed in 2 s and left revision 3 "failed".
+   This is the reviewer's state.
+3. kind-up started with pulls still blocked: it got past helm (revision 4 "deployed") and waited on KEDA. After
+   2 minutes ghcr.io was unblocked (the network "recovers"); kubelet's back-off retried, KEDA became ready, and
+   kind-up finished: rc=0, 442 s. KEDA Deployments ended Available=True, Progressing=True/NewReplicaSetAvailable.
+
+== Build #2 (main a290dea, the fix commit): SUCCESS, 2452 s, jenkins-build-2.log
+Stages: checkout 0 s, lint 25 s, charts 296 s (kubeconform schema downloads on the slow network), test 79 s
+(benchmark 9 passed, rag 7 passed against the throwaway Postgres, promtool SUCCESS), build 1328 s (cache miss,
+see e1c067a), scan 48 s (0 CRITICAL, exit 0), push 3 s (rag@sha256:6f10a3e78c6adfc2b7dfb7239367a76be937ed0c38bbab7a238b0d83960659f8),
+bump 0 s (CI commit 78db02d95d6672ab8b887a1807b4c011e8bdf019, chart 0.1.0+ci.2), argocd sync 659 s (rag-api rolled,
+all four Synced/Healthy at 78db02d at 17:07:36Z), post 2 s.
+Ingest Job from that rollout: spec restartPolicy Never, backoffLimit 3; 1 pod, Completed, 0 failed.
+Admin password: started from the compose secret, `env | grep -c JENKINS_ADMIN_PASSWORD` in the controller = 0,
+jenkins-cli authenticated with the file. secret-probe-build.log, a pipeline step on the same controller:
+"env entries with PASSWORD: 0" and "secret file readable by the build user". So builds no longer inherit it in their
+environment, but a build step can still read /run/secrets/jenkins_admin_password: builds run on the built-in node as
+the jenkins user. Keeping it from builds needs a separate agent; not done.
+
+== Digest equality (same rev, kind-up vs ci/run.sh)
+kind-up at e1c067a on the Windows host built rag@sha256:6f10a3e7..., the digest build #2 had pushed (rag/ is the
+same tree in a290dea and e1c067a). Build #3 (Jenkins, Linux checkout of e1c067a) built with every step CACHED and
+pushed the same rag@sha256:6f10a3e7... . Equality relies on the shared BuildKit cache of the one Docker engine:
+the RUN steps (uv sync, model download) are not bit-reproducible on their own.
+
+== Build #3 (main e1c067a): SUCCESS, 220 s, jenkins-build-3.log
+Stages: lint 22 s, charts 117 s, test 62 s, build 8 s (all CACHED), scan 1 s (0 CRITICAL, exit 0), push 1 s
+(rag@sha256:6f10a3e7..., unchanged), bump 0 s (CI commit b050b2dc60041d750e8ea09d0f0bdf7bdbf03d20, 0.1.0+ci.3),
+argocd sync 3 s (no rollout: same digest, Chart.yaml metadata only), post 0 s.
+
+== Cluster after
+kind-up at e1c067a (kind-up-final-e1c067a.log): rc=0, 64 s, all four apps Synced/Healthy at
+e1c067a46a2778d9fea294b2c0e1c35f9fb6a527 (HEAD, not a CI commit); no rollout: rag-api stays on
+rag@sha256:6f10a3e7... (Deployment generation 2). GET http://rag-api.localhost:8090/healthz -> {"status":"ok"}.
+
+== Earlier fix during execution
+161b359 ci/jenkins: run the job with jenkins-cli -http. The default WebSocket mode was rejected with 403
+"Unexpected request origin" (the CLI calls localhost:8080 inside the container; the Jenkins URL is 127.0.0.1:8088).
+
+== Not verified
+GitHub Actions: not run (no remote). OpenShift: not tested. A failing scan (CRITICAL found) and the .trivyignore path
+were not exercised. ci/run.sh ran only inside Jenkins, not directly on a Linux host. A truly slow first pull in a clean
+run was not repeated after the fixes (the images were on the host by then); the slow-pull path was exercised by the
+recovery test and by the failed attempts. The build-step isolation of the admin password is not achieved (see build #2).

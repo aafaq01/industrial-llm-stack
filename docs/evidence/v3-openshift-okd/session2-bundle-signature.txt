@@ -1,0 +1,17 @@
+# 2026-10-10T08:42:07Z key: CrcOrgPublicKey from https://raw.githubusercontent.com/crc-org/crc/v2.64.0/pkg/crc/constants/keys.go
+# the .sig is the second file in the bundle layer tar (next to the .crcbundle)
+$ gpg --import crc-org.asc; gpg --list-keys --with-colons (fpr, uid)
+B84655BFAC1C8E067FD9CA87DC7EAC400A1BFDFB
+crc (Key to sign bundle used by crc) <crc@crc.dev>
+4B733D3952187E279093583A346DBCB801CA4564
+$ sha256sum crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle.sig
+e47cedb646c3b708ccbbe116e59348c3074f1ab79509575167e1c15d446b7f52 *crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle.sig
+$ gpg --verify crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle.sig crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle
+gpg: Signature made Wed Sep 16 15:51:03 2026 PST
+gpg:                using EDDSA key B84655BFAC1C8E067FD9CA87DC7EAC400A1BFDFB
+gpg:                issuer "crc@crc.dev"
+gpg: Good signature from "crc (Key to sign bundle used by crc) <crc@crc.dev>" [unknown]
+gpg: WARNING: The key's User ID is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: B846 55BF AC1C 8E06 7FD9  CA87 DC7E AC40 0A1B FDFB
+exit 0

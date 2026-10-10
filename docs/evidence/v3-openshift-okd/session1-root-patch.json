@@ -1,0 +1,1 @@
+{"spec":{"source":{"repoURL":"git://host.crc.testing/industrial-llm-platform","targetRevision":"okd","helm":{"valuesObject":{"repoURL":"git://host.crc.testing/industrial-llm-platform","targetRevision":"okd","env":"openshift","ragImage":"image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e"}}}}}

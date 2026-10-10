@@ -1,0 +1,93 @@
+I1010 09:47:27.979617 394 pb_stub.cc:298]  Failed to initialize Python stub for auto-complete: ModuleNotFoundError: No module named '_contextvars'
+
+At:
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/contextvars.py(1): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1333): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/events.py(18): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap>(1423): _handle_fromlist
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py(40): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/__init__.py(8): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1333): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  /tmp/folderOdBhb4/1/model.py(19): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+
+Signal (2) received.
+Traceback (most recent call last):
+  File "/kaggle/working/bench/inference/vision/triton_serve.py", line 78, in <module>
+    main()
+  File "/kaggle/working/bench/inference/vision/triton_serve.py", line 58, in main
+    triton.bind(
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/pytriton/triton.py", line 560, in bind
+    self._model_manager.add_model(model, self.is_connected())
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/pytriton/models/manager.py", line 102, in add_model
+    self._load_model_with_warmup(model, _is_model_store_local)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/pytriton/models/manager.py", line 165, in _load_model_with_warmup
+    self._load_model(model, local_model_store)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/pytriton/models/manager.py", line 239, in _load_model
+    client.load_model(config=config, files=files)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/pytriton/client/client.py", line 423, in load_model
+    self._general_client.load_model(self._model_name, config=config, files=files, headers=self._headers)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/tritonclient/http/_client.py", line 669, in load_model
+    _raise_if_error(response)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/tritonclient/http/_utils.py", line 74, in _raise_if_error
+    raise error
+tritonclient.utils.InferenceServerException: [400] load failed for model 'yolov8n_b1': version 1 is at UNAVAILABLE state: Internal: ModuleNotFoundError: No module named '_contextvars'
+
+At:
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/contextvars.py(1): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1333): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/events.py(18): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap>(1423): _handle_fromlist
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py(40): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  /root/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/asyncio/__init__.py(8): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1333): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+  /tmp/folderOdBhb4/1/model.py(19): <module>
+  <frozen importlib._bootstrap>(488): _call_with_frames_removed
+  <frozen importlib._bootstrap_external>(995): exec_module
+  <frozen importlib._bootstrap>(950): _load_unlocked
+  <frozen importlib._bootstrap>(1334): _find_and_load_unlocked
+  <frozen importlib._bootstrap>(1360): _find_and_load
+;
+

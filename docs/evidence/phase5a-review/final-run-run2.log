@@ -1,0 +1,35 @@
+2026-10-09T09:02:49Z
+[09:02:50Z] kind v0.33.0, context kind-llm, git source head
+[09:02:52Z] building and pushing the rag image
+[09:02:57Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+[09:02:58Z] git://kind-git/industrial-llm-platform main = bea3e53e4870db62c18c1c028475f562d2d65544
+[09:03:00Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[09:03:21Z] installing ArgoCD v3.5.4
+[09:03:47Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[09:03:47Z] root=/
+[09:04:03Z] platform-deps=Synced/Progressing root=OutOfSync/Progressing
+[09:17:52Z] platform-deps=Synced/Healthy root=OutOfSync/Healthy
+[09:18:08Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Progressing
+[09:35:04Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Missing root=Synced/Healthy
+[09:35:35Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Progressing root=Synced/Healthy
+[09:35:50Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing
+[09:45:10Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS   AGE
+elasticsearch-0               1/1     Running     0          41m
+llamacpp-685c695698-9kbvj     1/1     Running     0          27m
+postgres-0                    1/1     Running     0          41m
+prometheus-84d4d5d7cd-nh8c5   1/1     Running     0          41m
+rag-api-664cc6b865-tkg75      1/1     Running     0          9m36s
+rag-ingest-gqn5n              0/1     Completed   0          9m36s
+[09:45:11Z] done in 42m21s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: http://127.0.0.1:8090/v1  (OpenAI API; KEDA scales it 1..3 on in-flight requests)
+ArgoCD:   kubectl --context kind-llm -n argocd port-forward svc/argocd-server 8443:443
+          password: kubectl --context kind-llm -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+UP_RC=0 WALL=2542s
+2026-10-09T09:45:11Z

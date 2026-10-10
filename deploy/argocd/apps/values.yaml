@@ -1,0 +1,12 @@
+# Set by the root Application (deploy/argocd/root.yaml).
+repoURL: git://kind-git/industrial-llm-platform
+targetRevision: main
+env: kind  # picks deploy/helm/<chart>/values-<env>.yaml
+namespace: llm
+ragImage: ""  # set by kind-up.sh to the pushed image digest; empty = the chart's values file
+
+# Waves: infra deps first, then the model server, then the API that needs both.
+apps:
+  - {name: platform-deps, wave: 0}
+  - {name: llamacpp, wave: 1}
+  - {name: rag-api, wave: 2}

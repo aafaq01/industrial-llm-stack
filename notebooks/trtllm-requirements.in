@@ -1,0 +1,26 @@
+# TensorRT-LLM environment for the Kaggle v3 notebook (Linux x86_64, Python 3.10: the 0.14.0 wheel is cp310 only).
+# Lock: trtllm-requirements.txt. Needs Open MPI first (apt: libopenmpi-dev, openmpi-bin 4.1.6-7ubuntu2) because
+# mpi4py 3.1.6 builds from source. Install: uv pip install --torch-backend cu124 --extra-index-url https://pypi.nvidia.com
+#   --index-strategy unsafe-best-match -r notebooks/trtllm-requirements.txt
+# Regenerate:
+#   uv pip compile notebooks/trtllm-requirements.in -o notebooks/trtllm-requirements.txt --python-version 3.10 --python-platform x86_64-unknown-linux-gnu --torch-backend cu124 --extra-index-url https://pypi.nvidia.com --index-strategy unsafe-best-match
+# 0.14.0 is the last release whose support matrix lists Turing (SM75); see inference/README.md.
+tensorrt-llm==0.14.0
+# 0.14 imports "from cuda import cudart"; cuda-python 13 dropped that module path. 12.5.0 is the version 0.14.0's
+# PyPI metadata names.
+cuda-python==12.5.0
+# mpi4py 3.1.x as in the NGC 24.07 to 24.10 images TensorRT-LLM 0.14 was built on (4.x changed its MPI loading).
+mpi4py==3.1.6
+# examples/apps/openai_server.py needs these (its requirements.txt at v0.14.0 pins fastapi==0.112);
+# prometheus-client for /metrics (inference/trtllm/serve.py).
+fastapi==0.112.0
+uvicorn
+prometheus-client
+# datasets 2.14.4 (via evaluate; imported by tensorrt_llm.quantization) subclasses pa.PyExtensionType, which pyarrow
+# 21.0.0 removed: "import tensorrt_llm" failed on Kaggle 2026-10-10 (v3d) with pyarrow 25.0.1. 20.0.0 is the last
+# release that has it (checked: hasattr(pyarrow, "PyExtensionType") is True on 20.0.0, False on 21.0.0).
+pyarrow==20.0.0
+# tensorrt_llm/profiler.py runs `pynvml.__version__ < '11.5.0'` at import; pynvml 12+ is a shim over nvidia-ml-py
+# without __version__, so "import tensorrt_llm" raises AttributeError (found in a local Ubuntu 24.04 container with
+# CUDA driver and NVML stubs, 2026-10-10). 11.5.3 is the last 11.x, the version TensorRT-LLM 0.13/0.14 era logs show.
+pynvml==11.5.3

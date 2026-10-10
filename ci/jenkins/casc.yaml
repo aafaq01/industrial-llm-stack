@@ -1,0 +1,32 @@
+# Jenkins Configuration as Code: one admin user (password from the compose secret /run/secrets/jenkins_admin_password), one pipeline job.
+jenkins:
+  systemMessage: industrial-llm-platform local CI. Configured by ci/jenkins/casc.yaml; UI edits are lost on restart.
+  numExecutors: 1  # builds run on the controller; a separate agent adds nothing on one laptop
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: ${jenkins_admin_password}  # JCasC reads /run/secrets/jenkins_admin_password
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+unclassified:
+  location:
+    url: http://127.0.0.1:8088/
+jobs:
+  - script: |
+      pipelineJob('industrial-llm-platform') {
+        description('ci/Jenkinsfile from the committed main branch of the host checkout (mounted at /repo).')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('file:///repo') }
+                branch('*/main')
+              }
+            }
+            scriptPath('ci/Jenkinsfile')
+          }
+        }
+      }

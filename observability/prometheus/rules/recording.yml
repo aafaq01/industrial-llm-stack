@@ -1,0 +1,181 @@
+# SLI recording rules for the two RAG SLOs. Definitions and rationale: observability/SLOs.md.
+# slo:sli_error:ratio_rate<window> is the fraction of bad events in the window (0 good, 1 all bad).
+# Windows: 5m, 30m, 1h, 2h, 6h, 1d, 3d feed the burn-rate alerts; 30d is the SLO window.
+groups:
+  - name: slo-rag-availability
+    rules:
+      - record: slo:sli_error:ratio_rate5m
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[5m])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[5m])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[5m]))
+      - record: slo:sli_error:ratio_rate30m
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[30m])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[30m])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[30m]))
+      - record: slo:sli_error:ratio_rate1h
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[1h])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[1h])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[1h]))
+      - record: slo:sli_error:ratio_rate2h
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[2h])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[2h])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[2h]))
+      - record: slo:sli_error:ratio_rate6h
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[6h])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[6h])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[6h]))
+      - record: slo:sli_error:ratio_rate1d
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[1d])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[1d])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[1d]))
+      - record: slo:sli_error:ratio_rate3d
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[3d])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[3d])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[3d]))
+      - record: slo:sli_error:ratio_rate30d
+        labels:
+          slo: rag-availability
+        expr: |
+          (
+            (sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status=~"5.."}[30d])) or vector(0))
+            + (sum(rate(rag_chat_errors_total{job="rag-api"}[30d])) or vector(0))
+          )
+          /
+          sum(rate(rag_http_requests_total{job="rag-api",path="/chat",status!~"4.."}[30d]))
+      # Fraction of the 30d error budget left: 1 = untouched, 0 = spent, negative = SLO missed.
+      # Same group as the 30d rule so it reads this evaluation's value, not the previous one.
+      - record: slo:error_budget:remaining
+        labels:
+          slo: rag-availability
+        expr: 1 - slo:sli_error:ratio_rate30d{slo="rag-availability"} / (1 - 0.99)
+
+  - name: slo-rag-ttft
+    rules:
+      - record: slo:sli_error:ratio_rate5m
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[5m]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[5m]))
+          )
+      - record: slo:sli_error:ratio_rate30m
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[30m]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[30m]))
+          )
+      - record: slo:sli_error:ratio_rate1h
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[1h]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[1h]))
+          )
+      - record: slo:sli_error:ratio_rate2h
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[2h]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[2h]))
+          )
+      - record: slo:sli_error:ratio_rate6h
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[6h]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[6h]))
+          )
+      - record: slo:sli_error:ratio_rate1d
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[1d]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[1d]))
+          )
+      - record: slo:sli_error:ratio_rate3d
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[3d]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[3d]))
+          )
+      - record: slo:sli_error:ratio_rate30d
+        labels:
+          slo: rag-ttft
+        # le matcher: Prometheus 3.x stores "60.0" as exposed by prometheus_client; "60" is accepted for 2.x text-format scrapes.
+        expr: |
+          1 - (
+            sum(rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le=~"60|60.0"}[30d]))
+            /
+            sum(rate(rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}[30d]))
+          )
+      # Fraction of the 30d error budget left: 1 = untouched, 0 = spent, negative = SLO missed.
+      # Same group as the 30d rule so it reads this evaluation's value, not the previous one.
+      - record: slo:error_budget:remaining
+        labels:
+          slo: rag-ttft
+        expr: 1 - slo:sli_error:ratio_rate30d{slo="rag-ttft"} / (1 - 0.95)

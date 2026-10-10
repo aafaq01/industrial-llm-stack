@@ -1,0 +1,54 @@
+# Defaults are SCC-safe (no fixed UID). values-kind.yaml / values-openshift.yaml add the platform bits.
+image: ghcr.io/ggml-org/llama.cpp:server-b11459
+initImage: curlimages/curl:8.22.0
+
+model:
+  file: qwen2.5-1.5b-instruct-q4_k_m.gguf
+  url: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/qwen2.5-1.5b-instruct-q4_k_m.gguf
+  sha256: 6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e
+
+# Same server flags as docker-compose.yml. parallel = slots per replica, also the KEDA per-replica target.
+server:
+  ctxSize: 4096
+  parallel: 2
+  threads: 4
+
+# Shared model cache. RWO works on a single-node cluster (kind); multi-node needs ReadWriteMany.
+persistence:
+  size: 2Gi
+  accessMode: ReadWriteOnce
+  storageClassName: ""
+
+resources:
+  requests: {cpu: "1", memory: 1536Mi}
+  limits: {cpu: "4", memory: 2Gi}
+initResources:
+  requests: {cpu: 100m, memory: 64Mi}
+  limits: {cpu: "1", memory: 256Mi}
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile: {type: RuntimeDefault}
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities: {drop: [ALL]}
+
+# KEDA scales on in-flight requests (processing + deferred) summed over replicas, read from Prometheus.
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3  # ~1.5 GB RAM per replica
+  prometheusAddress: ""  # default http://prometheus.<release namespace>.svc:9090 (KEDA runs in its own namespace)
+  query: sum(llamacpp:requests_processing{job="llamacpp"} + llamacpp:requests_deferred{job="llamacpp"})
+  pollingInterval: 5
+  cooldownPeriod: 60
+  scaleDownStabilizationSeconds: 60
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+route:
+  enabled: false
+  host: ""

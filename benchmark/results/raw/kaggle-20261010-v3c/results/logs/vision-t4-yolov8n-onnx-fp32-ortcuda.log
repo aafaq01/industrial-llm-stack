@@ -1,0 +1,9 @@
+vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r1-20261010T094601Z.json: ok 640/640 images/s 160.8 p50 6.11 ms p99 7.84 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r2-20261010T094605Z.json: ok 640/640 images/s 163.0 p50 6.12 ms p99 6.28 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r3-20261010T094610Z.json: ok 640/640 images/s 163.0 p50 6.12 ms p99 6.27 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r1-20261010T094614Z.json: ok 80/80 images/s 187.3 p50 42.48 ms p99 44.88 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r2-20261010T094618Z.json: ok 80/80 images/s 186.9 p50 42.59 ms p99 44.58 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r3-20261010T094623Z.json: ok 80/80 images/s 186.9 p50 42.60 ms p99 44.81 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r1-20261010T094627Z.json: ok 20/20 images/s 179.9 p50 177.36 ms p99 182.01 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r2-20261010T094632Z.json: ok 20/20 images/s 180.5 p50 177.27 ms p99 179.46 ms
+vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r3-20261010T094638Z.json: ok 20/20 images/s 181.0 p50 176.60 ms p99 183.86 ms

@@ -1,0 +1,43 @@
+# GitHub Actions mirror of ci/Jenkinsfile: same stages and pinned images through ci/run.sh.
+# Runs on the private GitHub repo; first run evidence: docs/evidence/v3-github-actions.txt.
+#
+# Skipped here: push, bump chart and argocd sync. They target the developer's kind cluster, its registry
+# (localhost:5001) and its git daemon, which a hosted runner cannot reach. Recreating the stack inside the job
+# (scripts/kind-up.sh: about 35 minutes, a 1.1 GB model download and the corpus ingest) would deploy to a cluster
+# that is deleted when the job ends, so it would show no more than the local Jenkins run does.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0  # gitleaks scans the whole history
+          persist-credentials: false
+      - run: bash ci/run.sh lint
+      - run: bash ci/run.sh charts
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash ci/run.sh test
+  image:
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash ci/run.sh build
+      - run: bash ci/run.sh scan

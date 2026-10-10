@@ -1,0 +1,166 @@
+# v3 item 12: TensorRT-LLM 0.14.0 FP16 vs same-session vLLM 0.31.0 on one Kaggle T4 (run v3i)
+Run: Kaggle notebook trtllm_t4 built from 693b44b (rebuilt in 30673df), pushed and downloaded by the coordinator;
+committed in 944586c as benchmark/results/raw/kaggle-20261010-v3i/. Reviewed offline here on 2026-10-10 (no load).
+run.json: git_commit 693b44b4446c00948085c81325bbeb24b5897776, started 2026-10-10T15:50:24Z, finished
+2026-10-10T16:28:31Z; tensorrt_llm 0.14.0, tensorrt 10.4.0, torch 2.4.0+cu124, Python 3.10.20, Open MPI
+4.1.6-7ubuntu2, vllm 0.31.0; Kaggle image digest 2757e0c7...; driver 580.178.04, 2x Tesla T4 (one used), power limit
+70.00 W.
+
+## Run history (what each run fixed); session READMEs under benchmark/results/raw/kaggle-20261010-v3*/
+- v3b (notebook 87ecf0a): failed before any benchmark. vLLM: vllm-requirements.txt not embedded. TRT-LLM: mpi4py
+  3.1.6 sdist build failed (setuptools removed new_compiler(dry_run=...)).
+- v3d (80905ea): vLLM control valid. TRT-LLM: venv installed (mpi4py fix worked), import failed (pyarrow has no
+  PyExtensionType with the locked datasets) -> FAILED-install.txt.
+- v3f (fb5ea24): vLLM control valid. TRT-LLM: import fixed (pyarrow 20.0.0, pynvml 11.5.3 pins), download fine,
+  checkpoint conversion could not save (ckpt dir not created) -> FAILED-build-engine.txt. Fixed in 414f88e.
+- v3h (414f88e): vLLM control valid. TRT-LLM: conversion fine, trtllm-build failed: the unfused context attention
+  plugin (--context_fmha disable, SM75 has no FMHA kernels) needed 21,978,227,456 bytes of scratch for batch 32 /
+  input 3072 / max_num_tokens 8192, with 15,636,037,632 available -> FAILED-build-engine.txt.
+- v3i (693b44b): complete. Two engines from one checkpoint, sized from the workspace formula.
+(v3c, v3e, v3g were the vision notebook.)
+
+## Workspace calculation (reference)
+Commit 693b44b and inference/trtllm/build_engine.py: TensorRT-LLM 0.14 GPTAttentionPluginCommon::
+getWorkspaceSizeForContext on the unfused path allocates about 6 x max_batch_size x heads x max_input_len^2 bytes
+for the qk buffers; build_engine.workspace_bytes() reproduces the v3h figure 21,978,227,456 exactly for
+(32, 3072, 8192) (unit test). Prompt lengths with the Qwen tokenizer: loadgen max 893 tokens, GSM8K 5-shot max 1654.
+Engines built in v3i (results/server_args/trtllm-build.txt):
+  bench: --max_batch_size 32 --max_input_len 1024 --max_seq_len 1152, attention workspace 2,550,211,328 bytes
+  gsm8k: --max_batch_size 8 --max_input_len 2048 --max_seq_len 2304, attention workspace 2,550,205,184 bytes
+  both: --gemm_plugin float16 --gpt_attention_plugin float16 --context_fmha disable --remove_input_padding enable
+        --kv_cache_type paged --max_num_tokens 8192; engine size 3.4G each.
+Server: inference/trtllm/serve.py, TensorRT-LLM 0.14's own examples/apps/openai_server.py (sha256 checked) with
+patches: ignore_eos sets end_id and pad_id to -1 (as 0.14's trtllm-bench does), a streaming fix (the upstream
+generator ended a stream on the first empty text diff), skip_special_tokens in detokenization, /metrics, prebuilt
+engine loading. KV cache block reuse off; --kv-cache-free-gpu-memory-fraction 0.9 (of memory free after the engine
+loads). Not Triton: NOT_RUN-triton-tensorrtllm-backend.txt (Triton's TensorRT-LLM backend needs the NGC container).
+
+## Timings (results/env/timing-*.txt)
+install (TRT-LLM venv) 169 s, install-vllm 279 s, install-base 17 s, download 3 s, build-engine 131 s,
+vllm-t4-1.5b-fp16 949 s (loadgen + GSM8K), trtllm-t4-1.5b-fp16 566 s (server + loadgen; loadgen alone 545 s),
+gsm8k-trtllm-1.5b-fp16 171 s. Session 15:50:24Z to 16:28:31Z (38 min).
+Engine builds, from logs/trtllm-build.log. Two clocks per engine:
+  "built bench engine in 55s", "built gsm8k engine in 32s": printed by inference/trtllm/build_engine.py around the
+    whole trtllm-build subprocess (Python start, tensorrt_llm import, plugin and network setup, build, serialize).
+  "Total time of building all engines: 00:00:24" (bench) and "00:00:18" (gsm8k): TensorRT-LLM's own timer inside
+    trtllm-build, which covers the engine build and serialization only, not the process start-up and imports.
+  gsm8k build: "Build phase peak memory: 10986.39 MB".
+Timing cache: benchmark/results/raw/kaggle-20261010-v3i/model.cache (154,341 bytes) is TensorRT's timing cache
+  written by trtllm-build into its working directory: the log shows "Global timing cache in use. Profiling results in
+  this builder pass will be stored." and "Serialized 12 timing cache entries ... Timing cache serialized to
+  model.cache" for both builds; the gsm8k build ran after bench, so it may have reused bench's entries. Kept for the
+  record; it is not needed to read any result.
+
+## Integrity
+Server logs:
+- TRT-LLM bench server: maxBatchSize 32, maxInputLen 1024, maxSequenceLen 1152, maxNumTokens 8192, Capacity
+  Scheduler GUARANTEED_NO_EVICT, loaded engine 3410 MiB, 7.58 GiB paged KV cache (283,776 tokens, 4434 blocks of 64).
+  No error, warning or traceback lines in server-trtllm-*.log or trtllm-build.log.
+- HTTP: TRT-LLM bench 894 POST /v1/chat/completions (= 3 x (66 + 72 + 160) loadgen incl. warmup), TRT-LLM gsm8k 250,
+  vLLM 1144 (894 loadgen + 250 GSM8K), all 200.
+- vLLM log: one EngineDeadError traceback (8 lines) at 16:11:09, right after "[shutdown] EngineCore: trigger
+  received signal=SIGTERM" with "Running: 0 reqs"; it is the notebook stopping the server after GSM8K, not a
+  request failure.
+- gpu-drain logs: [0, 0] MiB after each of the three server stops.
+Per run (scratchpad integrity.py over the 18 raw files; decode_checks from benchmark/loadgen/metrics.py):
+trtllm-t4-1.5b-fp16-c1-r1-20261010T16163 ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 15 tok_src {'usage': 66} out_tokens 8192 gpu: SW power cap active in 100% of samples
+trtllm-t4-1.5b-fp16-c1-r2-20261010T16183 ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 15 tok_src {'usage': 66} out_tokens 8192 gpu: SW power cap active in 100% of samples
+trtllm-t4-1.5b-fp16-c1-r3-20261010T16204 ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 15 tok_src {'usage': 66} out_tokens 8192 gpu: SW power cap active in 100% of samples
+trtllm-t4-1.5b-fp16-c32-r1-20261010T1623 ok 128/128 err 0 decode {'checked': 128, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 32 tok_src {'usage': 160} out_tokens 16384 gpu: SW power cap active in 92% of samples
+trtllm-t4-1.5b-fp16-c32-r2-20261010T1624 ok 128/128 err 0 decode {'checked': 128, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 32 tok_src {'usage': 160} out_tokens 16384 gpu: SW power cap active in 91% of samples
+trtllm-t4-1.5b-fp16-c32-r3-20261010T1625 ok 128/128 err 0 decode {'checked': 128, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 32 tok_src {'usage': 160} out_tokens 16384 gpu: SW power cap active in 94% of samples
+trtllm-t4-1.5b-fp16-c8-r1-20261010T16224 ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 15 tok_src {'usage': 72} out_tokens 8192 gpu: SW power cap active in 100% of samples
+trtllm-t4-1.5b-fp16-c8-r2-20261010T16230 ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 72} out_tokens 8192 gpu: SW power cap active in 100% of samples
+trtllm-t4-1.5b-fp16-c8-r3-20261010T16233 ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 17 tok_src {'usage': 72} out_tokens 8192 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c1-r1-20261010T155802Z ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 66} out_tokens 8192 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c1-r2-20261010T160030Z ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 66} out_tokens 8192 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c1-r3-20261010T160305Z ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 66} out_tokens 8192 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c32-r1-20261010T160657 ok 128/128 err 0 decode {'checked': 128, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 31 tok_src {'usage': 160} out_tokens 16384 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c32-r2-20261010T160726 ok 128/128 err 0 decode {'checked': 128, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 32 tok_src {'usage': 160} out_tokens 16384 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c32-r3-20261010T160754 ok 128/128 err 0 decode {'checked': 128, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 32 tok_src {'usage': 160} out_tokens 16384 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c8-r1-20261010T160538Z ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 72} out_tokens 8192 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c8-r2-20261010T160605Z ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 72} out_tokens 8192 gpu: SW power cap active in 100% of samples
+vllm-t4-1.5b-fp16-c8-r3-20261010T160631Z ok 64/64 err 0 decode {'checked': 64, 'output_tokens_not_max': 0, 'streams_truncated': 0} chunks<tokens 16 tok_src {'usage': 72} out_tokens 8192 gpu: SW power cap active in 100% of samples
+('trtllm', 'git') ['693b44b4']
+('trtllm', 'ignore_eos') ['true']
+('trtllm', 'max_tokens') ['128']
+('trtllm', 'prompts_sha256') ['"72fb01ab947799b7fcc757f90652501b203bff4bd445d3654d36aff01913ea7e"']
+('trtllm', 'requests') ['128', '64']
+('trtllm', 'seed') ['1234']
+('trtllm', 'temperature') ['0']
+('trtllm', 'warmup_requests') ['2', '32', '8']
+('vllm', 'git') ['693b44b4']
+('vllm', 'ignore_eos') ['true']
+('vllm', 'max_tokens') ['128']
+('vllm', 'prompts_sha256') ['"72fb01ab947799b7fcc757f90652501b203bff4bd445d3654d36aff01913ea7e"']
+('vllm', 'requests') ['128', '64']
+('vllm', 'seed') ['1234']
+('vllm', 'temperature') ['0']
+('vllm', 'warmup_requests') ['2', '32', '8']
+gsm8k-vllm-1.5b-fp16 items 250 special tokens in responses {} empty 0 invalid strict 112
+gsm8k-trtllm-1.5b-fp16 items 250 special tokens in responses {} empty 0 invalid strict 105
+same item set: True
+- Decode checks: every measured request in both engines has output_tokens == 128 (ignore_eos with end_id -1 on
+  TRT-LLM works); 0 truncated streams. Streamed chunks per request: min 124, mean 127.1 to 127.2, max 128 in both
+  engines (some chunks carry 2 tokens); identical shape across engines, consistent with real 128-token decodes. TPOT
+  (token-count based) is valid in every cell; ITL is per chunk, so it is slightly coarse for the ~25% of requests
+  with a 2-token chunk, equally in both engines.
+- Same settings across engines: prompts sha256 72fb01ab..., max_tokens 128, ignore_eos true, temperature 0, seed
+  1234, requests 64/128, warmup 2/8/32, git 693b44b; prompt tokens per 64 requests 15,485 on both (same tokenizer).
+- GPU clocks: SW power cap bit set in 91 to 100% of samples in every cell (TRT-LLM c32 91 to 94%, all others 100%).
+  The end-of-session nvidia-smi -q counter for GPU 0 shows SW Power Capping 22,301,052 us (22.3 s), far less than
+  the sampled share over ~25 min of load implies; the two sources disagree and I cannot reconcile them from the
+  data. Both show 0 thermal slowdown.
+GSM8K: both 250 items, identical doc_id sets; no <|im_end|>, <|endoftext|>, <|im_start|> or </s> in any response
+(skip_special_tokens patch held); no empty responses; strict-match [invalid] 112 (vLLM) and 105 (TRT-LLM).
+TRT-LLM GSM8K ran on the gsm8k engine (batch 8, input 2048); vLLM on the same server as its loadgen.
+
+## Report
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q -> 29 passed in 0.32s
+benchmark/.venv/Scripts/python benchmark/report.py -> wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 96 runs, 7 accuracy rows, 45 vision runs, 3 vision accuracy rows
+The like-for-like gate in report.py (trtllm_comparison) refuses the comparison ("Not compared: ...") when prompts
+sha256, max_tokens or ignore_eos differ, when any request decoded a length other than max_tokens under ignore_eos,
+when any stream is truncated, or, if ignore_eos is off on either side, when output lengths per prompt differ. On the
+real data it passes: same prompts sha256, max_tokens and ignore_eos, 0 off-length requests, 0 truncated streams, same
+concurrency levels. Every refusal path is covered by benchmark/tests/test_decode_checks.py (prompts, truncated
+streams, off-length with ignore_eos, per-prompt lengths with ignore_eos off). Added this round: SM clock p50 columns for both engines and a power-cap
+sentence under the comparison; a TensorRT-LLM minus vLLM GSM8K paired delta; session notes say "not produced:
+<FAILED file>" for v3d/v3f/v3h; host notes pick the longest matching key (v3i links here).
+
+GPU rows as generated:
+| kaggle-20261010-v3i/trtllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | trtllm 0.14.0 | fp16 | 1 | 3 | 68.9 ± 0.2 | 0.538 ± 0.002 | 0.025 ± 0.000 | 0.184 ± 0.001 | 14.1 ± 0.0 | 14.1 ± 0.0 | 1.811 ± 0.002 | 2.029 ± 0.001 | 2.039 ± 0.013 | 70.7 ± 0.1 | 0.000 ± 0.000 | 14085.0 ± 0.0 | 97.7 ± 0.1 | 1040.0 ± 8.7 | 79.0 ± 1.7 |
+| kaggle-20261010-v3i/trtllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | trtllm 0.14.0 | fp16 | 8 | 3 | 368.3 ± 2.5 | 2.877 ± 0.020 | 0.357 ± 0.034 | 0.769 ± 0.255 | 17.4 ± 0.0 | 18.5 ± 0.4 | 2.737 ± 0.036 | 3.334 ± 0.040 | 3.340 ± 0.040 | 46.8 ± 0.6 | 0.000 ± 0.000 | 14085.0 ± 0.0 | 98.4 ± 0.1 | 972.5 ± 4.3 | 77.3 ± 0.6 |
+| kaggle-20261010-v3i/trtllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | trtllm 0.14.0 | fp16 | 32 | 3 | 613.8 ± 7.5 | 4.795 ± 0.059 | 2.860 ± 0.045 | 3.052 ± 0.045 | 25.1 ± 0.0 | 29.0 ± 0.7 | 6.622 ± 0.083 | 6.978 ± 0.100 | 6.988 ± 0.101 | 19.3 ± 0.2 | 0.000 ± 0.000 | 14085.0 ± 0.0 | 90.4 ± 2.3 | 850.0 ± 17.3 | 77.7 ± 0.6 |
+| kaggle-20261010-v3i/vllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 1 | 3 | 55.7 ± 1.3 | 0.435 ± 0.010 | 0.033 ± 0.000 | 0.256 ± 0.003 | 17.5 ± 0.6 | 17.6 ± 0.6 | 2.300 ± 0.045 | 2.433 ± 0.107 | 2.446 ± 0.114 | 55.7 ± 1.1 | 0.000 ± 0.000 | 13209.0 ± 0.0 | 99.6 ± 0.1 | 642.5 ± 35.4 | 78.7 ± 2.1 |
+| kaggle-20261010-v3i/vllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 8 | 3 | 359.7 ± 0.3 | 2.810 ± 0.002 | 0.294 ± 0.011 | 0.626 ± 0.116 | 18.1 ± 0.1 | 18.7 ± 0.1 | 2.806 ± 0.004 | 3.722 ± 0.034 | 3.739 ± 0.032 | 45.6 ± 0.1 | 0.000 ± 0.000 | 13315.0 ± 0.0 | 99.8 ± 0.1 | 1090.0 ± 8.7 | 77.3 ± 0.6 |
+| kaggle-20261010-v3i/vllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 32 | 3 | 732.5 ± 1.8 | 5.723 ± 0.014 | 1.109 ± 0.112 | 2.029 ± 0.016 | 28.8 ± 0.1 | 34.6 ± 0.8 | 5.544 ± 0.063 | 5.998 ± 0.112 | 6.319 ± 0.119 | 23.1 ± 0.3 | 0.000 ± 0.000 | 13315.0 ± 0.0 | 100.0 ± 0.0 | 1105.0 ± 8.7 | 77.3 ± 0.6 |
+
+Comparison as generated:
+TensorRT-LLM rows: KV cache block reuse (its prefix caching) is off, and its KV cache takes 0.90 of the GPU memory left free after loading the engine, where vLLM's 0.90 is of the whole card. Server and engine build commands: server_args in each raw file and the session's server_args/ directory.
+
+kaggle-20261010-v3i, TensorRT-LLM vs vLLM: prompts sha256 72fb01ab9477 vs 72fb01ab9477; max_tokens [128] vs [128]; ignore_eos [True] vs [True]; concurrency [1, 8, 32] vs [1, 8, 32]; requests whose output tokens differ from max_tokens: 0 vs 0; truncated streams: 0 vs 0.
+
+| session | conc | TRT-LLM out tok/s | vLLM out tok/s | TRT-LLM / vLLM | TRT-LLM TTFT p50 s | vLLM TTFT p50 s | TRT-LLM E2E p95 s | vLLM E2E p95 s | TRT-LLM SM clock p50 MHz | vLLM SM clock p50 MHz |
+|---|---|---|---|---|---|---|---|---|---|---|
+| kaggle-20261010-v3i | 1 | 68.9 ± 0.2 | 55.7 ± 1.3 | 1.24 | 0.025 ± 0.000 | 0.033 ± 0.000 | 2.029 ± 0.001 | 2.433 ± 0.107 | 1040.0 ± 8.7 | 642.5 ± 35.4 |
+| kaggle-20261010-v3i | 8 | 368.3 ± 2.5 | 359.7 ± 0.3 | 1.02 | 0.357 ± 0.034 | 0.294 ± 0.011 | 3.334 ± 0.040 | 3.722 ± 0.034 | 972.5 ± 4.3 | 1090.0 ± 8.7 |
+| kaggle-20261010-v3i | 32 | 613.8 ± 7.5 | 732.5 ± 1.8 | 0.84 | 2.860 ± 0.045 | 1.109 ± 0.112 | 6.978 ± 0.100 | 5.998 ± 0.112 | 850.0 ± 17.3 | 1105.0 ± 8.7 |
+
+Both engines ran under the T4's 70 W power cap (clock event reasons per run in Raw files and flags); where the SM clock columns differ, part of the gap may be clock, not engine.
+**kaggle-20261010-v3i: TensorRT-LLM minus vLLM, same 250 items**
+
+- strict-match: +0.012 (vLLM 0.344 ± 0.030, TensorRT-LLM 0.356 ± 0.030 stderr); paired over 250 items: +0.012, 95% CI [-0.012, +0.036] (normal approximation).
+- flexible-extract: +0.000 (vLLM 0.620 ± 0.031, TensorRT-LLM 0.620 ± 0.031 stderr); paired over 250 items: +0.000, 95% CI [-0.019, +0.019] (normal approximation).
+
+## Reading and caveats
+- One T4, one session, 3 repeats per cell; fixed 128-token decode with ignore_eos (not natural stopping).
+- TRT-LLM is faster at c1 (68.9 vs 55.7 tok/s, 1.24x) but the vLLM c1 cell ran at SM clock p50 642 MHz against
+  1040 MHz for TRT-LLM, both power-capped; part of the c1 gap may be clock. At c8 they are close (1.02x). At c32
+  TRT-LLM is slower (0.84x) with TTFT p50 2.86 s vs 1.11 s; likely the unfused context attention (--context_fmha
+  disable on SM75) making prefill of 32 queued prompts slower, not proven.
+- GSM8K: TRT-LLM minus vLLM +0.012 strict-match (CI -0.012 to +0.036) and +0.000 flexible-extract: no difference
+  measurable on 250 items. Both with temperature 0 and no repetition penalty (vLLM --generation-config vllm; TRT-LLM
+  0.14 maps temperature 0 to greedy).
+- TRT-LLM is served by its own patched OpenAI example server, not trtllm-serve (0.15+) and not Triton; vLLM by
+  vllm serve. Server overheads differ and are part of the measurement.
+- Engines are TRT-LLM 0.14 (last release listing Turing); newer TRT-LLM may differ.

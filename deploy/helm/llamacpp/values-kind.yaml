@@ -1,0 +1,8 @@
+# kind: emulate an OpenShift-style arbitrary UID with group 0 (the image has no USER).
+podSecurityContext:
+  runAsUser: 1000650000
+  runAsGroup: 0
+ingress:
+  enabled: true
+  className: traefik
+  host: ""  # catch-all: http://127.0.0.1:8090/v1 (Windows does not resolve *.localhost for every client)

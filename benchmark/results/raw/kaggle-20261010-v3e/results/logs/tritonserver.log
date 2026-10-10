@@ -1,0 +1,68 @@
+I1010 12:31:18.011173 266 pinned_memory_manager.cc:277] "Pinned memory pool is created at '0x7f3b2e000000' with size 268435456"
+I1010 12:31:18.016341 266 cuda_memory_manager.cc:107] "CUDA memory pool is created on device 0 with size 67108864"
+I1010 12:31:18.025255 266 server.cc:604] 
++------------------+------+
+| Repository Agent | Path |
++------------------+------+
++------------------+------+
+
+I1010 12:31:18.025330 266 server.cc:631] 
++---------+------+--------+
+| Backend | Path | Config |
++---------+------+--------+
++---------+------+--------+
+
+I1010 12:31:18.025341 266 server.cc:674] 
++-------+---------+--------+
+| Model | Version | Status |
++-------+---------+--------+
++-------+---------+--------+
+
+I1010 12:31:18.126419 266 metrics.cc:877] "Collecting metrics for GPU 0: Tesla T4"
+I1010 12:31:18.143167 266 metrics.cc:770] "Collecting CPU metrics"
+I1010 12:31:18.144392 266 tritonserver.cc:2598] 
++----------------------------------+------------------------------------------+
+| Option                           | Value                                    |
++----------------------------------+------------------------------------------+
+| server_id                        | triton                                   |
+| server_version                   | 2.51.0                                   |
+| server_extensions                | classification sequence model_repository |
+|                                  |  model_repository(unload_dependents) sch |
+|                                  | edule_policy model_configuration system_ |
+|                                  | shared_memory cuda_shared_memory binary_ |
+|                                  | tensor_data parameters statistics trace  |
+|                                  | logging                                  |
+| model_repository_path[0]         | /root/.cache/pytriton/workspace_nvgi6cxf |
+|                                  | /model-store                             |
+| model_control_mode               | MODE_EXPLICIT                            |
+| startup_models_0                 | *                                        |
+| strict_model_config              | 0                                        |
+| model_config_name                |                                          |
+| rate_limit                       | OFF                                      |
+| pinned_memory_pool_byte_size     | 268435456                                |
+| cuda_memory_pool_byte_size{0}    | 67108864                                 |
+| min_supported_compute_capability | 6.0                                      |
+| strict_readiness                 | 1                                        |
+| exit_timeout                     | 30                                       |
+| cache_enabled                    | 0                                        |
++----------------------------------+------------------------------------------+
+
+I1010 12:31:18.146570 266 grpc_server.cc:2558] "Started GRPCInferenceService at 0.0.0.0:8001"
+I1010 12:31:18.146782 266 http_server.cc:4713] "Started HTTPService at 0.0.0.0:8000"
+I1010 12:31:18.195230 266 http_server.cc:362] "Started Metrics Service at 0.0.0.0:8002"
+E1010 12:31:20.320653 266 model_repository_manager.cc:470] "Failed to set config modification time: model_config_content_name_ is empty"
+I1010 12:31:20.322600 266 model_lifecycle.cc:472] "loading: yolov8n_b1:1"
+I1010 12:31:22.026196 266 python_be.cc:2249] "TRITONBACKEND_ModelInstanceInitialize: yolov8n_b1_0_0 (CPU device 0)"
+I1010 12:31:22.519991 266 model_lifecycle.cc:839] "successfully loaded 'yolov8n_b1'"
+E1010 12:31:22.562376 266 model_repository_manager.cc:470] "Failed to set config modification time: model_config_content_name_ is empty"
+I1010 12:31:22.562629 266 model_lifecycle.cc:472] "loading: yolov8n_b8:1"
+I1010 12:31:24.178699 266 python_be.cc:2249] "TRITONBACKEND_ModelInstanceInitialize: yolov8n_b8_0_0 (CPU device 0)"
+I1010 12:31:24.666901 266 model_lifecycle.cc:839] "successfully loaded 'yolov8n_b8'"
+E1010 12:31:24.712610 266 model_repository_manager.cc:470] "Failed to set config modification time: model_config_content_name_ is empty"
+I1010 12:31:24.712864 266 model_lifecycle.cc:472] "loading: yolov8n_b32:1"
+I1010 12:31:26.326634 266 python_be.cc:2249] "TRITONBACKEND_ModelInstanceInitialize: yolov8n_b32_0_0 (CPU device 0)"
+I1010 12:31:26.822832 266 model_lifecycle.cc:839] "successfully loaded 'yolov8n_b32'"
+I1010 12:35:59.810935 266 server.cc:305] "Waiting for in-flight requests to complete."
+I1010 12:35:59.810981 266 server.cc:321] "Timeout 30: Found 0 model versions that have in-flight inferences"
+I1010 12:35:59.811301 266 server.cc:336] "All models are stopped, unloading models"
+I1010 12:35:59.811324 266 server.cc:345] "Timeout 30: Found 3 live models and 0 in-flight non-inference requests"

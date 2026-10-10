@@ -1,0 +1,201 @@
+Downloading cpython-3.10.20-linux-x86_64-gnu (download) (28.1MiB)
+ Downloaded cpython-3.10.20-linux-x86_64-gnu (download)
+Installed Python 3.10.20 in 1.57s
+ + cpython-3.10.20-linux-x86_64-gnu (python3.10)
+warning: `/root/.local/bin` is not on your PATH. To use installed Python executables, run `export PATH="/root/.local/bin:$PATH"` or `uv python update-shell`.
+  × Failed to build `mpi4py==3.1.6`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `setuptools.build_meta.build_wheel` failed (exit status: 1)
+
+      [stdout]
+      running bdist_wheel
+      running build
+      running build_src
+      running build_py
+      creating build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/bench.py -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/run.py -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/__main__.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py
+      creating build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/aplus.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/pool.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/server.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/_base.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/_core.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/_lib.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/__main__.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      creating build/lib.linux-x86_64-cpython-310/mpi4py/util
+      copying src/mpi4py/util/__init__.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/util
+      copying src/mpi4py/util/pkl5.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/util
+      copying src/mpi4py/util/dtlib.py ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/util
+      copying src/mpi4py/bench.pyi -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/MPI.pyi -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/__main__.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/run.pyi -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/dl.pyi -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/__init__.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/py.typed -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/libmpi.pxd ->
+      build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/MPI.pxd -> build/lib.linux-x86_64-cpython-310/mpi4py
+      copying src/mpi4py/__init__.pxd ->
+      build/lib.linux-x86_64-cpython-310/mpi4py
+      creating build/lib.linux-x86_64-cpython-310/mpi4py/include/mpi4py
+      copying src/mpi4py/include/mpi4py/mpi4py.MPI_api.h ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/include/mpi4py
+      copying src/mpi4py/include/mpi4py/mpi4py.MPI.h ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/include/mpi4py
+      copying src/mpi4py/include/mpi4py/mpi4py.h ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/include/mpi4py
+      copying src/mpi4py/include/mpi4py/mpi4py.i ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/include/mpi4py
+      copying src/mpi4py/include/mpi4py/mpi.pxi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/include/mpi4py
+      copying src/mpi4py/futures/aplus.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/_core.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/__main__.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/server.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/__init__.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/_lib.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/futures/pool.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/futures
+      copying src/mpi4py/util/pkl5.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/util
+      copying src/mpi4py/util/dtlib.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/util
+      copying src/mpi4py/util/__init__.pyi ->
+      build/lib.linux-x86_64-cpython-310/mpi4py/util
+      running build_clib
+
+      [stderr]
+      /root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py:765:
+      SetuptoolsDeprecationWarning: License classifiers are deprecated.
+      !!
+
+      
+      ********************************************************************************
+              Please consider removing the following classifiers in favor of a
+      SPDX license expression:
+
+              License :: OSI Approved :: BSD License
+
+              See
+      https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license
+      for details.
+      
+      ********************************************************************************
+
+      !!
+        self._finalize_license_expression()
+      Traceback (most recent call last):
+        File "<string>", line 11, in <module>
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 438, in build_wheel
+          return _build(['bdist_wheel'])
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 429, in _build
+          return self._build_with_temp_dir(
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 410, in _build_with_temp_dir
+          self.run_setup()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/build_meta.py",
+      line 317, in run_setup
+          exec(code, locals())  # noqa: S102 # exec is intentional here
+        File "<string>", line 644, in <module>
+        File "<string>", line 641, in main
+        File "<string>", line 492, in run_setup
+        File
+      "/root/.cache/uv/sdists-v9/pypi/mpi4py/3.1.6/ulDZrbukL547wrf0/src/conf/mpidistutils.py",
+      line 547, in setup
+          return fcn_setup(**attrs)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/__init__.py",
+      line 117, in setup
+          return distutils.core.setup(**attrs)  # type: ignore[return-value]
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/core.py",
+      line 168, in setup
+          return run_commands(dist)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/core.py",
+      line 184, in run_commands
+          dist.run_commands()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1028, in run_commands
+          self.run_command(cmd)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1106, in run_command
+          super().run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1047, in run_command
+          cmd_obj.run()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/command/bdist_wheel.py",
+      line 385, in run
+          self.run_command("build")
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/cmd.py",
+      line 342, in run_command
+          self.distribution.run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1106, in run_command
+          super().run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1047, in run_command
+          cmd_obj.run()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/command/build.py",
+      line 137, in run
+          self.run_command(cmd_name)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/cmd.py",
+      line 342, in run_command
+          self.distribution.run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1106, in run_command
+          super().run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1047, in run_command
+          cmd_obj.run()
+        File
+      "/root/.cache/uv/sdists-v9/pypi/mpi4py/3.1.6/ulDZrbukL547wrf0/src/conf/mpidistutils.py",
+      line 1002, in run
+          self.compiler = new_compiler(compiler=self.compiler,
+      TypeError: new_compiler() got an unexpected keyword argument 'dry_run'
+
+
+hint: Build failures usually indicate a problem with the package or the build environment

@@ -1,0 +1,34 @@
+{
+ "weights": "yolov8n.pt",
+ "weights_sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+ "opset": 17,
+ "imgsz": 640,
+ "versions": {
+  "ultralytics": "8.4.174",
+  "torch": "2.13.0+cu129",
+  "onnx": "1.23.2",
+  "tensorrt": "10.16.1.11"
+ },
+ "files": {
+  "yolov8n-fp32-opset17.onnx": {
+   "sha256": "9f29af4a18a944c7cdcda32de27b67246de558274260cb9938e32d5520359e85",
+   "precision": "fp32",
+   "batch": "dynamic"
+  },
+  "yolov8n-fp16-b1.engine": {
+   "sha256": "15be2884dcda9b115c84661141b4c1f7197dac8f5dd5f6710cc7c6782fa7aa0d",
+   "precision": "fp16",
+   "batch": 1
+  },
+  "yolov8n-fp16-b8.engine": {
+   "sha256": "87522ae867ab59cef9d8b5df0a31dcb9a0e357a636e647b283eb8b25c813d14c",
+   "precision": "fp16",
+   "batch": 8
+  },
+  "yolov8n-fp16-b32.engine": {
+   "sha256": "2b89ce441d5d044b308fa7589a38d1b2045d80eb9bf374d8c9d53c544aaa2572",
+   "precision": "fp16",
+   "batch": 32
+  }
+ }
+}

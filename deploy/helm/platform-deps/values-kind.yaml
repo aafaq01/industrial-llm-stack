@@ -1,0 +1,4 @@
+# kind: emulate an OpenShift-style arbitrary UID with group 0 (the postgres image defaults to root).
+podSecurityContext:
+  runAsUser: 1000650000
+  runAsGroup: 0

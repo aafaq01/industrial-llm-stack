@@ -1,0 +1,65 @@
+[{"stream_name":"stderr","time":8.769321409,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.769429778,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.769440501,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.769446909,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.584207997,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.584247393,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.584253296,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.584257785,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":11.006305088,"data":"wrote 7 files to /kaggle/working/bench\n"}
+,{"stream_name":"stdout","time":11.206996193,"data":"/bin/sh: 1: nvidia-smi: not found\n"}
+,{"stream_name":"stdout","time":11.207035271,"data":"\n"}
+,{"stream_name":"stdout","time":14.67884008,"data":"GPU_COUNT = 0\n"}
+,{"stream_name":"stdout","time":216.049702105,"data":"WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('\u003cpip._vendor.urllib3.connection.HTTPSConnection object at 0x7f4450dca120\u003e: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /simple/uv/\n"}
+,{"stream_name":"stdout","time":216.049745117,"data":"WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('\u003cpip._vendor.urllib3.connection.HTTPSConnection object at 0x7f4450d8e710\u003e: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /simple/uv/\n"}
+,{"stream_name":"stdout","time":216.049753477,"data":"WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('\u003cpip._vendor.urllib3.connection.HTTPSConnection object at 0x7f4450d8e990\u003e: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /simple/uv/\n"}
+,{"stream_name":"stdout","time":216.049760041,"data":"WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('\u003cpip._vendor.urllib3.connection.HTTPSConnection object at 0x7f4450d8ec10\u003e: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /simple/uv/\n"}
+,{"stream_name":"stdout","time":216.0497669,"data":"WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('\u003cpip._vendor.urllib3.connection.HTTPSConnection object at 0x7f4450d8ee90\u003e: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /simple/uv/\n"}
+,{"stream_name":"stdout","time":216.049773461,"data":"ERROR: Could not find a version that satisfies the requirement uv==0.11.32 (from versions: none)\n"}
+,{"stream_name":"stdout","time":216.049778826,"data":"ERROR: No matching distribution found for uv==0.11.32\n"}
+,{"stream_name":"stdout","time":216.049784041,"data":"\n"}
+,{"stream_name":"stderr","time":306.28579524,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":306.286620172,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":306.286663594,"data":"    import sys;import papermill as pm;pm.execute_notebook(\"__notebook__.ipynb\",\"__notebook__.ipynb\",progress_bar=False,log_output=True,stdout_file=sys.stdout,stderr_file=sys.stderr,allow_errors=False,timeout=14400)\n"}
+,{"stream_name":"stderr","time":306.286672731,"data":"                                      ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":306.286678691,"data":"  File \"/usr/local/lib/python3.13/dist-packages/papermill/execute.py\", line 131, in execute_notebook\n"}
+,{"stream_name":"stderr","time":306.286686435,"data":"    raise_for_execution_errors(nb, output_path)\n"}
+,{"stream_name":"stderr","time":306.286690528,"data":"    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":306.286694558,"data":"  File \"/usr/local/lib/python3.13/dist-packages/papermill/execute.py\", line 251, in raise_for_execution_errors\n"}
+,{"stream_name":"stderr","time":306.286698771,"data":"    raise error\n"}
+,{"stream_name":"stderr","time":306.286702612,"data":"papermill.exceptions.PapermillExecutionError: \n"}
+,{"stream_name":"stderr","time":306.286706773,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":306.286711085,"data":"Exception encountered at \"In [4]\":\n"}
+,{"stream_name":"stderr","time":306.286715303,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":306.286719306,"data":"RuntimeError                              Traceback (most recent call last)\n"}
+,{"stream_name":"stderr","time":306.286723434,"data":"/tmp/ipykernel_16/2636212561.py in \u003ccell line: 0\u003e()\n"}
+,{"stream_name":"stderr","time":306.286729568,"data":"      8 ):\n"}
+,{"stream_name":"stderr","time":306.286738508,"data":"      9     extra = \"--torch-backend cu129\" if name == \"vllm\" else \"\"\n"}
+,{"stream_name":"stderr","time":306.286741661,"data":"---\u003e 10     log = sh(\n"}
+,{"stream_name":"stderr","time":306.286744317,"data":"     11         f\"uv venv -q --python {PYTHON_VERSION} {VENVS}/{name} \u0026\u0026 \"\n"}
+,{"stream_name":"stderr","time":306.286747274,"data":"     12         f\"uv pip install -q --python {VENVS}/{name}/bin/python {extra} -r {BENCH}/{lock}\",\n"}
+,{"stream_name":"stderr","time":306.286750058,"data":"\n"}
+,{"stream_name":"stderr","time":306.28675264,"data":"/tmp/ipykernel_16/2124027253.py in sh(cmd, out, check)\n"}
+,{"stream_name":"stderr","time":306.286755415,"data":"     18         pathlib.Path(RESULTS, out).write_text(text)\n"}
+,{"stream_name":"stderr","time":306.286758054,"data":"     19     if check and r.returncode != 0:\n"}
+,{"stream_name":"stderr","time":306.28676076,"data":"---\u003e 20         raise RuntimeError(f\"exit {r.returncode}: {cmd[:200]}\\n{text[-3000:]}\")\n"}
+,{"stream_name":"stderr","time":306.286763879,"data":"     21     return text\n"}
+,{"stream_name":"stderr","time":306.286766461,"data":"     22 \n"}
+,{"stream_name":"stderr","time":306.286769009,"data":"\n"}
+,{"stream_name":"stderr","time":306.286771557,"data":"RuntimeError: exit 2: uv venv -q --python 3.12.13 /tmp/venvs/vllm \u0026\u0026 uv pip install -q --python /tmp/venvs/vllm/bin/python --torch-backend cu129 -r /kaggle/working/bench/notebooks/vllm-requirements.txt\n"}
+,{"stream_name":"stderr","time":306.286774714,"data":"error: Request failed after 3 retries in 89.0s\n"}
+,{"stream_name":"stderr","time":306.286778476,"data":"  cause: Failed to download https://github.com/astral-sh/python-build-standalone/releases/download/20260807/cpython-3.12.13%2B20260807-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz\n"}
+,{"stream_name":"stderr","time":306.286785996,"data":"  cause: error sending request for url (https://github.com/astral-sh/python-build-standalone/releases/download/20260807/cpython-3.12.13%2B20260807-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz)\n"}
+,{"stream_name":"stderr","time":306.286789069,"data":"  cause: client error (Connect)\n"}
+,{"stream_name":"stderr","time":306.286791671,"data":"  cause: operation timed out\n"}
+,{"stream_name":"stderr","time":306.286794239,"data":"\n"}
+,{"stream_name":"stderr","time":306.286796715,"data":"\n"}
+,{"stream_name":"stderr","time":309.432275444,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":309.432316034,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":309.654016377,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":309.654049706,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":310.666466135,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":310.782069325,"data":"[NbConvertApp] Writing 129745 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":314.373711258,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":315.147798695,"data":"[NbConvertApp] Writing 605003 bytes to __results__.html\n"}
+]

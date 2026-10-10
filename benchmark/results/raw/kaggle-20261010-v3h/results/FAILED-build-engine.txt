@@ -1,0 +1,63 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_23/2592251504.py", line 28, in step
+    res = fn(*args, **kw)
+  File "/tmp/ipykernel_23/2298588444.py", line 72, in build_engine
+    out = sh(
+        f"{env} {TPY} {BENCH}/inference/trtllm/build_engine.py {TRT_WORK}/hf {TRT_WORK} "
+    ...<3 lines>...
+        timeout=3600,
+    )
+  File "/tmp/ipykernel_23/1223397648.py", line 27, in sh
+    raise RuntimeError(f"exit {r.returncode}{why}: {cmd[:300]}\n{text[-3000:]}")
+RuntimeError: exit 1: timeout -k 60 3600 bash -c 'CUDA_VISIBLE_DEVICES=0 OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1 /tmp/venvs/trtllm/bin/python /kaggle/working/bench/inference/trtllm/build_engine.py /tmp/trtllm/hf /tmp/trtllm --cmd-out /kaggle/working/results/server_args/trtllm-build.txt'
+ 21978227456 bytes of scratch space, but only 15636037632 is available. Try increasing the workspace size with IBuilderConfig::setMemoryPoolLimit().
+)
+
+0it [00:00, ?it/s]
+4it [00:00, 12.88it/s]
+18it [00:00, 50.87it/s]
+33it [00:00, 78.63it/s]
+46it [00:00, 92.34it/s]
+58it [00:00, 100.02it/s]
+73it [00:00, 110.73it/s]
+86it [00:00, 114.09it/s]
+99it [00:01, 111.68it/s]
+114it [00:01, 119.64it/s]
+129it [00:01, 124.28it/s]
+142it [00:01, 122.88it/s]
+155it [00:01, 115.20it/s]
+170it [00:01, 118.75it/s]
+185it [00:01, 121.93it/s]
+198it [00:01, 120.03it/s]
+211it [00:02, 115.92it/s]
+226it [00:02, 120.64it/s]
+230it [00:02, 94.19it/s] 
+Traceback (most recent call last):
+  File "/tmp/venvs/trtllm/bin/trtllm-build", line 10, in <module>
+    sys.exit(main())
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 568, in main
+    parallel_build(model_config, ckpt_dir, build_config, args.output_dir,
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 423, in parallel_build
+    passed = build_and_save(rank, rank % workers, ckpt_dir,
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 390, in build_and_save
+    engine = build_model(build_config,
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 383, in build_model
+    return build(model, build_config)
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/builder.py", line 1189, in build
+    engine = None if build_config.dry_run else builder.build_engine(
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/_common.py", line 204, in decorated
+    return f(*args, **kwargs)
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/builder.py", line 418, in build_engine
+    assert engine is not None, 'Engine building failed, please check the error log.'
+AssertionError: Engine building failed, please check the error log.
+Traceback (most recent call last):
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 113, in <module>
+    main()
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 108, in main
+    build(ckpt, engine, args.cmd_out)
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 87, in build
+    subprocess.run(cmd, check=True)
+  File "/root/.local/share/uv/python/cpython-3.10.20-linux-x86_64-gnu/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/tmp/venvs/trtllm/bin/trtllm-build', '--checkpoint_dir', '/tmp/trtllm/ckpt-fp16', '--output_dir', '/tmp/trtllm/engine-fp16', '--gemm_plugin', 'float16', '--gpt_attention_plugin', 'float16', '--context_fmha', 'disable', '--remove_input_padding', 'enable', '--kv_cache_type', 'paged', '--max_batch_size', '32', '--max_input_len', '3072', '--max_seq_len', '4096', '--max_num_tokens', '8192', '--workers', '1']' returned non-zero exit status 1.
+

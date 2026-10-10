@@ -1,0 +1,169 @@
+[{"stream_name":"stderr","time":7.480949174,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.481039667,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.481069799,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.481074735,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.096711441,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.096739171,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.096744155,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.096747742,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":9.338332244,"data":"wrote 14 files to /kaggle/working/bench\n"}
+,{"stream_name":"stdout","time":10.309589563,"data":"Sat Oct 10 12:45:18 2026       \n"}
+,{"stream_name":"stdout","time":10.309620325,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":10.309623877,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":10.309626361,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":10.30962861,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":10.309631004,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":10.309633266,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":10.309635518,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":10.309637719,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":10.309640064,"data":"| N/A   49C    P8              9W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":10.309642271,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":10.309644462,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":10.309646914,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":10.30964919,"data":"| N/A   53C    P8             12W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":10.309651387,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":10.30965375,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":10.309655958,"data":"\n"}
+,{"stream_name":"stdout","time":10.309658017,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":10.309660318,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":10.309671726,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":10.309674235,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":10.309676443,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":10.309678632,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":10.30968194,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":10.309684248,"data":"\n"}
+,{"stream_name":"stdout","time":13.143734836,"data":"GPU_COUNT = 2\n"}
+,{"stream_name":"stdout","time":13.652769531,"data":"preflight OK: 2 GPU(s), reachable: https://pypi.org/simple/, https://pypi.nvidia.com/tensorrt-cu12/, https://github.com, https://huggingface.co, http://images.cocodataset.org/val2017/000000000139.jpg\n"}
+,{"stream_name":"stdout","time":18.847922596,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.0/27.0 MB 71.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":18.847956076,"data":"uv 0.11.32 (x86_64-unknown-linux-gnu)\n"}
+,{"stream_name":"stdout","time":18.84796112,"data":"\n"}
+,{"stream_name":"stdout","time":31.079044868,"data":"install-base: 17s\n"}
+,{"stream_name":"stdout","time":31.101963221,"data":"dcgm not run: DCGM profiling fails on Kaggle for every field with 'DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root'; basic fields worked. Evidence: benchmark/results/raw/kaggle-20261010-v3a/results/dcgm/ (notebook built at 19ccae8)\n"}
+,{"stream_name":"stdout","time":31.102006597,"data":"vllm-t4-1.5b-fp16-dcgm not run: DCGM profiling fails on Kaggle for every field with 'DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root'; basic fields worked. Evidence: benchmark/results/raw/kaggle-20261010-v3a/results/dcgm/ (notebook built at 19ccae8)\n"}
+,{"stream_name":"stdout","time":183.416026112,"data":"\n"}
+,{"stream_name":"stdout","time":195.401520314,"data":"Creating new Ultralytics Settings v0.0.8 file ✅ \n"}
+,{"stream_name":"stdout","time":195.401555305,"data":"View Ultralytics Settings with 'yolo settings' or at '/root/.config/Ultralytics/settings.json'\n"}
+,{"stream_name":"stdout","time":195.401566202,"data":"Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.\n"}
+,{"stream_name":"stdout","time":195.401570683,"data":"2.13.0+cu129 12.9 (7, 5) 10.16.1.11 1.26.0 ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'] 8.4.174\n"}
+,{"stream_name":"stdout","time":195.401573829,"data":"\n"}
+,{"stream_name":"stdout","time":195.40157666,"data":"vision-install: 164s\n"}
+,{"stream_name":"stdout","time":211.652747019,"data":"500 images (sha256 ok), 496 with labels, 3504 boxes -\u003e /tmp/data/coco500\n"}
+,{"stream_name":"stdout","time":211.652789512,"data":"\n"}
+,{"stream_name":"stdout","time":211.973862176,"data":"vision-data: 17s\n"}
+,{"stream_name":"stdout","time":940.857518477,"data":"10/10/2026-12:56:56] [TRT] [I] Domain:           \n"}
+,{"stream_name":"stdout","time":940.857566987,"data":"[10/10/2026-12:56:56] [TRT] [I] Model version:    0\n"}
+,{"stream_name":"stdout","time":940.857573047,"data":"[10/10/2026-12:56:56] [TRT] [I] Doc string:       \n"}
+,{"stream_name":"stdout","time":940.857584255,"data":"[10/10/2026-12:56:56] [TRT] [I] ----------------------------------------------------------------\n"}
+,{"stream_name":"stdout","time":940.857587804,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m input \"images\" with shape(32, 3, 640, 640) DataType.FLOAT\n"}
+,{"stream_name":"stdout","time":940.857594999,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m output \"output0\" with shape(32, 84, 8400) DataType.FLOAT\n"}
+,{"stream_name":"stdout","time":940.85759756,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m building FP16 engine as /kaggle/working/results/models/work/yolov8n.engine\n"}
+,{"stream_name":"stdout","time":940.857599972,"data":"[10/10/2026-12:56:56] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.\n"}
+,{"stream_name":"stdout","time":940.857602419,"data":"[10/10/2026-12:56:57] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -119, GPU +0, now: CPU 1722, GPU 1938 (MiB)\n"}
+,{"stream_name":"stdout","time":940.857604714,"data":"[10/10/2026-12:56:57] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.\n"}
+,{"stream_name":"stdout","time":940.857606962,"data":"[10/10/2026-12:56:57] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.\n"}
+,{"stream_name":"stdout","time":940.857609345,"data":"[10/10/2026-13:00:46] [TRT] [I] Detected 1 inputs and 3 output network tensors.\n"}
+,{"stream_name":"stdout","time":940.857613789,"data":"[10/10/2026-13:00:47] [TRT] [I] Total Host Persistent Memory: 326992 bytes\n"}
+,{"stream_name":"stdout","time":940.857616214,"data":"[10/10/2026-13:00:47] [TRT] [I] Total Device Persistent Memory: 1091072 bytes\n"}
+,{"stream_name":"stdout","time":940.857618647,"data":"[10/10/2026-13:00:47] [TRT] [I] Max Scratch Memory: 0 bytes\n"}
+,{"stream_name":"stdout","time":940.857620958,"data":"[10/10/2026-13:00:47] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 111 steps to complete.\n"}
+,{"stream_name":"stdout","time":940.857623369,"data":"[10/10/2026-13:00:47] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 6.83825ms to assign 7 blocks to 111 nodes requiring 311296512 bytes.\n"}
+,{"stream_name":"stdout","time":940.857625949,"data":"[10/10/2026-13:00:47] [TRT] [I] Total Activation Memory: 311296000 bytes\n"}
+,{"stream_name":"stdout","time":940.857629189,"data":"[10/10/2026-13:00:47] [TRT] [I] Total Weights Memory: 6379680 bytes\n"}
+,{"stream_name":"stdout","time":940.85764388,"data":"[10/10/2026-13:00:48] [TRT] [I] Engine generation completed in 230.69 seconds.\n"}
+,{"stream_name":"stdout","time":940.857648097,"data":"[10/10/2026-13:00:48] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 800 MiB\n"}
+,{"stream_name":"stdout","time":940.857652204,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m export success ✅ 232.3s, saved as '/kaggle/working/results/models/work/yolov8n.engine' (7.5 MB)\n"}
+,{"stream_name":"stdout","time":940.85765694,"data":"\n"}
+,{"stream_name":"stdout","time":940.85766073,"data":"Export complete (232.6s)\n"}
+,{"stream_name":"stdout","time":940.857669134,"data":"Results saved to \u001b[1m/kaggle/working/results/models/work/yolov8n.engine\u001b[0m\n"}
+,{"stream_name":"stdout","time":940.857672884,"data":"Predict:         yolo predict task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 quantize=16\n"}
+,{"stream_name":"stdout","time":940.857676484,"data":"Validate:        yolo val task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 data=coco.yaml quantize=16 \n"}
+,{"stream_name":"stdout","time":940.857680127,"data":"Visualize:       https://netron.app\n"}
+,{"stream_name":"stdout","time":940.857687805,"data":"{\n"}
+,{"stream_name":"stdout","time":940.857691077,"data":" \"yolov8n-fp32-opset17.onnx\": {\n"}
+,{"stream_name":"stdout","time":940.857694512,"data":"  \"sha256\": \"a1b5783436403b9100fc5a0ae7f70fbbc1a8cea0cb52e5abc848442e5fc12d25\",\n"}
+,{"stream_name":"stdout","time":940.857699064,"data":"  \"precision\": \"fp32\",\n"}
+,{"stream_name":"stdout","time":940.857702408,"data":"  \"batch\": \"dynamic\"\n"}
+,{"stream_name":"stdout","time":940.857707035,"data":" },\n"}
+,{"stream_name":"stdout","time":940.857713974,"data":" \"yolov8n-fp16-b1.engine\": {\n"}
+,{"stream_name":"stdout","time":940.857716295,"data":"  \"sha256\": \"c9b34364c8b5089c4cdc9c7d844dc4fb18ab670523dc2a72e24ed22d7cc47acb\",\n"}
+,{"stream_name":"stdout","time":940.857718932,"data":"  \"precision\": \"fp16\",\n"}
+,{"stream_name":"stdout","time":940.857721095,"data":"  \"batch\": 1\n"}
+,{"stream_name":"stdout","time":940.85772328,"data":" },\n"}
+,{"stream_name":"stdout","time":940.857726058,"data":" \"yolov8n-fp16-b8.engine\": {\n"}
+,{"stream_name":"stdout","time":940.857738809,"data":"  \"sha256\": \"ee1582db6b1ce9d1184a8df16e9199d6ed251568d9cbc50464ce4ef5285ae64c\",\n"}
+,{"stream_name":"stdout","time":940.857743016,"data":"  \"precision\": \"fp16\",\n"}
+,{"stream_name":"stdout","time":940.857746987,"data":"  \"batch\": 8\n"}
+,{"stream_name":"stdout","time":940.857751006,"data":" },\n"}
+,{"stream_name":"stdout","time":940.857754646,"data":" \"yolov8n-fp16-b32.engine\": {\n"}
+,{"stream_name":"stdout","time":940.857758382,"data":"  \"sha256\": \"b6af406cbd5f5136df81870dc413dce56557a7f6407674cb3fedab36c024a277\",\n"}
+,{"stream_name":"stdout","time":940.857761868,"data":"  \"precision\": \"fp16\",\n"}
+,{"stream_name":"stdout","time":940.857765129,"data":"  \"batch\": 32\n"}
+,{"stream_name":"stdout","time":940.857768388,"data":" }\n"}
+,{"stream_name":"stdout","time":940.857771492,"data":"}\n"}
+,{"stream_name":"stdout","time":940.857774587,"data":"\n"}
+,{"stream_name":"stdout","time":940.857777719,"data":"vision-export: 729s\n"}
+,{"stream_name":"stdout","time":940.85778099,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda not run: RUN_SPEED is False: already measured, see benchmark/results/raw/kaggle-20261010-v3c/ (notebook built at 80905ea)\n"}
+,{"stream_name":"stdout","time":940.857784559,"data":"vision-t4-yolov8n-trt-fp16 not run: RUN_SPEED is False: already measured, see benchmark/results/raw/kaggle-20261010-v3c/ (notebook built at 80905ea)\n"}
+,{"stream_name":"stdout","time":940.857788142,"data":"vision-triton not run: RUN_TRITON is False: already measured, see benchmark/results/raw/kaggle-20261010-v3e/ (notebook built at fb5ea24)\n"}
+,{"stream_name":"stdout","time":957.82146928,"data":" 425/500 87.0it/s 5.6s\u003c0.9s\n"}
+,{"stream_name":"stdout","time":957.821507541,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 87% ━━━━━━━━━━── 435/500 88.6it/s 5.7s\u003c0.7s\n"}
+,{"stream_name":"stdout","time":957.82151222,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 88% ━━━━━━━━━━╸─ 444/500 88.0it/s 5.8s\u003c0.6s\n"}
+,{"stream_name":"stdout","time":957.821515064,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 90% ━━━━━━━━━━╸─ 453/500 88.3it/s 5.9s\u003c0.5s\n"}
+,{"stream_name":"stdout","time":957.821517885,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 92% ━━━━━━━━━━━─ 463/500 88.9it/s 6.1s\u003c0.4s\n"}
+,{"stream_name":"stdout","time":957.821545655,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 94% ━━━━━━━━━━━─ 472/500 88.2it/s 6.2s\u003c0.3s\n"}
+,{"stream_name":"stdout","time":957.821550729,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 96% ━━━━━━━━━━━╸ 482/500 88.7it/s 6.3s\u003c0.2s\n"}
+,{"stream_name":"stdout","time":957.821555626,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 98% ━━━━━━━━━━━╸ 491/500 88.6it/s 6.4s\u003c0.1s\n"}
+,{"stream_name":"stdout","time":957.82156055,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 500/500 77.3it/s 6.5s\n"}
+,{"stream_name":"stdout","time":957.821564735,"data":"                   all        500       3504       0.64      0.513      0.556      0.401\n"}
+,{"stream_name":"stdout","time":957.821568393,"data":"Speed: 1.0ms preprocess, 6.8ms inference, 0.0ms loss, 1.2ms postprocess per image\n"}
+,{"stream_name":"stdout","time":957.821572357,"data":"pt-fp32 {\"metrics/precision(B)\": 0.639603405213343, \"metrics/recall(B)\": 0.5133357719473712, \"metrics/mAP50(B)\": 0.5555270585042406, \"metrics/mAP50-95(B)\": 0.40068282933505744, \"fitness\": 0.40068282933505744}\n"}
+,{"stream_name":"stdout","time":957.821578823,"data":"\n"}
+,{"stream_name":"stdout","time":957.821582151,"data":"map-pt-fp32: 17s\n"}
+,{"stream_name":"stdout","time":970.750247399,"data":" 442/500 77.5it/s 6.2s\u003c0.7s\n"}
+,{"stream_name":"stdout","time":970.750287819,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 90% ━━━━━━━━━━╸─ 450/500 77.0it/s 6.3s\u003c0.6s\n"}
+,{"stream_name":"stdout","time":970.750294142,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 91% ━━━━━━━━━━╸─ 458/500 76.4it/s 6.4s\u003c0.5s\n"}
+,{"stream_name":"stdout","time":970.750298357,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 93% ━━━━━━━━━━━─ 466/500 75.5it/s 6.5s\u003c0.5s\n"}
+,{"stream_name":"stdout","time":970.750302067,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 94% ━━━━━━━━━━━─ 474/500 75.3it/s 6.6s\u003c0.3s\n"}
+,{"stream_name":"stdout","time":970.750305837,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 96% ━━━━━━━━━━━╸ 482/500 75.0it/s 6.7s\u003c0.2s\n"}
+,{"stream_name":"stdout","time":970.750309774,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 98% ━━━━━━━━━━━╸ 490/500 74.7it/s 6.8s\u003c0.1s\n"}
+,{"stream_name":"stdout","time":970.750319805,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 99% ━━━━━━━━━━━╸ 498/500 74.5it/s 6.9s\u003c0.0s\n"}
+,{"stream_name":"stdout","time":970.750322622,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 500/500 71.8it/s 7.0s\n"}
+,{"stream_name":"stdout","time":970.750325107,"data":"                   all        500       3504       0.64      0.513      0.556      0.401\n"}
+,{"stream_name":"stdout","time":970.750327495,"data":"Speed: 1.1ms preprocess, 7.8ms inference, 0.0ms loss, 1.2ms postprocess per image\n"}
+,{"stream_name":"stdout","time":970.750329751,"data":"onnx-fp32 {\"metrics/precision(B)\": 0.6396033927096284, \"metrics/recall(B)\": 0.5133357768455306, \"metrics/mAP50(B)\": 0.555527063386431, \"metrics/mAP50-95(B)\": 0.4006828264389918, \"fitness\": 0.4006828264389918}\n"}
+,{"stream_name":"stdout","time":970.75034032,"data":"\n"}
+,{"stream_name":"stdout","time":970.750343031,"data":"map-onnx-fp32: 13s\n"}
+,{"stream_name":"stdout","time":980.550298037,"data":"07.9it/s 3.9s\u003c0.8s\n"}
+,{"stream_name":"stdout","time":980.550326112,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 85% ━━━━━━━━━━── 428/500 107.6it/s 4.0s\u003c0.7s\n"}
+,{"stream_name":"stdout","time":980.550332964,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 88% ━━━━━━━━━━╸─ 440/500 108.6it/s 4.1s\u003c0.6s\n"}
+,{"stream_name":"stdout","time":980.550339417,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 90% ━━━━━━━━━━╸─ 451/500 108.9it/s 4.2s\u003c0.5s\n"}
+,{"stream_name":"stdout","time":980.550344417,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 92% ━━━━━━━━━━━─ 463/500 109.9it/s 4.3s\u003c0.3s\n"}
+,{"stream_name":"stdout","time":980.550349567,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 94% ━━━━━━━━━━━─ 474/500 107.7it/s 4.4s\u003c0.2s\n"}
+,{"stream_name":"stdout","time":980.550355477,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 97% ━━━━━━━━━━━╸ 485/500 106.9it/s 4.5s\u003c0.1s\n"}
+,{"stream_name":"stdout","time":980.550360982,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 99% ━━━━━━━━━━━╸ 497/500 109.4it/s 4.6s\u003c0.0s\n"}
+,{"stream_name":"stdout","time":980.550366247,"data":"\u001b[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 500/500 107.1it/s 4.7s\n"}
+,{"stream_name":"stdout","time":980.550371344,"data":"                   all        500       3504      0.624      0.516      0.555      0.401\n"}
+,{"stream_name":"stdout","time":980.550376604,"data":"Speed: 1.0ms preprocess, 2.6ms inference, 0.0ms loss, 1.4ms postprocess per image\n"}
+,{"stream_name":"stdout","time":980.550381457,"data":"trt-fp16 {\"metrics/precision(B)\": 0.6235971946136956, \"metrics/recall(B)\": 0.515542331498042, \"metrics/mAP50(B)\": 0.5550427123263678, \"metrics/mAP50-95(B)\": 0.40100439381936354, \"fitness\": 0.40100439381936354}\n"}
+,{"stream_name":"stdout","time":980.550387514,"data":"\n"}
+,{"stream_name":"stdout","time":980.550391982,"data":"map-trt-fp16: 10s\n"}
+,{"stream_name":"stdout","time":980.745443756,"data":"raw/vision-accuracy/onnx-fp32.json {\"metrics/precision(B)\": 0.6396033927096284, \"metrics/recall(B)\": 0.5133357768455306, \"metrics/mAP50(B)\": 0.555527063386431, \"metrics/mAP50-95(B)\": 0.4006828264389918, \"fitness\": 0.4006828264389918}\n"}
+,{"stream_name":"stdout","time":980.74546653,"data":"raw/vision-accuracy/pt-fp32.json {\"metrics/precision(B)\": 0.639603405213343, \"metrics/recall(B)\": 0.5133357719473712, \"metrics/mAP50(B)\": 0.5555270585042406, \"metrics/mAP50-95(B)\": 0.40068282933505744, \"fitness\": 0.40068282933505744}\n"}
+,{"stream_name":"stdout","time":980.745473406,"data":"raw/vision-accuracy/trt-fp16.json {\"metrics/precision(B)\": 0.6235971946136956, \"metrics/recall(B)\": 0.515542331498042, \"metrics/mAP50(B)\": 0.5550427123263678, \"metrics/mAP50-95(B)\": 0.40100439381936354, \"fitness\": 0.40100439381936354}\n"}
+,{"stream_name":"stdout","time":980.745489527,"data":"/kaggle/working/results/NOT_RUN-dcgm.txt\n"}
+,{"stream_name":"stdout","time":980.745493347,"data":"/kaggle/working/results/NOT_RUN-vision-t4-yolov8n-onnx-fp32-ortcuda.txt\n"}
+,{"stream_name":"stdout","time":980.745496766,"data":"/kaggle/working/results/NOT_RUN-vision-t4-yolov8n-trt-fp16.txt\n"}
+,{"stream_name":"stdout","time":980.745500072,"data":"/kaggle/working/results/NOT_RUN-vision-triton.txt\n"}
+,{"stream_name":"stdout","time":980.745503323,"data":"/kaggle/working/results/NOT_RUN-vllm-t4-1.5b-fp16-dcgm.txt\n"}
+,{"stream_name":"stdout","time":980.745506362,"data":"\n"}
+,{"stream_name":"stdout","time":980.74550934,"data":"summary: 0s\n"}
+,{"stream_name":"stdout","time":980.941682691,"data":"session used 967 s of the 3000 s budget\n"}
+,{"stream_name":"stderr","time":983.696257586,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":983.696286032,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":983.887488711,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":983.887513092,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":984.645554423,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":984.729756288,"data":"[NbConvertApp] Writing 249185 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":987.106148048,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":987.728586432,"data":"[NbConvertApp] Writing 870285 bytes to __results__.html\n"}
+]

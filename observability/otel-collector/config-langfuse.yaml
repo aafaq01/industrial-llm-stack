@@ -1,0 +1,21 @@
+# Merged over config.yaml only when LANGFUSE_OTEL_ENDPOINT is set (see docker-compose.yml).
+# Adds a second traces pipeline that sends the same spans to Langfuse's OTLP HTTP endpoint.
+extensions:
+  basicauth/langfuse:
+    client_auth:
+      username: ${env:LANGFUSE_PUBLIC_KEY}
+      password: ${env:LANGFUSE_SECRET_KEY}
+
+exporters:
+  otlphttp/langfuse:
+    endpoint: ${env:LANGFUSE_OTEL_ENDPOINT}  # .../api/public/otel; the exporter appends /v1/traces
+    auth:
+      authenticator: basicauth/langfuse
+
+service:
+  extensions: [basicauth/langfuse]
+  pipelines:
+    traces/langfuse:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/langfuse]

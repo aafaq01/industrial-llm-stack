@@ -1,0 +1,11 @@
+build SUCCESS start=2026-10-09T12:39:30.535Z duration=2471s
+Declarative: Checkout SCM    2026-10-09T12:39:45.130Z      7s
+lint                         2026-10-09T12:39:52.605Z     76s
+charts                       2026-10-09T12:41:08.962Z     26s
+test                         2026-10-09T12:41:35.392Z    448s
+build                        2026-10-09T12:49:04.208Z    595s
+scan                         2026-10-09T12:58:59.751Z     51s
+push                         2026-10-09T12:59:50.830Z      3s
+bump chart                   2026-10-09T12:59:54.418Z      0s
+argocd sync                  2026-10-09T12:59:54.796Z   1243s
+Declarative: Post Actions    2026-10-09T13:20:38.925Z      2s

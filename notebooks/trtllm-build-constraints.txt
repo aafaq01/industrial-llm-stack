@@ -1,0 +1,5 @@
+# Build-time constraints for sdists in the TensorRT-LLM venv (uv pip install --build-constraints).
+# mpi4py 3.1.6 builds from source and its conf/mpidistutils.py calls new_compiler(dry_run=...);
+# setuptools 81.0.0 removed dry-run support (NEWS: "Removed support for the --dry-run parameter", #4872),
+# so uv's isolated build env must use the last 80.x. Failure seen on Kaggle 2026-10-10 (v3b install-trtllm.log).
+setuptools==80.10.2

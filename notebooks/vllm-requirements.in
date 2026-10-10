@@ -1,0 +1,11 @@
+# vLLM server environment for the Kaggle T4 notebook (Linux x86_64, Python 3.12, CUDA 12.9 builds).
+# Lock: vllm-requirements.txt. Install: uv pip install --torch-backend cu129 -r notebooks/vllm-requirements.txt
+#
+# Resolving straight from the GitHub wheel URL hung for about 3 h on 2026-10-07, so the lock is resolved from the
+# PyPI vllm==0.31.0 metadata plus vllm-overrides.txt (the two requirements where the +cu129 wheel differs),
+# then the vllm line is swapped for the +cu129 wheel URL. Regenerate, one command per line:
+#
+#   uv pip compile notebooks/vllm-requirements.in --override notebooks/vllm-overrides.txt -o notebooks/vllm-requirements.txt --python-version 3.12 --python-platform x86_64-manylinux_2_28 --torch-backend cu129 --no-header
+#   sed -i 's|^vllm==0.31.0$|vllm @ https://github.com/vllm-project/vllm/releases/download/v0.31.0/vllm-0.31.0%2Bcu129-cp38-abi3-manylinux_2_28_x86_64.whl|' notebooks/vllm-requirements.txt
+#   sed -i '1i # Generated from notebooks/vllm-requirements.in (see the commands there). Install with --torch-backend cu129.' notebooks/vllm-requirements.txt
+vllm==0.31.0

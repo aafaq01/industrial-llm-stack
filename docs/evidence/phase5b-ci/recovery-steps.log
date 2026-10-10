@@ -1,0 +1,66 @@
+== 16:08:15 block ghcr.io pulls in the node, remove KEDA images, restart KEDA without a ready pod
+Deleted: ghcr.io/kedacore/keda:2.21.0
+Deleted: ghcr.io/kedacore/keda-metrics-apiserver:2.21.0
+Deleted: ghcr.io/kedacore/keda-admission-webhooks:2.21.0
+deployment.apps/keda-admission-webhooks restarted
+deployment.apps/keda-operator restarted
+deployment.apps/keda-operator-metrics-apiserver restarted
+pod "keda-admission-webhooks-56b7b7c6c8-mcpsn" deleted from keda namespace
+pod "keda-admission-webhooks-7dbdbcb6d-bw9cn" deleted from keda namespace
+pod "keda-operator-648678d9f8-pxtf7" deleted from keda namespace
+pod "keda-operator-7bc858d9d8-kkknh" deleted from keda namespace
+pod "keda-operator-metrics-apiserver-5499d688c4-6sj6r" deleted from keda namespace
+pod "keda-operator-metrics-apiserver-7d67c4b8c8-c7dzn" deleted from keda namespace
+NAME                                               READY   STATUS             RESTARTS   AGE
+keda-admission-webhooks-56b7b7c6c8-kcgcn           0/1     ImagePullBackOff   0          20s
+keda-admission-webhooks-7dbdbcb6d-smhns            0/1     ImagePullBackOff   0          20s
+keda-operator-648678d9f8-8dzzv                     0/1     ImagePullBackOff   0          20s
+keda-operator-7bc858d9d8-vhbr4                     0/1     ImagePullBackOff   0          20s
+keda-operator-metrics-apiserver-5499d688c4-lbs5b   0/1     ImagePullBackOff   0          20s
+keda-operator-metrics-apiserver-7d67c4b8c8-5vxxp   0/1     ImagePullBackOff   0          20s
+== 16:18:28 conditions
+keda-admission-webhooks: Available=False Progressing=False/ProgressDeadlineExceeded
+keda-operator: Available=False Progressing=False/ProgressDeadlineExceeded
+keda-operator-metrics-apiserver: Available=False Progressing=False/ProgressDeadlineExceeded
+== old wait: kubectl rollout status
+error: deployment "keda-operator" exceeded its progress deadline
+rc=1
+== old wait: helm upgrade --wait (as kind-up did before 50a9ece), marks the release failed
+Error: UPGRADE FAILED: resource Deployment/keda/keda-operator not ready. status: Failed, message: Progress deadline exceeded
+resource Deployment/keda/keda-operator-metrics-apiserver not ready. status: Failed, message: Progress deadline exceeded
+resource Deployment/keda/keda-admission-webhooks not ready. status: Failed, message: Progress deadline exceeded
+rc=1 after 2s
+2       	Fri Oct  9 21:07:12 2026	deployed  	keda-2.21.0	2.21.0     	Upgrade complete                                                                                                            
+3       	Fri Oct  9 21:18:29 2026	failed    	keda-2.21.0	2.21.0     	Upgrade "keda" failed: resource Deployment/keda/keda-operator not ready. status: Failed, message: Progress deadline excee...
+== 16:21:24 kind-up has been waiting on KEDA for 2 minutes with pulls still blocked:
+[16:18:40Z] kind v0.33.0, context kind-llm, git source head
+[16:18:42Z] pre-pulling images on the host and loading them into the node
+[16:19:11Z] building and pushing the rag image
+[16:19:16Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:214fcc7f224ef7b3ed1d1597529609c305e6a150380fd0c19102c0a99c26b1b1
+[16:19:17Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+keda-admission-webhooks-56b7b7c6c8-kcgcn ImagePullBackOff
+keda-admission-webhooks-7dbdbcb6d-smhns ImagePullBackOff
+keda-operator-648678d9f8-8dzzv ImagePullBackOff
+keda-operator-7bc858d9d8-vhbr4 ImagePullBackOff
+keda-operator-metrics-apiserver-5499d688c4-lbs5b ImagePullBackOff
+keda-operator-metrics-apiserver-7d67c4b8c8-5vxxp ImagePullBackOff
+4       	Fri Oct  9 21:19:18 2026	deployed  	keda-2.21.0	2.21.0     	Upgrade complete                                                                                                            
+== 16:21:24 unblock ghcr.io (network recovers)
+== kind-up output
+[16:18:40Z] kind v0.33.0, context kind-llm, git source head
+[16:18:42Z] pre-pulling images on the host and loading them into the node
+[16:19:11Z] building and pushing the rag image
+[16:19:16Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:214fcc7f224ef7b3ed1d1597529609c305e6a150380fd0c19102c0a99c26b1b1
+[16:19:17Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[16:25:30Z] installing ArgoCD v3.5.4
+[16:25:57Z] git://kind-git/industrial-llm-platform main = a290dea0127fbdfaba67986a699881b06098fee9
+[16:26:01Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy at a290dea0127fbdfaba67986a699881b06098fee9
+[16:26:01Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+[16:26:02Z] done in 7m22s
+rc=0 wall=442s
+== 16:26:04 after
+keda-admission-webhooks: Available=True Progressing=True/NewReplicaSetAvailable
+keda-operator: Available=True Progressing=True/NewReplicaSetAvailable
+keda-operator-metrics-apiserver: Available=True Progressing=True/NewReplicaSetAvailable
+3       	Fri Oct  9 21:18:29 2026	failed    	keda-2.21.0	2.21.0     	Upgrade "keda" failed: resource Deployment/keda/keda-operator not ready. status: Failed, message: Progress deadline excee...
+4       	Fri Oct  9 21:19:18 2026	deployed  	keda-2.21.0	2.21.0     	Upgrade complete                                                                                                            

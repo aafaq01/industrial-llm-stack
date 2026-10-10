@@ -1,0 +1,260 @@
+# Phase 2 GPU run (Kaggle run v2): vLLM on T4, integrity review and report
+Run: Kaggle kernel <kaggle-user>/vllm-t4-benchmark, pushed and downloaded by the coordinator (not by me).
+Raw output: benchmark/results/raw/kaggle-20261009/ (embedded bench/ copy removed by the coordinator).
+Reviewed 2026-10-09 on the Windows host, offline: file inspection, report.py, pytest. No Kaggle commands, no commit.
+
+## Run facts (results/env/)
+run.json: git_commit 8c01b3262760b69a0ede5fb0c3ff9bf47e838443, gpu_count 2, vllm_version 0.31.0,
+  started_utc 2026-10-09T05:54:36Z, kaggle_kernel_run_type Batch,
+  kaggle_docker_image gcr.io/kaggle-gpu-images/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f
+finished_utc.txt: 2026-10-09T06:33:53Z (39 min 17 s after start). Notebook log (vllm-t4-benchmark.log):
+  "preflight OK: 2 GPU(s), pypi.org and github.com reachable" at 13 s, "no failed or skipped cells" at 2370 s.
+  No FAILED-*/NOT_RUN files. Only stderr warnings: debugger frozen-modules notice, nbconvert SyntaxWarnings.
+nvidia-smi.txt: 2x Tesla T4, driver 580.178.04, CUDA 13.0, 15360 MiB each, idle at 55 C, P8, 10 W (05:54:33).
+nvidia-smi-q.txt: power limit 70.00 W (default = max); clock event reasons at start: Idle only, all counters 0 us.
+vllm-torch.txt: vllm 0.31.0, torch 2.13.0+cu129, CUDA 12.9, capability (7, 5).
+os-release: Ubuntu 24.04.1 LTS. lscpu: Intel Xeon @ 2.00GHz, 4 CPUs. free: 32099 MiB RAM.
+Per-cell wall clock (timing-*.txt; fp16 and awq include their GSM8K run):
+  vllm-t4-1.5b-fp16 978 s, vllm-t4-1.5b-awq 610 s, vllm-t4-7b-awq 312 s, vllm-2xt4-1.5b-fp16-tp2 182 s.
+Server commands (server_args/*.txt): vllm serve <repo> --revision and --tokenizer-revision <pinned sha> --dtype float16
+  --max-model-len 4096 --gpu-memory-utilization 0.9 --attention-backend TRITON_ATTN --no-enable-prefix-caching --seed 0
+  --tensor-parallel-size 1 (2 for the tp2 cell). Revisions equal docs/VERSIONS.md.
+
+## Integrity checks
+Server logs (results/logs/server-*.log):
+- Attention backend: "Using AttentionBackendEnum.TRITON_ATTN backend." in all four logs (twice in tp2, once per worker).
+- AWQ kernel: "Using MarlinLinearKernel for AutoAWQMarlinLinearMethod" in both AWQ logs (1.5B and 7B).
+- dtype: "Casting torch.bfloat16 to torch.float16." for the 1.5B FP16 model (checkpoint is bf16; expected with
+  --dtype float16, T4 has no bf16). AWQ checkpoints are fp16.
+- TP=2: world_size=2 with rank 0 and rank 1 (local_rank 0 and 1), nccl 2.29.7, "Model loading took 1.5 GiB" twice;
+  GPU samples show both GPUs at 13731 MiB and 99 to 100% util. Custom allreduce disabled ("platform lacks GPU P2P
+  capability"), FlashInfer allreduce and SymmMem unsupported on capability 7.5, so all-reduce goes through NCCL
+  without P2P. Real 2-GPU tensor parallelism, over the slowest interconnect path.
+- KV cache: 340,064 tokens (1.5B FP16), 411,376 (1.5B AWQ), 113,744 (7B AWQ), 774,272 (TP=2); max concurrency at
+  4096 tokens 83x, 100x, 27.8x, 189x, all above the 32 used. vllm:num_preemptions_total delta 0 in every run.
+- Prefix caching: vllm:prefix_cache_queries_total delta 0 in every run (off, as configured).
+- Errors: 0 lines with error, exception or traceback in any server log. HTTP: 2984 POST /v1/chat/completions, all 200
+  (= 2484 loadgen requests including warmup + 2 x 250 GSM8K), plus /health, /metrics, /v1/models, all 200.
+- Warnings, each benign or explained:
+  * "Triton kernel JIT compilation during inference: kernel_unified_attention" once per server, at 06:01:42,
+    06:17:35, 06:28:14, 06:32:56. Each is before that server's first measured request (06:01:45, 06:17:36, 06:28:20,
+    06:32:59, from started_utc + request offsets), so inside warmup, not in any measured window.
+  * FlashInfer sampler unavailable on 7.5, falling back (expected).
+  * "Default vLLM sampling parameters have been overridden by the model's generation_config.json":
+    {repetition_penalty 1.1, temperature 0.7, top_k 20, top_p 0.8} for both 1.5B models, repetition_penalty 1.05 for
+    7B. Requests set temperature 0 (loadgen and lm-eval), so top_k and top_p are moot, but repetition_penalty applies
+    to every request because none sets it. GSM8K scores are therefore with repetition_penalty 1.1 for both FP16 and
+    AWQ: the delta is like for like, absolute scores are not stock settings. Loadgen still decoded exactly 128 tokens
+    per request. Fix for future runs: vllm serve --generation-config vllm, now in build_notebook.py (not run yet).
+  * Shutdown "force killing remaining process EngineCore" once per server (the notebook's stop path). gpu-drain logs:
+    "GPU memory.used MiB after stop [0, 0] (0s)" for all four cells, so each cell started on empty GPUs.
+- GPU memory: "Desired GPU memory utilization is (0.9, 13.11 GiB)" in every log; GPU mem max 12927 to 13731 MiB.
+Loadgen (results/logs/loadgen-*.log and the 24 raw JSON files): every run ok N/N, 0 errors; git_commit 8c01b326
+  (clean), prompts_sha256 72fb01ab... (= prompts.jsonl), max_tokens 128, ignore_eos true, token counts from server
+  usage in every record. Server-side deltas per run: 15485 prompt and 8192 generation tokens for 64 requests
+  (30970 / 16384 for 128), request_success equal to the measured count. 15485 is the same prompt token total that
+  llama.cpp counted in the CPU runs (same Qwen tokenizer and prompts).
+pip freeze: results/env/pip-freeze-vllm.txt vs notebooks/vllm-requirements.txt: 197 pins each, no differences (vllm
+  from the v0.31.0 +cu129 release wheel URL). pip-freeze-bench.txt matches benchmark/requirements.txt except
+  httpx2-jsfetch (emscripten only) and tzdata (emscripten or win32 only), excluded by their markers on Linux.
+docs/VERSIONS.md: nothing differs from what was pinned (vLLM 0.31.0 +cu129, torch 2.13.0+cu129, uv 0.11.32, lm-eval
+  0.4.13, model revisions), so it was not edited. Driver 580.178.04 and the Kaggle image digest are observed, not pinned.
+
+## GPU sampler (gpu_samples in each raw file: nvidia-smi every 500 ms over the measured window)
+Per run: requests, warmup, max_tokens, ignore_eos, prompts sha, output tokens, errors, token source, measured window
+(UTC), warmup TTFT mean; then per GPU: samples, memory max MiB, util mean, SM clock range MHz, temperature range C,
+power max W. Script: scratchpad gpucheck.py over the raw files.
+vllm-2xt4-1.5b-fp16-tp2-c32-r1- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:32:59 - 06:33:14 warmTTFT 1.811
+    gpu0 n=28 mem_max=13731 util=100% sm=1170-1575 temp=75-81 pw_max=71; gpu1 n=28 mem_max=13731 util=100% sm=1320-1575 temp=56-63 pw_max=74
+vllm-2xt4-1.5b-fp16-tp2-c32-r2- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:33:18 - 06:33:33 warmTTFT 0.709
+    gpu0 n=29 mem_max=13731 util=100% sm=1185-1560 temp=80-82 pw_max=72; gpu1 n=29 mem_max=13731 util=100% sm=1260-1575 temp=64-68 pw_max=75
+vllm-2xt4-1.5b-fp16-tp2-c32-r3- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:33:36 - 06:33:51 warmTTFT 0.726
+    gpu0 n=28 mem_max=13731 util=99% sm=1200-1560 temp=76-79 pw_max=72; gpu1 n=28 mem_max=13731 util=99% sm=1245-1575 temp=69-73 pw_max=78
+vllm-t4-1.5b-awq-c1-r1- 8c01b326 64 2 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:17:36 - 06:18:47 warmTTFT 0.557
+    gpu0 n=141 mem_max=13295 util=98% sm=930-1380 temp=75-82 pw_max=77
+vllm-t4-1.5b-awq-c1-r2- 8c01b326 64 2 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:18:50 - 06:20:01 warmTTFT 0.027
+    gpu0 n=140 mem_max=13295 util=99% sm=990-1410 temp=75-78 pw_max=71
+vllm-t4-1.5b-awq-c1-r3- 8c01b326 64 2 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:20:04 - 06:21:14 warmTTFT 0.028
+    gpu0 n=140 mem_max=13295 util=98% sm=1005-1410 temp=76-77 pw_max=74
+vllm-t4-1.5b-awq-c32-r1- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:22:10 - 06:22:28 warmTTFT 1.130
+    gpu0 n=36 mem_max=13401 util=100% sm=1125-1395 temp=76-77 pw_max=78
+vllm-t4-1.5b-awq-c32-r2- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:22:32 - 06:22:50 warmTTFT 1.310
+    gpu0 n=36 mem_max=13401 util=100% sm=1095-1485 temp=76-77 pw_max=76
+vllm-t4-1.5b-awq-c32-r3- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:22:55 - 06:23:13 warmTTFT 1.039
+    gpu0 n=36 mem_max=13401 util=100% sm=1125-1410 temp=76-77 pw_max=71
+vllm-t4-1.5b-awq-c8-r1- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:21:17 - 06:21:31 warmTTFT 0.570
+    gpu0 n=29 mem_max=13401 util=99% sm=1155-1410 temp=77-78 pw_max=70
+vllm-t4-1.5b-awq-c8-r2- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:21:34 - 06:21:48 warmTTFT 0.571
+    gpu0 n=29 mem_max=13401 util=99% sm=1125-1500 temp=77-78 pw_max=70
+vllm-t4-1.5b-awq-c8-r3- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:21:51 - 06:22:05 warmTTFT 0.535
+    gpu0 n=29 mem_max=13401 util=99% sm=1110-1425 temp=77-77 pw_max=80
+vllm-t4-1.5b-fp16-c1-r1- 8c01b326 64 2 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:01:45 - 06:04:18 warmTTFT 0.571
+    gpu0 n=299 mem_max=13209 util=100% sm=465-1305 temp=62-81 pw_max=74
+vllm-t4-1.5b-fp16-c1-r2- 8c01b326 64 2 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:04:23 - 06:07:05 warmTTFT 0.034
+    gpu0 n=319 mem_max=13209 util=100% sm=525-1200 temp=76-78 pw_max=71
+vllm-t4-1.5b-fp16-c1-r3- 8c01b326 64 2 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:07:11 - 06:09:53 warmTTFT 0.033
+    gpu0 n=318 mem_max=13209 util=99% sm=525-1245 temp=76-78 pw_max=75
+vllm-t4-1.5b-fp16-c32-r1- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:11:18 - 06:11:41 warmTTFT 1.075
+    gpu0 n=46 mem_max=13315 util=100% sm=930-1380 temp=76-77 pw_max=76
+vllm-t4-1.5b-fp16-c32-r2- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:11:47 - 06:12:10 warmTTFT 1.190
+    gpu0 n=46 mem_max=13315 util=100% sm=990-1440 temp=77-78 pw_max=76
+vllm-t4-1.5b-fp16-c32-r3- 8c01b326 128 32 128 True 72fb01ab toks 16384 err 0 src {'usage'} meas 06:12:16 - 06:12:39 warmTTFT 1.133
+    gpu0 n=45 mem_max=13315 util=100% sm=1020-1320 temp=77-78 pw_max=71
+vllm-t4-1.5b-fp16-c8-r1- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:09:56 - 06:10:19 warmTTFT 0.489
+    gpu0 n=46 mem_max=13315 util=100% sm=900-1455 temp=77-78 pw_max=73
+vllm-t4-1.5b-fp16-c8-r2- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:10:23 - 06:10:46 warmTTFT 0.504
+    gpu0 n=46 mem_max=13315 util=100% sm=960-1380 temp=77-77 pw_max=70
+vllm-t4-1.5b-fp16-c8-r3- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:10:50 - 06:11:13 warmTTFT 0.508
+    gpu0 n=46 mem_max=13315 util=100% sm=1020-1425 temp=76-77 pw_max=70
+vllm-t4-7b-awq-c8-r1- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:28:20 - 06:29:05 warmTTFT 2.796
+    gpu0 n=90 mem_max=12927 util=100% sm=870-1365 temp=75-80 pw_max=78
+vllm-t4-7b-awq-c8-r2- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:29:12 - 06:29:57 warmTTFT 1.807
+    gpu0 n=89 mem_max=12927 util=100% sm=915-1425 temp=75-78 pw_max=82
+vllm-t4-7b-awq-c8-r3- 8c01b326 64 8 128 True 72fb01ab toks 8192 err 0 src {'usage'} meas 06:30:04 - 06:30:49 warmTTFT 1.755
+    gpu0 n=89 mem_max=12927 util=100% sm=885-1410 temp=76-78 pw_max=79
+
+SM clock, power and temperature per run (scratchpad clocks.py over the same raw files):
+vllm-2xt4-1.5b-fp16-tp2-c32-r1-  SM MHz mean 1402 p50 1350 max 1575 | power W mean 66.8 | temp C mean 69.4 max 81 | out tok/s 1120.1
+vllm-2xt4-1.5b-fp16-tp2-c32-r2-  SM MHz mean 1367 p50 1328 max 1575 | power W mean 67.2 | temp C mean 74.0 max 82 | out tok/s 1114.4
+vllm-2xt4-1.5b-fp16-tp2-c32-r3-  SM MHz mean 1366 p50 1358 max 1575 | power W mean 66.5 | temp C mean 74.0 max 79 | out tok/s 1128.5
+vllm-t4-1.5b-awq-c1-r1-          SM MHz mean 1060 p50 1050 max 1380 | power W mean 65.9 | temp C mean 78.0 max 82 | out tok/s 114.5
+vllm-t4-1.5b-awq-c1-r2-          SM MHz mean 1073 p50 1035 max 1410 | power W mean 65.8 | temp C mean 77.2 max 78 | out tok/s 115.3
+vllm-t4-1.5b-awq-c1-r3-          SM MHz mean 1080 p50 1050 max 1410 | power W mean 66.1 | temp C mean 76.9 max 77 | out tok/s 115.7
+vllm-t4-1.5b-awq-c32-r1-         SM MHz mean 1237 p50 1230 max 1395 | power W mean 65.7 | temp C mean 76.9 max 77 | out tok/s 904.8
+vllm-t4-1.5b-awq-c32-r2-         SM MHz mean 1223 p50 1215 max 1485 | power W mean 65.7 | temp C mean 76.8 max 77 | out tok/s 908.3
+vllm-t4-1.5b-awq-c32-r3-         SM MHz mean 1246 p50 1245 max 1410 | power W mean 65.6 | temp C mean 77.0 max 77 | out tok/s 909.9
+vllm-t4-1.5b-awq-c8-r1-          SM MHz mean 1245 p50 1245 max 1410 | power W mean 65.2 | temp C mean 77.3 max 78 | out tok/s 564.5
+vllm-t4-1.5b-awq-c8-r2-          SM MHz mean 1243 p50 1245 max 1500 | power W mean 66.5 | temp C mean 77.1 max 78 | out tok/s 567.7
+vllm-t4-1.5b-awq-c8-r3-          SM MHz mean 1252 p50 1260 max 1425 | power W mean 66.7 | temp C mean 77.0 max 77 | out tok/s 568.9
+vllm-t4-1.5b-fp16-c1-r1-         SM MHz mean 691 p50 615 max 1305 | power W mean 66.8 | temp C mean 75.3 max 81 | out tok/s 53.8
+vllm-t4-1.5b-fp16-c1-r2-         SM MHz mean 605 p50 555 max 1200 | power W mean 66.4 | temp C mean 77.1 max 78 | out tok/s 50.4
+vllm-t4-1.5b-fp16-c1-r3-         SM MHz mean 611 p50 555 max 1245 | power W mean 66.5 | temp C mean 77.0 max 78 | out tok/s 50.6
+vllm-t4-1.5b-fp16-c32-r1-        SM MHz mean 1089 p50 1080 max 1380 | power W mean 65.9 | temp C mean 77.0 max 77 | out tok/s 715.1
+vllm-t4-1.5b-fp16-c32-r2-        SM MHz mean 1094 p50 1080 max 1440 | power W mean 64.8 | temp C mean 77.1 max 78 | out tok/s 716.3
+vllm-t4-1.5b-fp16-c32-r3-        SM MHz mean 1097 p50 1080 max 1320 | power W mean 64.4 | temp C mean 77.0 max 78 | out tok/s 717.4
+vllm-t4-1.5b-fp16-c8-r1-         SM MHz mean 1072 p50 1050 max 1455 | power W mean 66.4 | temp C mean 77.3 max 78 | out tok/s 355.7
+vllm-t4-1.5b-fp16-c8-r2-         SM MHz mean 1088 p50 1080 max 1380 | power W mean 65.6 | temp C mean 77.0 max 77 | out tok/s 357.1
+vllm-t4-1.5b-fp16-c8-r3-         SM MHz mean 1100 p50 1080 max 1425 | power W mean 66.1 | temp C mean 76.8 max 77 | out tok/s 355.2
+vllm-t4-7b-awq-c8-r1-            SM MHz mean 1012 p50 1005 max 1365 | power W mean 65.0 | temp C mean 77.4 max 80 | out tok/s 181.5
+vllm-t4-7b-awq-c8-r2-            SM MHz mean 1022 p50 1005 max 1425 | power W mean 65.7 | temp C mean 77.0 max 78 | out tok/s 182.1
+vllm-t4-7b-awq-c8-r3-            SM MHz mean 1028 p50 1020 max 1410 | power W mean 65.6 | temp C mean 77.0 max 78 | out tok/s 182.0
+Plausible: one row per ~0.5 s of measured wall time, util 98 to 100%, memory at the 0.90 pre-allocation.
+Every run averaged 64 to 67 W mean power against the 70 W cap, at 75 to 82 C, with SM clocks below the T4's 1590 MHz
+boost. That is all the data shows: clock event reasons were captured only at the start (nvidia-smi -q), not during
+runs, so whether the clocks were set by the power cap, temperature or something else is not recorded.
+
+## Report
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q -> 7 passed in 0.07s
+benchmark/.venv/Scripts/python benchmark/report.py -> wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 33 runs, 2 accuracy rows
+report.py changes: GPU and CPU in separate tables (the GPU table adds GPU mem max, util, SM clock p50, temp max);
+hardware column per cell from the raw env; a not-like-for-like note when both exist; a host line per label with the
+machine's GPUs from nvidia-smi and a link here; new flags "rN GPU SM clock p50 X MHz vs max Y MHz (cause not
+recorded)" when p50 < 0.6 x max within a run and "rN GPU temperature up to N C" at >= 85 C (unit test added);
+accuracy table with a session column and the AWQ minus FP16 delta for both filters with a paired 95% CI;
+ACCURACY_NOTES carries the repetition_penalty and strict-match caveats with a link here; separate GPU and CPU charts
+(review round 1).
+Every GPU number in RESULTS.md comes from the 24 raw loadgen files and the 2 lm-eval result/sample files linked there.
+
+GPU table as generated:
+### GPU (vLLM)
+
+Prefix caching is off (`--no-enable-prefix-caching`), so every repeat runs prefill and cells are not split by cache regime. GPU mem max mostly reflects vLLM pre-allocating `--gpu-memory-utilization 0.90` of each card for weights and KV cache, not the memory the workload needed. GPU columns are over all sampled GPUs (both cards for TP=2), from nvidia-smi every 500 ms during the measured window.
+
+| cell | hardware | engine | precision | conc | repeats | out tok/s | req/s | TTFT p50 s | TTFT p95 s | ITL p50 ms | TPOT p50 ms | E2E p50 s | E2E p95 s | E2E p99 s | tok/s per req p50 | err rate | GPU mem max MiB | GPU util mean % | SM clock p50 MHz | GPU temp max C |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| kaggle-20261009/vllm-2xt4-1.5b-fp16-tp2 | 2x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 32 | 3 | 1121.0 ± 7.1 | 8.758 ± 0.055 | 0.761 ± 0.037 | 1.284 ± 0.023 | 18.9 ± 0.1 | 22.5 ± 0.3 | 3.662 ± 0.003 | 3.832 ± 0.040 | 3.846 ± 0.039 | 35.0 ± 0.0 | 0.000 ± 0.000 | 13731.0 ± 0.0 | 99.6 ± 0.6 | 1345.0 ± 15.6 | 80.7 ± 1.5 |
+| kaggle-20261009/vllm-t4-1.5b-awq | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | awq-int4 | 1 | 3 | 115.2 ± 0.6 | 0.900 ± 0.005 | 0.030 ± 0.002 | 0.257 ± 0.001 | 8.017 ± 0.040 | 7.928 ± 0.076 | 1.037 ± 0.011 | 1.361 ± 0.016 | 1.372 ± 0.023 | 123.5 ± 1.3 | 0.000 ± 0.000 | 13295.0 ± 0.0 | 98.4 ± 0.4 | 1045.0 ± 8.7 | 79.0 ± 2.6 |
+| kaggle-20261009/vllm-t4-1.5b-awq | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | awq-int4 | 8 | 3 | 567.1 ± 2.3 | 4.430 ± 0.018 | 0.286 ± 0.007 | 0.852 ± 0.105 | 9.844 ± 0.057 | 10.8 ± 0.3 | 1.745 ± 0.059 | 2.686 ± 0.018 | 2.700 ± 0.009 | 73.5 ± 2.7 | 0.000 ± 0.000 | 13401.0 ± 0.0 | 99.3 ± 0.1 | 1250.0 ± 8.7 | 77.7 ± 0.6 |
+| kaggle-20261009/vllm-t4-1.5b-awq | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | awq-int4 | 32 | 3 | 907.6 ± 2.6 | 7.091 ± 0.020 | 1.197 ± 0.128 | 2.187 ± 0.107 | 19.6 ± 0.1 | 25.2 ± 0.5 | 4.517 ± 0.017 | 4.868 ± 0.021 | 5.015 ± 0.100 | 28.3 ± 0.1 | 0.000 ± 0.000 | 13401.0 ± 0.0 | 100.0 ± 0.1 | 1230.0 ± 15.0 | 77.0 ± 0.0 |
+| kaggle-20261009/vllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 1 | 3 | 51.6 ± 1.9 | 0.403 ± 0.015 | 0.034 ± 0.001 | 0.262 ± 0.004 | 19.2 ± 0.9 | 19.3 ± 0.7 | 2.499 ± 0.082 | 2.646 ± 0.133 | 2.673 ± 0.156 | 51.2 ± 1.7 | 0.000 ± 0.000 | 13209.0 ± 0.0 | 99.4 ± 0.2 | 575.0 ± 34.6 | 79.0 ± 1.7 |
+| kaggle-20261009/vllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 8 | 3 | 356.0 ± 0.9 | 2.781 ± 0.007 | 0.302 ± 0.010 | 0.691 ± 0.116 | 18.3 ± 0.1 | 19.1 ± 0.1 | 2.830 ± 0.009 | 3.731 ± 0.035 | 3.752 ± 0.031 | 45.2 ± 0.1 | 0.000 ± 0.000 | 13315.0 ± 0.0 | 99.9 ± 0.0 | 1070.0 ± 17.3 | 77.3 ± 0.6 |
+| kaggle-20261009/vllm-t4-1.5b-fp16 | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | fp16 | 32 | 3 | 716.3 ± 1.1 | 5.596 ± 0.009 | 1.171 ± 0.099 | 2.198 ± 0.096 | 29.5 ± 0.1 | 35.6 ± 1.0 | 5.675 ± 0.037 | 6.077 ± 0.013 | 6.225 ± 0.245 | 22.6 ± 0.1 | 0.000 ± 0.000 | 13315.0 ± 0.0 | 99.9 ± 0.1 | 1080.0 ± 0.0 | 77.7 ± 0.6 |
+| kaggle-20261009/vllm-t4-7b-awq | 1x Tesla T4 (Kaggle) | vllm 0.31.0 | awq-int4 | 8 | 3 | 181.9 ± 0.3 | 1.421 ± 0.003 | 0.970 ± 0.009 | 2.887 ± 0.645 | 29.9 ± 0.0 | 31.4 ± 0.6 | 5.523 ± 0.004 | 8.349 ± 0.140 | 8.393 ± 0.121 | 23.2 ± 0.0 | 0.000 ± 0.000 | 12927.0 ± 0.0 | 99.9 ± 0.1 | 1010.0 ± 8.7 | 78.7 ± 1.2 |
+
+## Accuracy (GSM8K, first 250 test items, dataset revision 740312add88f781978c0658806c59bc2815b9866, 5-shot
+## multiturn, chat template, gen_kwargs until [Question:, </s>, <|im_end|>], do_sample false, temperature 0.0)
+gsm8k-1.5b-fp16: strict-match 0.360 ± 0.030, flexible-extract 0.592 ± 0.031 (stderr)
+gsm8k-1.5b-awq:  strict-match 0.300 ± 0.029, flexible-extract 0.528 ± 0.032 (stderr)
+AWQ minus FP16, paired over the same 250 items (normal approximation 95% CI, as in RESULTS.md):
+  strict-match     -0.060, CI [-0.128, +0.008] (upper bound +0.0076). Discordant items: FP16 only right 45, AWQ only
+                   right 30; exact McNemar two-sided p = 0.105.
+  flexible-extract -0.064, CI [-0.128, +0.000] (upper bound +0.0003). Discordant: FP16 only 42, AWQ only 26; exact
+                   McNemar two-sided p = 0.068.
+Reading: AWQ scores about 6 points lower on both filters, but 250 items do not separate that from zero at the 5%
+level (both CIs include 0, flexible-extract only just). A larger subset was not run.
+strict-match also measures format: 113 (FP16) and 123 (AWQ) responses scored [invalid] (no "#### N" ending), from the
+samples files. The longest responses are about 990 characters, so a few may hit lm-eval's default generation limit.
+Both lm_eval.log files show "fatal: not a git repository" (lm-eval's own git hash lookup; harmless).
+
+## Flags and suspicious results
+- vllm-t4-1.5b-fp16 c1 (flagged in all 3 repeats: SM clock p50 615, 555, 555 MHz vs max 1305, 1200, 1245). The one
+  real anomaly. At c1 the FP16 server ran at about half the SM clock of every other cell (mean 605 to 691 MHz vs
+  1012 to 1402 elsewhere) at the same ~66 W, and its ITL p50 (19.2 ms) is no better than FP16 at c8 (18.3 ms).
+  r1 was the session's first measured load (GPU 62 C rising to 81 C) and had the highest clocks (mean 691 MHz) and
+  throughput (53.8 tok/s vs 50.4 and 50.6). The cause of the low clock is not recorded (no clock event reasons or
+  memory clock during runs). Consequence for the AWQ vs FP16 c1 comparison (115.2 vs 51.6 tok/s, AWQ c1 SM clock p50
+  ~1045 MHz): the clock difference is a real confound, but its size and direction are unknown. A large effect is
+  unlikely: batch-1 decode is memory-bound (the bandwidth check below puts both at ~130 to 150 GB/s), FP16 at c8 runs
+  18.3 ms per step at ~1070 MHz vs 19.2 ms at c1 at ~575 MHz, and weight size alone predicts up to about 2.8x (observed 2.2x)
+  (~3.1 GB FP16 vs ~1.1 GB AWQ read per token). Fix for a future run: GPU sampler now records memory clock and clock
+  event reasons, and the notebook captures nvidia-smi -q at the end (run.py and build_notebook.py changed, notebook
+  not rebuilt).
+- vllm-t4-1.5b-awq c32 (flagged: CV 0.11 on TTFT p50; r3 1.050 s vs 1.282 and 1.259). FP16 c32 shows the same
+  pattern (r3 1.059 vs 1.209 and 1.246, CV 0.08, under the limit). Throughput and E2E p95 agree within 1%. At c32
+  TTFT p50 depends on how 32 closed-loop workers line up with scheduler steps; small, not a measurement error.
+- Not flagged but noisy: 7B AWQ c8 TTFT p95 2.887 ± 0.645 s (the flag rules check TTFT p50, not p95); its TTFT p50
+  (0.961 to 0.980 s) and throughput agree within 2%. TP=2 r1 warmup TTFT mean 1.811 s vs 0.709 and 0.726 (first requests on a fresh
+  server, warmup only).
+- No warmup flags, no errors, no repeat disagreement, no temperature >= 85 C.
+- Too-good check: decode rates are within T4 memory bandwidth (320 GB/s): 1.5B FP16 c1 ~50 tok/s x ~3 GB weights
+  is ~150 GB/s; 1.5B AWQ c1 115 tok/s x ~1.1 GB is ~130 GB/s; TP=2 c32 1121 tok/s vs 716 on one GPU is 1.57x on two
+  cards without P2P. Nothing exceeds a physical bound.
+
+## Not like for like
+CPU (llama.cpp, laptop, GGUF Q4_K_M, 2 slots, warm or cold prompt cache) and GPU (vLLM, Kaggle T4, FP16 or AWQ,
+prefix caching off, 64-67 W mean vs a 70 W cap) differ in hardware, weights, server, concurrency levels and cache regime.
+RESULTS.md keeps them in separate tables and says so; no CPU vs GPU ratio is reported.
+
+## Files changed (no commit)
+benchmark/report.py, benchmark/tests/test_metrics.py, benchmark/RESULTS.md, benchmark/charts/latency_throughput_gpu.png
+and latency_throughput_cpu.png (benchmark/charts/latency_throughput.png deleted), README.md (Phase 2 section only:
+links, no numbers), docs/evidence/phase2-gpu.txt; in review round 1 also benchmark/loadgen/run.py,
+notebooks/build_notebook.py and inference/README.md.
+
+## pre-commit (paths staged with git add, then git reset -q; nothing committed)
+uvx --python 3.12 pre-commit@4.6.2 run --files <report.py, test_metrics.py, RESULTS.md, chart, README.md, this file>
+-> all hooks Passed (after one ruff-format pass on report.py and test_metrics.py; tests and report rerun, RESULTS.md
+byte-identical).
+The same run over benchmark/results/raw/kaggle-20261009/ (first pass, which included the raw files) found:
+- end-of-file-fixer and trailing-whitespace REWROTE whitespace in raw files: lm-eval results_*.json and lm_eval.log
+  (final newline), run.json, nvidia-smi.txt, nvidia-smi-q.txt, vllm-t4-benchmark.log, server-*.log (trailing spaces).
+  Whitespace only: JSON parses the same, the 24 loadgen JSON files were not touched (gpucheck.py output identical
+  before and after), RESULTS.md identical. The downloaded originals are no longer byte-exact copies of the Kaggle
+  output; re-download with kaggle kernels output if byte-exact originals are needed. (The coordinator re-downloaded
+  them byte-exact and excluded results/raw from the whitespace hooks afterwards.)
+- check-added-large-files fails on the two lm-eval samples_*.jsonl (2597 KB and 2609 KB > 500 KB). They are needed for
+  the paired CI, so they must be committed with an exclusion or a larger limit for results/raw.
+- gitleaks generic-api-key on line 7 of each server-*.log: the value is the Hugging Face tokenizer_revision commit
+  sha (public, pinned in docs/VERSIONS.md), a false positive; needs an allowlist entry.
+- check json passed on all raw JSON.
+Not fixed here: .pre-commit-config.yaml and gitleaks config are outside my paths.
+
+# Review round 1 (wording; no rerun)
+- FP16 c1 clock: reworded above. The clock confound is real, its size and direction are unknown, and memory-bound
+  batch-1 decode makes a large effect unlikely; the ~2x AWQ vs FP16 ratio at c1 matches the weight sizes alone. The
+  session-wide statement now says only what was measured: 64 to 67 W mean against a 70 W cap.
+- report.py: low-clock flag text is now "(cause not recorded)". RESULTS.md GPU section gets one generated neutral
+  line for any GPU cell whose SM clock p50 is under 0.6 x the median of the other GPU cells (only FP16 c1: 575 vs
+  1080 MHz, 53%).
+- Charts: separate figures, charts/latency_throughput_gpu.png and charts/latency_throughput_cpu.png; log axes get
+  1-2-5 tick labels.
+- For future runs (notebook not rebuilt; the coordinator commits and rebuilds):
+  * benchmark/loadgen/run.py GpuSampler query adds clocks.mem and clocks_event_reasons.active (raw keys
+    clock_mem_mhz, clocks_event_reasons; bitmask 0x4 SW power cap, 0x20 SW thermal, 0x40 HW thermal). The field
+    needs driver >= 535; if nvidia-smi rejects a field the sampler yields no rows, so check gpu_samples in the
+    first raw file of the next run.
+  * notebooks/build_notebook.py: vllm serve gets --generation-config vllm; nvidia-smi -q is saved again at the end
+    as env/nvidia-smi-q-end.txt (cumulative clock event reason counters).
+- inference/README.md: run v2 facts (driver, phone verification, ~39 min, TRITON_ATTN, Marlin, TP=2 via NCCL
+  without P2P, fallback not needed), the generation_config behaviour and fix, lock entry count (197 = vllm URL +
+  196 name==version pins; the earlier "196 pins" counted only the latter), and "rm -r .../bench" after download.

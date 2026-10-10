@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_24/2592251504.py", line 28, in step
+    res = fn(*args, **kw)
+  File "/tmp/ipykernel_24/2298588444.py", line 72, in build_engine
+    out = sh(
+        f"{env} {TPY} {BENCH}/inference/trtllm/build_engine.py {TRT_WORK}/hf {TRT_WORK} "
+    ...<3 lines>...
+        timeout=3600,
+    )
+  File "/tmp/ipykernel_24/1223397648.py", line 27, in sh
+    raise RuntimeError(f"exit {r.returncode}{why}: {cmd[:300]}\n{text[-3000:]}")
+RuntimeError: exit 1: timeout -k 60 3600 bash -c 'CUDA_VISIBLE_DEVICES=0 OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1 /tmp/venvs/trtllm/bin/python /kaggle/working/bench/inference/trtllm/build_engine.py /tmp/trtllm/hf /tmp/trtllm --cmd-out /kaggle/working/results/server_args/trtllm-build.txt'
+rror 2) at path "/tmp/trtllm/ckpt-fp16/.tmp5tdTel"
+Exception ignored in: <function PretrainedModel.__del__ at 0x7d2a0e308790>
+Traceback (most recent call last):
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/models/modeling_utils.py", line 589, in __del__
+    self.release()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/models/modeling_utils.py", line 586, in release
+    release_gc()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/_utils.py", line 471, in release_gc
+    torch.cuda.ipc_collect()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 904, in ipc_collect
+    _lazy_init()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 333, in _lazy_init
+    raise DeferredCudaCallError(msg) from e
+torch.cuda.DeferredCudaCallError: CUDA call failed lazily at initialization with error: 'NoneType' object is not iterable
+
+CUDA call was originally invoked at:
+
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 96, in <module>
+    main()
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 70, in main
+    untie(hf, untied)
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 41, in untie
+    from safetensors.torch import load_file, save_file
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/safetensors/torch.py", line 6, in <module>
+    import torch
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/__init__.py", line 1694, in <module>
+    _C._initExtension(_manager_path())
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 1470, in <module>
+    _lazy_call(_register_triton_kernels)
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 256, in _lazy_call
+    _queued_calls.append((callable, traceback.format_stack()))
+
+

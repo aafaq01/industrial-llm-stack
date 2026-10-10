@@ -1,0 +1,19 @@
+# 2026-10-10T08:39:00Z before stopping kind
+free physical memory GB 18.8
+$ docker stop llm-control-plane kind-registry kind-git
+llm-control-plane
+kind-registry
+kind-git
+# 2026-10-10T08:39:32Z 20 s after
+free physical memory GB 20.8
+$ crc version
+CRC version: 2.64.0+458092
+OpenShift version: 4.22.14
+MicroShift version: 4.22.13
+$ crc config view
+- consent-telemetry                     : no
+- cpus                                  : 6
+- disk-size                             : 60
+- host-network-access                   : true
+- memory                                : 16384
+- preset                                : okd

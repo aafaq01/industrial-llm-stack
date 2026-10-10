@@ -1,0 +1,260 @@
+# Phase 2 prep evidence (harness + notebook, no GPU run)
+date: 2026-10-07 (UTC times below)
+host: Windows 11, AMD Ryzen 7 7730U, Docker 29.6.2, uv 0.11.32, Kaggle CLI 2.2.4
+git HEAD: dddb3864fb3ec47fa15c0fa74a3a477570a60d0f (Phase 2 files uncommitted at the time)
+NOTE: another agent was building the RAG service on this machine during every run below.
+All CPU numbers here are SMOKE ONLY and must not be reported. No GPU session was started.
+
+## Client venv (Python 3.12, from benchmark/requirements.txt)
+uv venv --python 3.12 benchmark/.venv
+uv pip install --python benchmark/.venv -r benchmark/requirements.txt
+-> Python 3.12.13; datasets==5.1.0 httpx==0.28.1 lm-eval==0.4.13 matplotlib==3.11.2 pytest==9.1.1
+
+## Unit tests
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -v
+benchmark/tests/test_metrics.py::test_percentile_matches_linear_interpolation PASSED [ 20%]
+benchmark/tests/test_metrics.py::test_ttft_itl_tpot_from_synthetic_timestamps PASSED [ 40%]
+benchmark/tests/test_metrics.py::test_tpot_uses_token_count_when_chunks_carry_several_tokens PASSED [ 60%]
+benchmark/tests/test_metrics.py::test_summary_excludes_warmup_and_counts_errors PASSED [ 80%]
+benchmark/tests/test_metrics.py::test_cv_and_flags PASSED                [100%]
+5 passed in 0.08s
+
+## Smoke loadgen against llama.cpp (http://127.0.0.1:8080, compose service, --parallel 2 --threads 4)
+started 2026-10-07T15:50:39Z, 2m04s wall clock
+benchmark/.venv/Scripts/python benchmark/loadgen/run.py --base-url http://127.0.0.1:8080/v1 \
+  --model qwen2.5-1.5b-instruct-q4_k_m --model-revision sha256:6a1a2eb6...e9407e --engine llama.cpp \
+  --engine-version b11459 --precision gguf-q4_k_m --label llamacpp-cpu-1.5b-q4km --concurrency 1 4 --repeats 1 \
+  --requests 8 --warmup 2 --metrics-url http://127.0.0.1:8080/metrics --server-args "..." --smoke \
+  --out-dir benchmark/results/raw/smoke
+llamacpp-cpu-1.5b-q4km-c1-r1-20261007T155040Z.json: ok 8/8 out_tok/s 18.45724704068055 ttft_p50 0.2993409999999983 e2e_p95 9.134958700000002
+llamacpp-cpu-1.5b-q4km-c4-r1-20261007T155150Z.json: ok 8/8 out_tok/s 23.82531317606362 ttft_p50 11.448217000000001 e2e_p95 23.43774145
+Raw JSON check (smoke flag, warmup recorded and excluded, token count from server usage, docker stats captured):
+c1: smoke=True ok=8/8 errors=0 warmup_records=2 token_source=['usage'] gpu_samples=None docker_stats_rows=9
+c4: smoke=True ok=8/8 errors=0 warmup_records=2 token_source=['usage'] gpu_samples=None docker_stats_rows=9
+
+## Same loadgen on Linux (python:3.12.13-slim on the compose network), proves the Kaggle code path
+started 2026-10-07T15:59:09Z, --concurrency 2 --requests 2 --warmup 1 --max-tokens 16 --smoke, output discarded
+linuxcheck-c2-r1-20261007T155909Z.json: ok 2/2 ...
+linux ok | AMD Ryzen 7 7730U with Radeon Graphics | Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.41 | ok 2 | vllm serve 'x' --flag | abc
+
+## Smoke lm-eval GSM8K (limit 5) against llama.cpp
+started 2026-10-07T12:37:32Z, 2m54s wall clock
+bash benchmark/accuracy/run_gsm8k.sh http://127.0.0.1:8080/v1/chat/completions qwen2.5-1.5b-instruct-q4_k_m \
+  benchmark/results/raw/smoke/accuracy-llamacpp-q4km 5 2
+|   Tasks    |Version|     Filter     |n-shot|  Metric   |   |Value|   |Stderr|
+|------------|------:|----------------|-----:|-----------|---|----:|---|-----:|
+|gsm8k_pinned|      3|flexible-extract|     5|exact_match|↑  |  0.6|±  |0.2449|
+|            |       |strict-match    |     5|exact_match|↑  |  0.4|±  |0.2449|
+(5 items: proves the pipeline only, not an accuracy result)
+
+## Report
+benchmark/.venv/Scripts/python benchmark/report.py
+wrote ...\benchmark\RESULTS.md: 0 runs, 0 accuracy rows
+RESULTS.md says: "No results yet. No reportable (non-smoke) benchmark or accuracy runs have been committed."
+Non-empty path exercised on copies of the smoke files with smoke=false in a scratch directory (not committed):
+6 runs, 2 accuracy rows, table + flags + chart + AWQ/FP16 delta rendered.
+
+## Notebook validation (no GPU)
+benchmark/.venv/Scripts/python notebooks/build_notebook.py
+uvx --python 3.12 --with nbformat==5.11.1 python nbcheck.py
+json.loads: OK
+nbformat.validate: OK, cells: 17 code: 10
+compile() every code cell: OK
+compile() all code cells concatenated: OK
+embedded == repo file: benchmark/loadgen/run.py a874ae89a17d
+embedded == repo file: benchmark/loadgen/metrics.py e411ffb08a8f
+embedded == repo file: benchmark/loadgen/prompts.jsonl 72fb01ab9477
+embedded == repo file: benchmark/accuracy/run_gsm8k.sh 67b262aa1074
+embedded == repo file: benchmark/accuracy/tasks/gsm8k_pinned.yaml 8fcecb0b938c
+embedded == repo file: benchmark/requirements.txt c91bc10ea14e
+embedded == repo file: notebooks/vllm-requirements.txt de43ce294e36
+kernel-metadata.json: OK <kaggle-user>/vllm-t4-benchmark NvidiaTeslaT4
+Rebuilding twice gives an identical file (git diff --quiet).
+
+## vLLM version research (2026-10-07)
+- PyPI: newest vLLM 0.31.0 (2026-10-05). v0.31.0 CMakeLists.txt CUDA_SUPPORTED_ARCHS starts at 7.5;
+  docs/getting_started/installation/gpu.cuda.inc.md: "compute capability 7.5 or higher (e.g., T4 ...)".
+- v0.31.0 vllm/v1/attention/backends/flashinfer.py: FlashInfer floor raised to SM80 because it is broken on SM75
+  (flashinfer issue 3620); triton_attn.py supports all capabilities -> pin --attention-backend TRITON_ATTN.
+- quantization/auto_awq.py get_min_capability() == 75.
+- PyPI vllm 0.31.0 requires torch==2.13.0; PyPI torch 2.13.0 depends on cuda-toolkit 13.0.3 (needs R580+ driver).
+  GitHub release asset vllm-0.31.0+cu129 exists; torch/torchvision/torchaudio 2.13.0/0.28.0/2.11.0 +cu129 exist.
+- uv pip compile straight from the GitHub wheel URL hung for about 3 h and was killed. The round 0 lock was then
+  resolved from PyPI metadata for vllm==0.31.0 on the assumption that the +cu129 wheel had the same dependency
+  list. That assumption was FALSE (found in review, fixed in round 1 below): the wheel requires
+  humming-kernels[cu12] and plain nvidia-cutlass-dsl where PyPI has the [cu13] extras.
+
+## pre-commit (my files staged with git add, then git reset -q; nothing committed)
+uvx --python 3.12 pre-commit@4.6.2 run --all-files
+2026-10-07T15:59:56Z
+fix end of files.........................................................Passed
+trim trailing whitespace.................................................Passed
+check yaml...............................................................Passed
+check json...............................................................Passed
+check for added large files..............................................Passed
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+yamllint.................................................................Passed
+gitleaks v8.30.1.........................................................Passed
+exit 0
+
+# Review round 1 fixes (2026-10-07, UTC 16:00 to 16:30). No GPU, no commit.
+
+## B1 vLLM lock vs the real +cu129 wheel METADATA
+Wheel METADATA range-fetched from the GitHub release (reviewer's copy: scratchpad vllm_cu129_METADATA.txt).
+Non-extra Requires-Dist, PyPI vllm 0.31.0 (<) vs vllm-0.31.0+cu129 wheel (>):
+17c17
+< humming-kernels[cu13]==0.1.16
+---
+> humming-kernels[cu12]==0.1.16
+32c32
+< nvidia-cutlass-dsl[cu13]==4.7.1
+---
+> nvidia-cutlass-dsl==4.7.1
+Fix: notebooks/vllm-overrides.txt overrides humming-kernels[cu12]==0.1.16 (a nvidia-cutlass-dsl override was tried
+and dropped: other dependencies request nvidia-cutlass-dsl[cu13] themselves, and the override stripped that).
+Regenerated by running the three commands in notebooks/vllm-requirements.in verbatim (extracted with
+grep '^#   ' | sed 's/^#   //' > regen.sh; bash regen.sh), so they are copy-pasteable.
+Check: independent resolve of the 76 wheel Requires-Dist lines (uv pip compile wheel-requires.in
+--python-version 3.12 --python-platform x86_64-manylinux_2_28 --torch-backend cu129), pins compared by name==version:
+  LOCK pins == independent resolve of the +cu129 wheel METADATA Requires-Dist (196 packages, identical)
+Old lock vs new lock (< old, > new):
+  < nvidia-cuda-cccl==13.3.4.3.1   < nvidia-cuda-crt==13.4.92   < nvidia-cuda-nvcc==13.4.92
+  < nvidia-cuda-nvrtc==13.4.92     < nvidia-cuda-runtime==13.4.92   < nvidia-nvvm==13.4.92
+  > nvidia-cuda-cccl-cu12==12.9.27  > nvidia-cuda-nvcc-cu12==12.9.86
+Remaining 13.x pins, all required by the wheel's own tree: nvidia-cuda-nvdisasm==13.4.92,
+nvidia-cutlass-dsl-libs-cu13==4.7.1, nvidia-ml-py==13.615.71.
+
+## Prompt length (for the MAX_MODEL_LEN comment), measured with llama.cpp /apply-template + /tokenize
+(Qwen2.5 tokenizer from the GGUF): longest prompt l02 = 2388 chars, 864 tokens raw, 893 tokens with chat template.
+Shortest s17 = 34 tokens with template. Digits and log lines tokenize densely, so 2.7 chars/token here.
+
+## Unit tests
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q
+6 passed in 0.09s
+(new: config-disagreement flag; paired AWQ-FP16 delta with 95% CI from lm-eval samples_*.jsonl)
+
+## Notebook helper code, offline in python:3.12.13-slim with a fake nvidia-smi, fake vllm, dead port
+Runs the real code cells extracted from the built .ipynb (scratchpad nbtest/harness.py). Fixes 1, 2, 3 exercised:
+2026-10-07T16:20:30Z
+fake nvidia-smi
+
+GPU_COUNT = 1
+GPU_COUNT from fake nvidia-smi: 1
+1 sh(check=True) raised: exit 3: echo boom; exit 3
+drain-test: GPU memory.used MiB after stop [300] (10s)
+2 stop_server: group alive after stop = False, took 10s
+  drain log: drain-test: GPU memory.used MiB after stop [300] (10s)
+crash-cell: GPU memory.used MiB after stop [300] (0s)
+crash-cell FAILED, see results/FAILED-crash-cell.txt
+crash-cell: 5s
+3 FAILED-crash-cell.txt: RuntimeError: server exited with code 1
+loadgen-fail FAILED, see results/FAILED-loadgen-fail.txt
+loadgen-fail: GPU memory.used MiB after stop [300] (0s)
+loadgen-fail: 1s
+4 FAILED-loadgen-fail.txt: httpx.ConnectError: [Errno 111] Connection refused
+  timing: 1 s wall clock
+5 GpuSampler via run.py:
+gpusampler-check-c1-r1-20261007T162146Z.json: ok 2/2 out_tok/s 17.40910136938903 ttft_p50 0.17268050000000001 e2e_p95 0.9195769999999999
+  gpu_samples rows 4 first {'timestamp': '2026/10/07 12:00:00.000', 'gpu': '0', 'memory_used_mib': '900', 'memory_total_mib': '15360', 'util_gpu_pct': '37', 'clock_sm_mhz': '1590', 'temp_c': '55', 'power_w': '70.10'}
+(2: worker ignores SIGTERM and is SIGKILLed via the process group; drain loop waited for memory.used < 1 GiB.
+ 5: GpuSampler now uses nvidia-smi -f <file>, query adds clocks.sm and temperature.gpu. Output not committed:
+ the GPU rows come from the fake nvidia-smi.)
+
+## report.py
+benchmark/.venv/Scripts/python benchmark/report.py -> 0 runs, 0 accuracy rows, "No results yet", now with the
+ignore_eos note in the header. On scratch copies (session dir "run", smoke files marked non-smoke, smoke lm-eval
+samples copied as both fp16 and awq):
+  cells named run/llamacpp-cpu-1.5b-q4km (session dir + label)
+  AWQ minus FP16 (strict-match, 5.0 items): +0.000 (FP16 stderr 0.245, AWQ stderr 0.245)
+  Paired over the same 5 items: +0.000, 95% CI [+0.000, +0.000] (normal approximation).
+
+## Notebook validation (rebuilt)
+json.loads: OK
+nbformat.validate: OK, cells: 17 code: 10
+compile() every code cell: OK
+compile() all code cells concatenated: OK
+embedded == repo file bytes: benchmark/loadgen/run.py 93e95977aecd
+embedded == repo file bytes: benchmark/loadgen/metrics.py e411ffb08a8f
+embedded == repo file bytes: benchmark/loadgen/prompts.jsonl 72fb01ab9477
+embedded == repo file bytes: benchmark/accuracy/run_gsm8k.sh 67b262aa1074
+embedded == repo file bytes: benchmark/accuracy/tasks/gsm8k_pinned.yaml 8fcecb0b938c
+embedded == repo file bytes: benchmark/requirements.txt c91bc10ea14e
+embedded == repo file bytes: notebooks/vllm-requirements.txt 9218775e0b0c
+kernel-metadata.json: OK <kaggle-user>/vllm-t4-benchmark NvidiaTeslaT4
+rebuild idempotent
+
+## pre-commit, round 1 (my paths staged, then git reset -q)
+uvx --python 3.12 pre-commit@4.6.2 run --all-files
+2026-10-07T16:22:40Z
+fix end of files.........................................................Passed
+trim trailing whitespace.................................................Passed
+check yaml...............................................................Passed
+check json...............................................................Passed
+check for added large files..............................................Passed
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+yamllint.................................................................Passed
+gitleaks v8.30.1.........................................................Passed
+exit 0
+
+# Round 2 (2026-10-08): Kaggle run v1 failed with no GPU and no internet
+Evidence kept in benchmark/results/raw/kaggle-20261007/ (bench/ copy of the code deleted, README.md added):
+run.json gpu_count 0; nvidia-smi.txt "/bin/sh: 1: nvidia-smi: not found"; vllm-t4-benchmark.log shows
+pip install uv==0.11.32 failing with "Temporary failure in name resolution"; install-vllm.log shows uv timing out
+on github.com (python-build-standalone). Changes: new preflight cell after env capture; pip install uv now check=True.
+
+## Preflight cell, run from the built notebook in python:3.12.13-slim
+2026-10-08T09:20:54Z
+== A: --network none, no nvidia-smi (like run v1)
+/bin/sh: 1: nvidia-smi: not found
+GPU_COUNT = 0
+PREFLIGHT RAISED: no GPU/internet: check Kaggle phone verification and that the accelerator is GPU T4 x2 and Internet is on (nvidia-smi not found; https://pypi.org/simple/ not reachable: <urlopen error [Errno -3] Temporary failure in name resolution>; https://github.com not reachable: <urlopen error [Errno -3] Temporary failure in name resolution>)
+FAILED-preflight.txt:
+no GPU/internet: check Kaggle phone verification and that the accelerator is GPU T4 x2 and Internet is on
+nvidia-smi not found
+https://pypi.org/simple/ not reachable: <urlopen error [Errno -3] Temporary failure in name resolution>
+https://github.com not reachable: <urlopen error [Errno -3] Temporary failure in name resolution>
+== B: internet, fake nvidia-smi listing 1 GPU
+preflight OK: 1 GPU(s), pypi.org and github.com reachable
+PREFLIGHT PASSED
+
+## Notebook validation (rebuilt; GIT_COMMIT c3ff8954e5b12343a91ffe64c586604260bbedfa, embedded files clean)
+json.loads: OK
+nbformat.validate: OK, cells: 18 code: 11
+compile() every code cell: OK
+compile() all code cells concatenated: OK
+embedded == repo file bytes: benchmark/loadgen/run.py 93e95977aecd
+embedded == repo file bytes: benchmark/loadgen/metrics.py e411ffb08a8f
+embedded == repo file bytes: benchmark/loadgen/prompts.jsonl 72fb01ab9477
+embedded == repo file bytes: benchmark/accuracy/run_gsm8k.sh 67b262aa1074
+embedded == repo file bytes: benchmark/accuracy/tasks/gsm8k_pinned.yaml 8fcecb0b938c
+embedded == repo file bytes: benchmark/requirements.txt c91bc10ea14e
+embedded == repo file bytes: notebooks/vllm-requirements.txt 9218775e0b0c
+kernel-metadata.json: OK <kaggle-user>/vllm-t4-benchmark NvidiaTeslaT4
+rebuild idempotent
+
+## Helper harness rerun on the rebuilt notebook (fake nvidia-smi, fake vllm, dead port)
+1 sh(check=True) raised: exit 3: echo boom; exit 3
+2 stop_server: group alive after stop = False, took 10s
+3 FAILED-crash-cell.txt: RuntimeError: server exited with code 1
+4 FAILED-loadgen-fail.txt: httpx.ConnectError: [Errno 111] Connection refused
+
+## pytest
+6 passed in 0.22s
+
+## report.py (kaggle-20261007 has 0 JSON files with a schema key and no results_*.json, so it is ignored)
+wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 0 runs, 0 accuracy rows
+
+## pre-commit, round 2 (my paths staged, then git reset -q)
+2026-10-08T09:23:57Z
+fix end of files.........................................................Passed
+trim trailing whitespace.................................................Passed
+check yaml...............................................................Passed
+check json...............................................................Passed
+check for added large files..............................................Passed
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+yamllint.................................................................Passed
+gitleaks v8.30.1.........................................................Passed
+exit 0

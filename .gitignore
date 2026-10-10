@@ -1,0 +1,19 @@
+.env
+*.gguf
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.ipynb_checkpoints/
+.tools/
+# Kaggle output: exported ONNX models and TensorRT engines (sha256 recorded in the raw JSON and exports.json)
+benchmark/results/raw/kaggle-*/results/models/*.onnx
+benchmark/results/raw/kaggle-*/results/models/*.engine
+benchmark/vision/.data/
+
+# graphify local state (graph.json, graph.html, GRAPH_REPORT.md, manifest are committed)
+graphify-out/.graphify_python
+graphify-out/.graphify_root
+graphify-out/cache/
+graphify-out/cost.json
+docs/private/

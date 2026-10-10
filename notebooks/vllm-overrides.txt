@@ -1,0 +1,5 @@
+# The vllm-0.31.0+cu129 wheel's METADATA requires humming-kernels[cu12]; the PyPI vllm 0.31.0 METADATA requires
+# humming-kernels[cu13]. Overriding it makes a resolve from PyPI metadata match the cu129 wheel. (The wheels also
+# differ on nvidia-cutlass-dsl vs nvidia-cutlass-dsl[cu13], but other packages request the [cu13] extra anyway, so
+# that one needs no override.) Used by the compile command in vllm-requirements.in.
+humming-kernels[cu12]==0.1.16

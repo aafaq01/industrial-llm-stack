@@ -1,0 +1,43 @@
+{
+  "run_id": "20261008T113955Z",
+  "ids": [
+    1,
+    4,
+    7,
+    10,
+    11,
+    12,
+    13,
+    16,
+    19,
+    22,
+    25,
+    28
+  ],
+  "judge_url": "http://127.0.0.1:8081/v1",
+  "judge": "Qwen2.5-7B-Instruct GGUF Q4_K_M via llama.cpp server-b11459, temperature 0, JSON schema output",
+  "git_describe": "2e92380-dirty",
+  "rag_api_image_id": "sha256:483e3833bbe8e93bee58add6ab6a6cf04c930395fcf1d5d22784067a31c9d96c",
+  "summary": {
+    "faithfulness": [
+      0.5916666666666667,
+      12
+    ],
+    "answer_relevancy": [
+      0.7979166666666666,
+      12
+    ],
+    "faithfulness_excluding_contradicted": [
+      0.6454545454545454,
+      11
+    ],
+    "answer_relevancy_excluding_contradicted": [
+      0.8704545454545454,
+      11
+    ]
+  },
+  "contradicted": [
+    "11:answer_relevancy",
+    "22:faithfulness"
+  ]
+}

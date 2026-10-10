@@ -1,0 +1,36 @@
+2026-10-09T08:50:12Z
+Deleting cluster "llm" ...
+Deleted nodes: ["llm-control-plane"]
+[08:50:24Z] kind cluster llm, kind-registry and kind-git removed
+DOWN_RC=0
+[08:50:24Z] kind v0.33.0, context kind-llm, git source head
+Creating cluster "llm" ...
+ • Ensuring node image (kindest/node:v1.36.4) 🖼️  ...
+ ✓ Ensuring node image (kindest/node:v1.36.4) 🖼️
+ • Preparing nodes 📦   ...
+ ✓ Preparing nodes 📦
+ • Writing configuration 📜  ...
+ ✓ Writing configuration 📜
+ • Starting control-plane 🕹️  ...
+ ✓ Starting control-plane 🕹️
+ • Installing CNI 🔌  ...
+ ✓ Installing CNI 🔌
+ • Installing StorageClass 💾  ...
+ ✓ Installing StorageClass 💾
+ • Waiting ≤ 2m0s for control-plane = Ready ⏳  ...
+ ✓ Waiting ≤ 2m0s for control-plane = Ready ⏳
+ • Ready after 18s 💚
+Set kubectl context to "kind-llm"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-llm
+
+Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/
+[08:51:10Z] building and pushing the rag image
+[08:51:17Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+[08:51:19Z] git://kind-git/industrial-llm-platform main = bea3e53e4870db62c18c1c028475f562d2d65544
+[08:51:22Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[08:57:16Z] installing ArgoCD v3.5.4
+error: timed out waiting for the condition
+UP_RC=1 WALL=716s
+2026-10-09T09:02:20Z

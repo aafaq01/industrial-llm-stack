@@ -1,0 +1,17 @@
+# Vision environment for the Kaggle v3 notebook (Linux x86_64, glibc >= 2.35, Python 3.12, CUDA 12.9 builds).
+# Lock: vision-requirements.txt. Install: uv pip install --torch-backend cu129 --extra-index-url https://pypi.nvidia.com
+#   --index-strategy unsafe-best-match -r notebooks/vision-requirements.txt
+# Regenerate (the NVIDIA index serves the TensorRT wheels; PyPI only has sdists that download them at build time):
+#   uv pip compile notebooks/vision-requirements.in -o notebooks/vision-requirements.txt --python-version 3.12 --python-platform x86_64-manylinux_2_35 --torch-backend cu129 --extra-index-url https://pypi.nvidia.com --index-strategy unsafe-best-match
+# CUDA 12 throughout so an R525+ driver suffices: onnxruntime-gpu 1.26.0 is the last CUDA 12 build on PyPI (1.27+ need
+# CUDA 13), TensorRT 10.16 is the last 10.x (TensorRT 11 is strongly typed and Ultralytics then needs ModelOpt for FP16).
+# nvidia-pytriton pins numpy < 2, which holds opencv-python at 4.11.
+ultralytics==8.4.174
+torch==2.13.0
+torchvision
+onnx
+onnxslim
+onnxruntime-gpu==1.26.0
+tensorrt-cu12==10.16.1.11
+nvidia-pytriton==0.7.0
+httpx==0.28.1

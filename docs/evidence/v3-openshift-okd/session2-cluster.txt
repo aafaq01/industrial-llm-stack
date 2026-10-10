@@ -1,0 +1,124 @@
+# 2026-10-10T08:44:25Z second crc session, before okd-up.sh
+$ oc version
+Client Version: 4.22.0-okd-scos.10
+Kustomize Version: v5.7.1
+Server Version: 4.22.0-okd-scos.10
+Kubernetes Version: v1.35.6
+$ oc get nodes -o wide
+NAME   STATUS   ROLES                         AGE   VERSION   INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                                          KERNEL-VERSION           CONTAINER-RUNTIME
+crc    Ready    control-plane,master,worker   25d   v1.35.5   192.168.126.11   <none>        CentOS Stream CoreOS 10.0.20260806-0 (Coughlan)   6.12.0-254.el10.x86_64   cri-o://1.35.5
+$ oc get node crc -o jsonpath=... (nodeInfo)
+osImage=CentOS Stream CoreOS 10.0.20260806-0 (Coughlan) kernel=6.12.0-254.el10.x86_64 runtime=cri-o://1.35.5 kubelet=v1.35.5 allocatable_cpu=5800m allocatable_memory=15909396Ki
+$ oc debug node/crc -q -- chroot /host sysctl vm.max_map_count
+vm.max_map_count = 262144
+$ oc describe node crc | sed -n "/Allocated resources/,/Events/p"
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests       Limits
+  --------           --------       ------
+  cpu                4731m (81%)    15010m (258%)
+  memory             14722Mi (94%)  12728Mi (81%)
+  ephemeral-storage  0 (0%)         0 (0%)
+  hugepages-1Gi      0 (0%)         0 (0%)
+  hugepages-2Mi      0 (0%)         0 (0%)
+Events:
+$ oc get storageclass
+NAME                                     PROVISIONER                        RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+crc-csi-hostpath-provisioner (default)   kubevirt.io.hostpath-provisioner   Retain          WaitForFirstConsumer   false                  24d
+$ oc -n openshift-marketplace get catalogsource community-operators -o jsonpath={.spec.image}
+registry.access.redhat.com/redhat/community-operator-index:v4.22
+## object timestamps (raw source for install timings in the first session)
+$ oc -n openshift-operators get subscription,installplan -o custom-columns=...
+KIND           NAME              CREATED
+Subscription   argocd-operator   2026-10-10T07:03:46Z
+InstallPlan    install-bkktm     2026-10-10T07:04:03Z
+$ oc -n openshift-operators get csv argocd-operator.v0.19.0 -o jsonpath={range .status.conditions[*]}...
+created=2026-10-10T07:04:12Z
+2026-10-10T07:04:19Z Installing InstallSucceeded
+2026-10-10T07:04:19Z Installing InstallWaiting
+2026-10-10T07:04:27Z Pending NeedsReinstall
+2026-10-10T07:04:28Z InstallReady AllRequirementsMet
+2026-10-10T07:04:28Z Installing InstallSucceeded
+2026-10-10T07:04:28Z Installing InstallWaiting
+2026-10-10T07:05:13Z Succeeded InstallSucceeded
+2026-10-10T07:21:00Z Failed ComponentUnhealthy
+2026-10-10T07:21:03Z Pending NeedsReinstall
+2026-10-10T07:21:03Z InstallReady AllRequirementsMet
+2026-10-10T07:21:04Z Installing InstallSucceeded
+2026-10-10T07:21:04Z Installing InstallWaiting
+2026-10-10T07:21:12Z Succeeded InstallSucceeded
+2026-10-10T08:28:30Z Failed ComponentUnhealthy
+2026-10-10T08:28:34Z Succeeded InstallSucceeded
+2026-10-10T08:41:50Z Failed ComponentUnhealthy
+2026-10-10T08:42:02Z Pending NeedsReinstall
+2026-10-10T08:42:03Z InstallReady AllRequirementsMet
+2026-10-10T08:42:06Z Installing InstallSucceeded
+2026-10-10T08:42:12Z Succeeded InstallSucceeded
+$ oc -n argocd get argocd argocd -o jsonpath=...
+created=2026-10-10T07:05:24Z phase=Available
+$ oc -n argocd get pods -o custom-columns=NAME,CREATED,STARTED
+NAME                                 CREATED                STARTED
+argocd-application-controller-0      2026-10-10T07:05:26Z   2026-10-10T07:05:26Z
+argocd-redis-7d4bd965dc-hd9sz        2026-10-10T07:05:26Z   2026-10-10T07:05:26Z
+argocd-repo-server-954d6c58c-8htdl   2026-10-10T07:05:26Z   2026-10-10T07:05:26Z
+argocd-server-78c98497-7qpzx         2026-10-10T07:05:26Z   2026-10-10T07:05:26Z
+$ helm --kube-context crc-admin -n keda history keda
+REVISION	UPDATED                 	STATUS    	CHART      	APP VERSION	DESCRIPTION     
+1       	Sat Oct 10 12:10:04 2026	superseded	keda-2.21.0	2.21.0     	Install complete
+2       	Sat Oct 10 13:05:02 2026	superseded	keda-2.21.0	2.21.0     	Upgrade complete
+3       	Sat Oct 10 13:07:57 2026	superseded	keda-2.21.0	2.21.0     	Upgrade complete
+4       	Sat Oct 10 13:31:45 2026	deployed  	keda-2.21.0	2.21.0     	Upgrade complete
+$ oc -n keda get deploy -o custom-columns=NAME,CREATED + available condition time
+keda-admission-webhooks created=2026-10-10T07:10:12Z available_since=2026-10-10T08:42:13Z
+keda-operator created=2026-10-10T07:10:12Z available_since=2026-10-10T08:42:07Z
+keda-operator-metrics-apiserver created=2026-10-10T07:10:12Z available_since=2026-10-10T08:42:03Z
+$ oc -n llm get imagestream rag -o jsonpath=...
+created=2026-10-10T07:14:48Z tag=0.1.0 2026-10-10T07:14:48Z sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e
+$ oc get ns llm argocd -o custom-columns=NAME,CREATED
+NAME     CREATED
+llm      2026-10-10T07:13:31Z
+argocd   2026-10-10T07:05:24Z
+keda     2026-10-10T07:10:11Z
+$ oc -n argocd get applications -o custom-columns=NAME,CREATED,WAVE
+NAME            CREATED                WAVE
+llamacpp        2026-10-10T07:23:27Z   <none>
+platform-deps   2026-10-10T07:23:25Z   <none>
+rag-api         2026-10-10T07:43:17Z   <none>
+root            2026-10-10T07:23:18Z   <none>
+$ oc -n llm get pods,jobs -o wide
+NAME                              READY   STATUS      RESTARTS   AGE
+pod/elasticsearch-0               1/1     Running     2          81m
+pod/llamacpp-5b84d6996b-59bsb     1/1     Running     2          81m
+pod/postgres-0                    1/1     Running     2          81m
+pod/prometheus-5d68576949-hqc6j   1/1     Running     2          81m
+pod/rag-api-f96cc9996-h6bmn       1/1     Running     2          60m
+pod/rag-ingest-7748n              0/1     Completed   0          60m
+
+NAME                   STATUS     COMPLETIONS   DURATION   AGE
+job.batch/rag-ingest   Complete   1/1           17m        60m
+$ oc -n llm get events --sort-by=.lastTimestamp
+2m51s       Normal    Created                        pod/prometheus-5d68576949-hqc6j              Container created
+2m50s       Warning   Unhealthy                      pod/prometheus-5d68576949-hqc6j              Readiness probe failed: Get "http://10.217.0.7:9090/-/ready": dial tcp 10.217.0.7:9090: connect: connection refused
+2m50s       Normal    Started                        pod/prometheus-5d68576949-hqc6j              Container started
+2m43s       Warning   Unhealthy                      pod/rag-api-f96cc9996-h6bmn                  Startup probe failed: Get "http://10.217.0.49:8000/healthz": dial tcp 10.217.0.49:8000: connect: connection refused
+2m43s       Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/keda-hpa-llamacpp    invalid metrics (1 invalid out of 1), first error is: failed to get s0-prometheus external metric value: failed to get s0-prometheus external metric: unable to get external metric llm/s0-prometheus/&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: llamacpp,},MatchExpressions:[]LabelSelectorRequirement{},}: unable to fetch metrics from external metrics API: the server is currently unable to handle the request (get s0-prometheus.external.metrics.k8s.io)
+2m43s       Warning   FailedGetExternalMetric        horizontalpodautoscaler/keda-hpa-llamacpp    unable to get external metric llm/s0-prometheus/&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: llamacpp,},MatchExpressions:[]LabelSelectorRequirement{},}: unable to fetch metrics from external metrics API: the server is currently unable to handle the request (get s0-prometheus.external.metrics.k8s.io)
+2m35s       Warning   FailedMount                    pod/postgres-0                               MountVolume.SetUp failed for volume "pvc-69545a29-ee23-4a1f-afa8-50dc894c1214" : rpc error: code = Unknown desc = check target path: could not get consistent content of /proc/mounts after 3 attempts
+2m34s       Normal    AddedInterface                 pod/elasticsearch-0                          Add eth0 [10.217.0.10/23] from ovn-kubernetes
+2m34s       Normal    Pulled                         pod/llamacpp-5b84d6996b-59bsb                Container image "curlimages/curl:8.22.0" already present on machine and can be accessed by the pod
+2m34s       Normal    AddedInterface                 pod/llamacpp-5b84d6996b-59bsb                Add eth0 [10.217.0.18/23] from ovn-kubernetes
+2m34s       Normal    Pulled                         pod/elasticsearch-0                          Container image "elasticsearch:9.5.5" already present on machine and can be accessed by the pod
+2m33s       Normal    Started                        pod/elasticsearch-0                          Container started
+2m33s       Normal    Created                        pod/llamacpp-5b84d6996b-59bsb                Container created
+2m33s       Normal    Started                        pod/llamacpp-5b84d6996b-59bsb                Container started
+2m33s       Normal    Created                        pod/elasticsearch-0                          Container created
+2m22s       Normal    Started                        pod/llamacpp-5b84d6996b-59bsb                Container started
+2m22s       Normal    Created                        pod/llamacpp-5b84d6996b-59bsb                Container created
+2m22s       Normal    Pulled                         pod/llamacpp-5b84d6996b-59bsb                Container image "ghcr.io/ggml-org/llama.cpp:server-b11459" already present on machine and can be accessed by the pod
+2m20s       Warning   Unhealthy                      pod/llamacpp-5b84d6996b-59bsb                Readiness probe failed: HTTP probe failed with statuscode: 503
+113s        Warning   Unhealthy                      pod/rag-api-f96cc9996-h6bmn                  Startup probe failed: HTTP probe failed with statuscode: 500
+101s        Warning   Unhealthy                      pod/elasticsearch-0                          Readiness probe failed:
+90s         Normal    AddedInterface                 pod/postgres-0                               Add eth0 [10.217.0.11/23] from ovn-kubernetes
+90s         Normal    Pulled                         pod/postgres-0                               Container image "postgres:18.6-alpine3.24" already present on machine and can be accessed by the pod
+90s         Normal    Created                        pod/postgres-0                               Container created
+90s         Normal    Started                        pod/postgres-0                               Container started

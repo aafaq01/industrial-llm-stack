@@ -1,0 +1,6 @@
+# Client-side benchmark tools (loadgen, report, accuracy, tests). Lock: requirements.txt.
+# uv pip compile --universal --python-version 3.12 benchmark/requirements.in -o benchmark/requirements.txt
+httpx==0.28.1
+matplotlib==3.11.2
+pytest==9.1.1
+lm-eval[api]==0.4.13

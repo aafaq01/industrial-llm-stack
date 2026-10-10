@@ -1,0 +1,83 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_24/2592251504.py", line 28, in step
+    res = fn(*args, **kw)
+  File "/tmp/ipykernel_24/1233512867.py", line 23, in install
+    sh(
+    ~~^
+        f"uv python install {TRTLLM_PYTHON} && uv venv -q --python {TRTLLM_PYTHON} {VENVS}/trtllm && "
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        timeout=2400,
+        ^^^^^^^^^^^^^
+    )[-1500:]
+    ^
+  File "/tmp/ipykernel_24/1223397648.py", line 27, in sh
+    raise RuntimeError(f"exit {r.returncode}{why}: {cmd[:300]}\n{text[-3000:]}")
+RuntimeError: exit 1: timeout -k 60 2400 bash -c 'uv python install 3.10.20 && uv venv -q --python 3.10.20 /tmp/venvs/trtllm && uv pip install -q --python /tmp/venvs/trtllm/bin/python --torch-backend cu124 --extra-index-url https://pypi.nvidia.com --index-strategy unsafe-best-match -r /kaggle/working/bench/notebooks/trtl
+",
+      line 547, in setup
+          return fcn_setup(**attrs)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/__init__.py",
+      line 117, in setup
+          return distutils.core.setup(**attrs)  # type: ignore[return-value]
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/core.py",
+      line 168, in setup
+          return run_commands(dist)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/core.py",
+      line 184, in run_commands
+          dist.run_commands()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1028, in run_commands
+          self.run_command(cmd)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1106, in run_command
+          super().run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1047, in run_command
+          cmd_obj.run()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/command/bdist_wheel.py",
+      line 385, in run
+          self.run_command("build")
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/cmd.py",
+      line 342, in run_command
+          self.distribution.run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1106, in run_command
+          super().run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1047, in run_command
+          cmd_obj.run()
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/command/build.py",
+      line 137, in run
+          self.run_command(cmd_name)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/cmd.py",
+      line 342, in run_command
+          self.distribution.run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/dist.py",
+      line 1106, in run_command
+          super().run_command(command)
+        File
+      "/root/.cache/uv/builds-v0/.tmpfuOaA1/lib/python3.10/site-packages/setuptools/_distutils/dist.py",
+      line 1047, in run_command
+          cmd_obj.run()
+        File
+      "/root/.cache/uv/sdists-v9/pypi/mpi4py/3.1.6/ulDZrbukL547wrf0/src/conf/mpidistutils.py",
+      line 1002, in run
+          self.compiler = new_compiler(compiler=self.compiler,
+      TypeError: new_compiler() got an unexpected keyword argument 'dry_run'
+
+
+hint: Build failures usually indicate a problem with the package or the build environment

@@ -1,0 +1,38 @@
+level=info msg="Using bundle path .tools\\downloads\\crc\\crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle"
+level=info msg="Checking minimum RAM requirements"
+level=info msg="Checking if running in a shell with administrator rights"
+level=info msg="Checking Windows release"
+level=info msg="Checking Windows edition"
+level=info msg="Checking if Hyper-V is installed and operational"
+level=info msg="Checking if Hyper-V service is enabled"
+level=info msg="Checking if crc-users group exists"
+level=info msg="Checking if current user is in crc-users and Hyper-V admins group"
+level=info msg="Checking if vsock is correctly configured"
+level=info msg="Checking if CRC bundle is extracted in '$HOME/.crc'"
+level=info msg="Checking if .tools\\downloads\\crc\\crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle exists"
+level=info msg="Checking if the win32 background launcher is installed"
+level=info msg="Checking if the daemon task is installed"
+level=info msg="Checking if the daemon task is running"
+level=info msg="Checking admin helper service is running"
+level=info msg="Checking SSH port availability"
+Your system is correctly setup for using CRC. Use 'crc start' to start the instance
+[08:04:57Z] Client Version: 4.22.0-okd-scos.10 Kustomize Version: v5.7.1 Server Version: 4.22.0-okd-scos.10 Kubernetes Version: v1.35.6 
+Warning: resource namespaces/argocd is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by oc apply. oc apply should only be used on resources created declaratively by either oc create --save-config or oc apply. The missing annotation will be patched automatically.
+Warning: resource namespaces/llm is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by oc apply. oc apply should only be used on resources created declaratively by either oc create --save-config or oc apply. The missing annotation will be patched automatically.
+[08:06:26Z] rag image image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e
+[08:06:33Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy at c055b4021897f4eed11e7e6e490b740bcdb55cd0
+[08:06:33Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+NAME                              READY   STATUS      RESTARTS   AGE
+pod/elasticsearch-0               1/1     Running     0          43m
+pod/llamacpp-5b84d6996b-59bsb     1/1     Running     0          43m
+pod/postgres-0                    1/1     Running     0          43m
+pod/prometheus-5d68576949-hqc6j   1/1     Running     0          43m
+pod/rag-api-f96cc9996-h6bmn       1/1     Running     0          22m
+pod/rag-ingest-7748n              0/1     Completed   0          22m
+
+NAME                                HOST/PORT                       PATH   SERVICES   PORT   TERMINATION     WILDCARD
+route.route.openshift.io/llamacpp   llamacpp-llm.apps-crc.testing          llamacpp   http   edge/Redirect   None
+route.route.openshift.io/rag-api    rag-api-llm.apps-crc.testing           rag-api    http   edge/Redirect   None
+[08:06:34Z] done in 1m52s
+chat:  curl -N --cacert <(~/.crc/bin/oc/oc.exe --context crc-admin -n openshift-config-managed get cm default-ingress-cert -o jsonpath='{.data.ca-bundle\.crt}') https://rag-api-llm.apps-crc.testing/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+exit 0

@@ -1,0 +1,209 @@
+{
+ "schema": 1,
+ "workload": "onnx-compare",
+ "label": "onnx-compare",
+ "created_utc": "2026-10-10T14:54:35+00:00",
+ "onnx": "1.23.2",
+ "files": [
+  {
+   "path": "benchmark/results/raw/kaggle-20261010-v3c/results/models/yolov8n-fp32-opset17.onnx",
+   "sha256": "c3a4c32fa3939177778425a9384c75d2202473cce75d1afefc2ca54d684d7eb4",
+   "nodes": 321,
+   "op_counts": {
+    "Add": 14,
+    "Cast": 6,
+    "Concat": 32,
+    "ConstantOfShape": 3,
+    "Conv": 64,
+    "Div": 1,
+    "Expand": 6,
+    "Gather": 9,
+    "MaxPool": 3,
+    "Mul": 61,
+    "Range": 6,
+    "Reshape": 17,
+    "Resize": 2,
+    "Shape": 10,
+    "Sigmoid": 58,
+    "Slice": 2,
+    "Softmax": 1,
+    "Split": 8,
+    "Sub": 2,
+    "Transpose": 3,
+    "Unsqueeze": 13
+   },
+   "canonical_graph_sha256": "288f06e660f6b4ec90a84f1d12a2908b37bed1e9d52029a611a1d6778294b545",
+   "initializers": 149,
+   "initializer_bytes": 12607848,
+   "initializer_sha256": "4bf7cccbe17c047d84eb3ff4d3ee0d05516e688da23b3465f2b221f6a57eb1ef",
+   "other": {
+    "metadata_props": {
+     "description": "Ultralytics YOLOv8n model trained on coco.yaml",
+     "author": "Ultralytics",
+     "date": "2026-10-10T09:33:45.710448+00:00",
+     "version": "8.4.174",
+     "license": "AGPL-3.0 License (https://ultralytics.com/license)",
+     "docs": "https://docs.ultralytics.com",
+     "stride": "32",
+     "task": "detect",
+     "head": "Detect",
+     "batch": "1",
+     "imgsz": "[640, 640]",
+     "names": "{0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus', 6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant', 11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat', 16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear', 22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag', 27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard', 32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove', 36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair', 57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet', 62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard', 67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink', 72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors', 77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'}",
+     "args": "{'data': None, 'batch': 1, 'fraction': 1.0, 'quantize': None, 'nms': None, 'dynamic': True, 'simplify': True, 'opset': 17}",
+     "channels": "3",
+     "end2end": "False"
+    },
+    "value_info": 1548,
+    "value_info_sha256": "84bbc0d5372f5aec8af4646406442bd48912fc2e871799362e820a3754d70ae5",
+    "producer": "pytorch 2.13.0",
+    "ir_version": 8,
+    "opset_import": [
+     [
+      "",
+      17
+     ]
+    ],
+    "doc_string_bytes": 0,
+    "node_names_sha256": "56a06c5f9cd6499a4910b0be6edd87bf1a492527edffac83fde0839902dcbabe"
+   }
+  },
+  {
+   "path": "benchmark/results/raw/kaggle-20261010-v3e/results/models/yolov8n-fp32-opset17.onnx",
+   "sha256": "9f29af4a18a944c7cdcda32de27b67246de558274260cb9938e32d5520359e85",
+   "nodes": 321,
+   "op_counts": {
+    "Add": 14,
+    "Cast": 6,
+    "Concat": 32,
+    "ConstantOfShape": 3,
+    "Conv": 64,
+    "Div": 1,
+    "Expand": 6,
+    "Gather": 9,
+    "MaxPool": 3,
+    "Mul": 61,
+    "Range": 6,
+    "Reshape": 17,
+    "Resize": 2,
+    "Shape": 10,
+    "Sigmoid": 58,
+    "Slice": 2,
+    "Softmax": 1,
+    "Split": 8,
+    "Sub": 2,
+    "Transpose": 3,
+    "Unsqueeze": 13
+   },
+   "canonical_graph_sha256": "288f06e660f6b4ec90a84f1d12a2908b37bed1e9d52029a611a1d6778294b545",
+   "initializers": 149,
+   "initializer_bytes": 12607848,
+   "initializer_sha256": "4bf7cccbe17c047d84eb3ff4d3ee0d05516e688da23b3465f2b221f6a57eb1ef",
+   "other": {
+    "metadata_props": {
+     "description": "Ultralytics YOLOv8n model trained on coco.yaml",
+     "author": "Ultralytics",
+     "date": "2026-10-10T12:19:19.106350+00:00",
+     "version": "8.4.174",
+     "license": "AGPL-3.0 License (https://ultralytics.com/license)",
+     "docs": "https://docs.ultralytics.com",
+     "stride": "32",
+     "task": "detect",
+     "head": "Detect",
+     "batch": "1",
+     "imgsz": "[640, 640]",
+     "names": "{0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus', 6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant', 11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat', 16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear', 22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag', 27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard', 32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove', 36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair', 57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet', 62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard', 67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink', 72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors', 77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'}",
+     "args": "{'data': None, 'batch': 1, 'fraction': 1.0, 'quantize': None, 'nms': None, 'dynamic': True, 'simplify': True, 'opset': 17}",
+     "channels": "3",
+     "end2end": "False"
+    },
+    "value_info": 989,
+    "value_info_sha256": "6007423eaac51a54099d73ef14532dedff22e173beeaa2928cded730c68e701f",
+    "producer": "pytorch 2.13.0",
+    "ir_version": 8,
+    "opset_import": [
+     [
+      "",
+      17
+     ]
+    ],
+    "doc_string_bytes": 0,
+    "node_names_sha256": "56a06c5f9cd6499a4910b0be6edd87bf1a492527edffac83fde0839902dcbabe"
+   }
+  },
+  {
+   "path": "benchmark/results/raw/kaggle-20261010-v3g/results/models/yolov8n-fp32-opset17.onnx",
+   "sha256": "a1b5783436403b9100fc5a0ae7f70fbbc1a8cea0cb52e5abc848442e5fc12d25",
+   "nodes": 321,
+   "op_counts": {
+    "Add": 14,
+    "Cast": 6,
+    "Concat": 32,
+    "ConstantOfShape": 3,
+    "Conv": 64,
+    "Div": 1,
+    "Expand": 6,
+    "Gather": 9,
+    "MaxPool": 3,
+    "Mul": 61,
+    "Range": 6,
+    "Reshape": 17,
+    "Resize": 2,
+    "Shape": 10,
+    "Sigmoid": 58,
+    "Slice": 2,
+    "Softmax": 1,
+    "Split": 8,
+    "Sub": 2,
+    "Transpose": 3,
+    "Unsqueeze": 13
+   },
+   "canonical_graph_sha256": "288f06e660f6b4ec90a84f1d12a2908b37bed1e9d52029a611a1d6778294b545",
+   "initializers": 149,
+   "initializer_bytes": 12607848,
+   "initializer_sha256": "4bf7cccbe17c047d84eb3ff4d3ee0d05516e688da23b3465f2b221f6a57eb1ef",
+   "other": {
+    "metadata_props": {
+     "description": "Ultralytics YOLOv8n model trained on coco.yaml",
+     "author": "Ultralytics",
+     "date": "2026-10-10T12:48:43.495596+00:00",
+     "version": "8.4.174",
+     "license": "AGPL-3.0 License (https://ultralytics.com/license)",
+     "docs": "https://docs.ultralytics.com",
+     "stride": "32",
+     "task": "detect",
+     "head": "Detect",
+     "batch": "1",
+     "imgsz": "[640, 640]",
+     "names": "{0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus', 6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant', 11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat', 16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear', 22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag', 27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard', 32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove', 36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair', 57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet', 62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard', 67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink', 72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors', 77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'}",
+     "args": "{'data': None, 'batch': 1, 'fraction': 1.0, 'quantize': None, 'nms': None, 'dynamic': True, 'simplify': True, 'opset': 17}",
+     "channels": "3",
+     "end2end": "False"
+    },
+    "value_info": 1548,
+    "value_info_sha256": "f9d887b236b5995922597e171d3ac9652d590e44c6c08a833c242be853e44493",
+    "producer": "pytorch 2.13.0",
+    "ir_version": 8,
+    "opset_import": [
+     [
+      "",
+      17
+     ]
+    ],
+    "doc_string_bytes": 0,
+    "node_names_sha256": "56a06c5f9cd6499a4910b0be6edd87bf1a492527edffac83fde0839902dcbabe"
+   }
+  }
+ ],
+ "bytes_identical": false,
+ "graph_identical": true,
+ "weights_identical": true,
+ "differing_fields": [
+  "metadata_props",
+  "value_info",
+  "value_info_sha256"
+ ],
+ "differing_metadata_keys": [
+  "date"
+ ]
+}

@@ -1,0 +1,16 @@
+v3 item 7: GitHub Actions, first run
+Repo: https://github.com/aafaq01/industrial-llm-platform (private), created 2026-10-09 with `gh repo create`,
+main pushed over HTTPS (gh credential helper for that push only). Pre-push checks: no .env/key/token files tracked;
+gitleaks v8.30.1 over full history: 30 commits scanned, no leaks found.
+
+Run 37970874178, trigger: push of 66e3b23, 2026-10-09T18:05:39Z, conclusion: success.
+Full log (ANSI colour codes and trailing whitespace stripped, otherwise as returned by `gh run view --log`): v3-github-actions/run-37970874178.log
+
+| job   | duration | steps                         | result |
+|-------|----------|-------------------------------|--------|
+| lint  | 91 s     | ci/run.sh lint, ci/run.sh charts | success: gitleaks 31 commits scanned, no leaks found; charts pass |
+| test  | 138 s    | ci/run.sh test                | success: benchmark 9 passed, rag 7 passed, promtool config/rules SUCCESS |
+| image | 175 s    | ci/run.sh build, ci/run.sh scan | success: Trivy, vulnerability DB downloaded at run time (mirror.gcr.io/aquasec/trivy-db:2), 0 vulnerabilities at CRITICAL in rag:ci-1 (debian 13.7) and every python package |
+
+Push, chart bump and ArgoCD sync are skipped on GitHub by design (a hosted runner cannot reach the local kind cluster);
+see the header of .github/workflows/ci.yml.

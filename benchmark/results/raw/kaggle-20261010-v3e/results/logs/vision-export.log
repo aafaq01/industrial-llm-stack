@@ -1,0 +1,170 @@
+Ultralytics 8.4.174 🚀 Python-3.12.13 torch-2.13.0+cu129 CPU (Intel Xeon CPU @ 2.00GHz)
+💡 ProTip: Export to OpenVINO format for best performance on Intel hardware. Learn more at https://docs.ultralytics.com/integrations/openvino
+YOLOv8n summary (fused): 72 layers, 3,151,904 parameters, 0 gradients, 8.7 GFLOPs
+
+[34m[1mPyTorch:[0m starting from '/kaggle/working/results/models/work/yolov8n.pt' with input shape (1, 3, 640, 640) BCHW and output shape(s) (1, 84, 8400) (6.2 MB)
+
+[34m[1mONNX:[0m starting export with onnx 1.23.2 opset 17...
+[34m[1mONNX:[0m slimming with onnxslim 0.1.98...
+[34m[1mONNX:[0m export success ✅ 4.2s, saved as '/kaggle/working/results/models/work/yolov8n.onnx' (12.3 MB)
+
+Export complete (4.5s)
+Results saved to [1m/kaggle/working/results/models/work/yolov8n.onnx[0m
+Predict:         yolo predict task=detect model=/kaggle/working/results/models/work/yolov8n.onnx imgsz=640 
+Validate:        yolo val task=detect model=/kaggle/working/results/models/work/yolov8n.onnx imgsz=640 data=coco.yaml  
+Visualize:       https://netron.app
+Ultralytics 8.4.174 🚀 Python-3.12.13 torch-2.13.0+cu129 CUDA:0 (Tesla T4, 14912MiB)
+YOLOv8n summary (fused): 72 layers, 3,151,904 parameters, 0 gradients, 8.7 GFLOPs
+
+[34m[1mPyTorch:[0m starting from '/kaggle/working/results/models/work/yolov8n.pt' with input shape (1, 3, 640, 640) BCHW and output shape(s) (1, 84, 8400) (6.2 MB)
+
+[34m[1mONNX:[0m starting export with onnx 1.23.2 opset 17...
+[34m[1mONNX:[0m slimming with onnxslim 0.1.98...
+[34m[1mONNX:[0m export success ✅ 0.8s, saved as '/kaggle/working/results/models/work/yolov8n.onnx' (12.3 MB)
+
+[34m[1mTensorRT:[0m starting export with TensorRT 10.16.1.11...
+[10/10/2026-12:19:25] [TRT] [I] [MemUsageChange] Init CUDA: CPU -2, GPU +0, now: CPU 688, GPU 194 (MiB)
+[10/10/2026-12:19:25] [TRT] [I] ----------------------------------------------------------------
+[10/10/2026-12:19:25] [TRT] [I] Input filename:   /kaggle/working/results/models/work/yolov8n.onnx
+[10/10/2026-12:19:25] [TRT] [I] ONNX IR version:  0.0.8
+[10/10/2026-12:19:25] [TRT] [I] Opset version:    17
+[10/10/2026-12:19:25] [TRT] [I] Producer name:    pytorch
+[10/10/2026-12:19:25] [TRT] [I] Producer version: 2.13.0
+[10/10/2026-12:19:25] [TRT] [I] Domain:           
+[10/10/2026-12:19:25] [TRT] [I] Model version:    0
+[10/10/2026-12:19:25] [TRT] [I] Doc string:       
+[10/10/2026-12:19:25] [TRT] [I] ----------------------------------------------------------------
+[34m[1mTensorRT:[0m input "images" with shape(1, 3, 640, 640) DataType.FLOAT
+[34m[1mTensorRT:[0m output "output0" with shape(1, 84, 8400) DataType.FLOAT
+[34m[1mTensorRT:[0m building FP16 engine as /kaggle/working/results/models/work/yolov8n.engine
+[10/10/2026-12:19:25] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-12:19:25] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +98, GPU +2, now: CPU 1024, GPU 196 (MiB)
+[10/10/2026-12:19:25] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-12:19:25] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[10/10/2026-12:23:33] [TRT] [I] Detected 1 inputs and 3 output network tensors.
+[10/10/2026-12:23:35] [TRT] [I] Total Host Persistent Memory: 370608 bytes
+[10/10/2026-12:23:35] [TRT] [I] Total Device Persistent Memory: 566272 bytes
+[10/10/2026-12:23:35] [TRT] [I] Max Scratch Memory: 0 bytes
+[10/10/2026-12:23:35] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 121 steps to complete.
+[10/10/2026-12:23:35] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 7.89958ms to assign 8 blocks to 121 nodes requiring 9997824 bytes.
+[10/10/2026-12:23:35] [TRT] [I] Total Activation Memory: 9996800 bytes
+[10/10/2026-12:23:35] [TRT] [I] Total Weights Memory: 6430336 bytes
+[10/10/2026-12:23:35] [TRT] [I] Engine generation completed in 249.721 seconds.
+[10/10/2026-12:23:35] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 169 MiB
+[34m[1mTensorRT:[0m export success ✅ 251.5s, saved as '/kaggle/working/results/models/work/yolov8n.engine' (7.8 MB)
+
+Export complete (252.4s)
+Results saved to [1m/kaggle/working/results/models/work/yolov8n.engine[0m
+Predict:         yolo predict task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 quantize=16
+Validate:        yolo val task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 data=coco.yaml quantize=16 
+Visualize:       https://netron.app
+Ultralytics 8.4.174 🚀 Python-3.12.13 torch-2.13.0+cu129 CUDA:0 (Tesla T4, 14912MiB)
+YOLOv8n summary (fused): 72 layers, 3,151,904 parameters, 0 gradients, 8.7 GFLOPs
+
+[34m[1mPyTorch:[0m starting from '/kaggle/working/results/models/work/yolov8n.pt' with input shape (8, 3, 640, 640) BCHW and output shape(s) (8, 84, 8400) (6.2 MB)
+
+[34m[1mONNX:[0m starting export with onnx 1.23.2 opset 17...
+[34m[1mONNX:[0m slimming with onnxslim 0.1.98...
+[34m[1mONNX:[0m export success ✅ 1.1s, saved as '/kaggle/working/results/models/work/yolov8n.onnx' (12.3 MB)
+
+[34m[1mTensorRT:[0m starting export with TensorRT 10.16.1.11...
+[10/10/2026-12:23:37] [TRT] [I] ----------------------------------------------------------------
+[10/10/2026-12:23:37] [TRT] [I] Input filename:   /kaggle/working/results/models/work/yolov8n.onnx
+[10/10/2026-12:23:37] [TRT] [I] ONNX IR version:  0.0.8
+[10/10/2026-12:23:37] [TRT] [I] Opset version:    17
+[10/10/2026-12:23:37] [TRT] [I] Producer name:    pytorch
+[10/10/2026-12:23:37] [TRT] [I] Producer version: 2.13.0
+[10/10/2026-12:23:37] [TRT] [I] Domain:           
+[10/10/2026-12:23:37] [TRT] [I] Model version:    0
+[10/10/2026-12:23:37] [TRT] [I] Doc string:       
+[10/10/2026-12:23:37] [TRT] [I] ----------------------------------------------------------------
+[34m[1mTensorRT:[0m input "images" with shape(8, 3, 640, 640) DataType.FLOAT
+[34m[1mTensorRT:[0m output "output0" with shape(8, 84, 8400) DataType.FLOAT
+[34m[1mTensorRT:[0m building FP16 engine as /kaggle/working/results/models/work/yolov8n.engine
+[10/10/2026-12:23:37] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-12:23:37] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -119, GPU +0, now: CPU 1705, GPU 474 (MiB)
+[10/10/2026-12:23:37] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-12:23:37] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[10/10/2026-12:27:20] [TRT] [I] Detected 1 inputs and 3 output network tensors.
+[10/10/2026-12:27:21] [TRT] [I] Total Host Persistent Memory: 324256 bytes
+[10/10/2026-12:27:21] [TRT] [I] Total Device Persistent Memory: 1039872 bytes
+[10/10/2026-12:27:21] [TRT] [I] Max Scratch Memory: 0 bytes
+[10/10/2026-12:27:21] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 116 steps to complete.
+[10/10/2026-12:27:21] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 7.23097ms to assign 8 blocks to 116 nodes requiring 77825024 bytes.
+[10/10/2026-12:27:21] [TRT] [I] Total Activation Memory: 77824000 bytes
+[10/10/2026-12:27:21] [TRT] [I] Total Weights Memory: 6430368 bytes
+[10/10/2026-12:27:21] [TRT] [I] Engine generation completed in 224.367 seconds.
+[10/10/2026-12:27:21] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 200 MiB
+[34m[1mTensorRT:[0m export success ✅ 226.0s, saved as '/kaggle/working/results/models/work/yolov8n.engine' (7.5 MB)
+
+Export complete (226.2s)
+Results saved to [1m/kaggle/working/results/models/work/yolov8n.engine[0m
+Predict:         yolo predict task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 quantize=16
+Validate:        yolo val task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 data=coco.yaml quantize=16 
+Visualize:       https://netron.app
+Ultralytics 8.4.174 🚀 Python-3.12.13 torch-2.13.0+cu129 CUDA:0 (Tesla T4, 14912MiB)
+YOLOv8n summary (fused): 72 layers, 3,151,904 parameters, 0 gradients, 8.7 GFLOPs
+
+[34m[1mPyTorch:[0m starting from '/kaggle/working/results/models/work/yolov8n.pt' with input shape (32, 3, 640, 640) BCHW and output shape(s) (32, 84, 8400) (6.2 MB)
+
+[34m[1mONNX:[0m starting export with onnx 1.23.2 opset 17...
+[34m[1mONNX:[0m slimming with onnxslim 0.1.98...
+[34m[1mONNX:[0m export success ✅ 1.0s, saved as '/kaggle/working/results/models/work/yolov8n.onnx' (12.3 MB)
+
+[34m[1mTensorRT:[0m starting export with TensorRT 10.16.1.11...
+[10/10/2026-12:27:23] [TRT] [I] ----------------------------------------------------------------
+[10/10/2026-12:27:23] [TRT] [I] Input filename:   /kaggle/working/results/models/work/yolov8n.onnx
+[10/10/2026-12:27:23] [TRT] [I] ONNX IR version:  0.0.8
+[10/10/2026-12:27:23] [TRT] [I] Opset version:    17
+[10/10/2026-12:27:23] [TRT] [I] Producer name:    pytorch
+[10/10/2026-12:27:23] [TRT] [I] Producer version: 2.13.0
+[10/10/2026-12:27:23] [TRT] [I] Domain:           
+[10/10/2026-12:27:23] [TRT] [I] Model version:    0
+[10/10/2026-12:27:23] [TRT] [I] Doc string:       
+[10/10/2026-12:27:23] [TRT] [I] ----------------------------------------------------------------
+[34m[1mTensorRT:[0m input "images" with shape(32, 3, 640, 640) DataType.FLOAT
+[34m[1mTensorRT:[0m output "output0" with shape(32, 84, 8400) DataType.FLOAT
+[34m[1mTensorRT:[0m building FP16 engine as /kaggle/working/results/models/work/yolov8n.engine
+[10/10/2026-12:27:23] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-12:27:23] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -119, GPU +0, now: CPU 1736, GPU 1938 (MiB)
+[10/10/2026-12:27:23] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-12:27:23] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[10/10/2026-12:31:13] [TRT] [I] Detected 1 inputs and 3 output network tensors.
+[10/10/2026-12:31:14] [TRT] [I] Total Host Persistent Memory: 322384 bytes
+[10/10/2026-12:31:14] [TRT] [I] Total Device Persistent Memory: 1129984 bytes
+[10/10/2026-12:31:14] [TRT] [I] Max Scratch Memory: 0 bytes
+[10/10/2026-12:31:14] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 120 steps to complete.
+[10/10/2026-12:31:14] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 7.89591ms to assign 9 blocks to 120 nodes requiring 311297536 bytes.
+[10/10/2026-12:31:14] [TRT] [I] Total Activation Memory: 311296000 bytes
+[10/10/2026-12:31:14] [TRT] [I] Total Weights Memory: 6379680 bytes
+[10/10/2026-12:31:14] [TRT] [I] Engine generation completed in 230.856 seconds.
+[10/10/2026-12:31:14] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 800 MiB
+[34m[1mTensorRT:[0m export success ✅ 232.4s, saved as '/kaggle/working/results/models/work/yolov8n.engine' (7.5 MB)
+
+Export complete (232.7s)
+Results saved to [1m/kaggle/working/results/models/work/yolov8n.engine[0m
+Predict:         yolo predict task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 quantize=16
+Validate:        yolo val task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 data=coco.yaml quantize=16 
+Visualize:       https://netron.app
+{
+ "yolov8n-fp32-opset17.onnx": {
+  "sha256": "9f29af4a18a944c7cdcda32de27b67246de558274260cb9938e32d5520359e85",
+  "precision": "fp32",
+  "batch": "dynamic"
+ },
+ "yolov8n-fp16-b1.engine": {
+  "sha256": "15be2884dcda9b115c84661141b4c1f7197dac8f5dd5f6710cc7c6782fa7aa0d",
+  "precision": "fp16",
+  "batch": 1
+ },
+ "yolov8n-fp16-b8.engine": {
+  "sha256": "87522ae867ab59cef9d8b5df0a31dcb9a0e357a636e647b283eb8b25c813d14c",
+  "precision": "fp16",
+  "batch": 8
+ },
+ "yolov8n-fp16-b32.engine": {
+  "sha256": "2b89ce441d5d044b308fa7589a38d1b2045d80eb9bf374d8c9d53c544aaa2572",
+  "precision": "fp16",
+  "batch": 32
+ }
+}

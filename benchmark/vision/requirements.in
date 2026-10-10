@@ -1,0 +1,7 @@
+# Local CPU baseline for the vision benchmark (run_vision.py --backend ort-cpu, fetch_coco_subset.py). Python 3.12.
+# Lock: requirements.txt. Same ONNX Runtime version as the Kaggle GPU run (onnxruntime-gpu 1.26.0).
+#   uv pip compile --universal --python-version 3.12 benchmark/vision/requirements.in -o benchmark/vision/requirements.txt
+onnxruntime==1.26.0
+pillow
+numpy
+httpx==0.28.1

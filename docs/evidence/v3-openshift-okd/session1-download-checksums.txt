@@ -1,0 +1,2 @@
+crc-windows-installer.zip: OK
+okd-bundle-windows.layer.tar.gz: OK

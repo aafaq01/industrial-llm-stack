@@ -1,0 +1,30 @@
+{{- if .Values.autoscaling.enabled }}
+{{- $a := .Values.autoscaling }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: llamacpp
+  labels: {app: llamacpp}
+spec:
+  scaleTargetRef:
+    name: llamacpp
+  minReplicaCount: {{ $a.minReplicas }}
+  maxReplicaCount: {{ $a.maxReplicas }}
+  pollingInterval: {{ $a.pollingInterval }}
+  cooldownPeriod: {{ $a.cooldownPeriod }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: {{ $a.scaleDownStabilizationSeconds }}
+          policies:
+            - {type: Pods, value: 1, periodSeconds: 30}
+  triggers:
+    # Target average per replica = slots per replica, so replicas = ceil(in-flight / parallel).
+    - type: prometheus
+      metricType: AverageValue
+      metadata:
+        serverAddress: {{ $a.prometheusAddress | default (printf "http://prometheus.%s.svc:9090" $.Release.Namespace) }}
+        query: {{ $a.query | quote }}
+        threshold: {{ .Values.server.parallel | quote }}
+{{- end }}

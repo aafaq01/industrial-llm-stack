@@ -1,0 +1,5 @@
+apiVersion: v2
+name: platform-deps
+description: Minimal single-instance PostgreSQL, Elasticsearch and Prometheus (scrapes llama.cpp for KEDA). Dev only.
+type: application
+version: 0.1.0

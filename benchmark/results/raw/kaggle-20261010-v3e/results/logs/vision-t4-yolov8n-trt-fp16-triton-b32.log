@@ -1,0 +1,3 @@
+vision-t4-yolov8n-trt-fp16-triton-b32-r1-20261010T123354Z.json: ok 20/20 images/s 23.3 p50 1361.81 ms p99 1422.45 ms
+vision-t4-yolov8n-trt-fp16-triton-b32-r2-20261010T123436Z.json: ok 20/20 images/s 23.2 p50 1377.56 ms p99 1449.81 ms
+vision-t4-yolov8n-trt-fp16-triton-b32-r3-20261010T123518Z.json: ok 20/20 images/s 23.3 p50 1369.33 ms p99 1478.63 ms

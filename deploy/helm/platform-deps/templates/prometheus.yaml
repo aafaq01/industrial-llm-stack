@@ -1,0 +1,99 @@
+{{- define "prom.config" -}}
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: llamacpp
+    scrape_interval: 5s
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces: {own_namespace: true}
+    relabel_configs:
+      - {source_labels: [__meta_kubernetes_pod_label_app], regex: llamacpp, action: keep}
+      - {source_labels: [__meta_kubernetes_pod_container_port_name], regex: http, action: keep}
+      - {source_labels: [__meta_kubernetes_pod_name], target_label: pod}
+{{- end }}
+# Minimal in-cluster Prometheus: only scrapes llama.cpp pods in this namespace, for the KEDA trigger.
+# ponytail: no rules, alerting or Grafana here; the compose stack has the full observability setup.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: prometheus
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: prometheus
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+data:
+  prometheus.yml: |
+    {{- include "prom.config" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels: {app: prometheus}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: prometheus}
+  template:
+    metadata:
+      labels: {app: prometheus}
+      annotations:
+        checksum/config: {{ include "prom.config" . | sha256sum | trunc 16 }}
+    spec:
+      serviceAccountName: prometheus
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: prometheus
+          image: {{ .Values.prometheus.image }}
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time={{ .Values.prometheus.retention }}
+          ports:
+            - {name: http, containerPort: 9090}
+          readinessProbe:
+            httpGet: {path: /-/ready, port: http}
+            periodSeconds: 5
+          resources: {{- toYaml .Values.prometheus.resources | nindent 12 }}
+          securityContext: {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - {name: config, mountPath: /etc/prometheus}
+            - {name: data, mountPath: /prometheus}
+      volumes:
+        - name: config
+          configMap: {name: prometheus}
+        - name: data
+          emptyDir: {}  # ponytail: metrics are only needed live for KEDA; use a PVC to keep history
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels: {app: prometheus}
+spec:
+  selector: {app: prometheus}
+  ports:
+    - {name: http, port: 9090, targetPort: http}

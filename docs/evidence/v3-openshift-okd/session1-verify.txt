@@ -1,0 +1,160 @@
+## 2026-10-10T08:02:32Z applications
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+## pods: SCC annotation, pod and container securityContext
+elasticsearch-0 scc=restricted-v2 fsGroup=1000670000 runAsNonRoot=true seccomp=RuntimeDefault [elasticsearch runAsUser=1000670000 roRootFs=false drop=["ALL"]]
+llamacpp-5b84d6996b-59bsb scc=restricted-v2 fsGroup=1000670000 runAsNonRoot=true seccomp=RuntimeDefault [llama-server runAsUser=1000670000 roRootFs=true drop=["ALL"]]
+postgres-0 scc=restricted-v2 fsGroup=1000670000 runAsNonRoot=true seccomp=RuntimeDefault [postgres runAsUser=1000670000 roRootFs=true drop=["ALL"]]
+prometheus-5d68576949-hqc6j scc=restricted-v2 fsGroup=1000670000 runAsNonRoot=true seccomp=RuntimeDefault [prometheus runAsUser=1000670000 roRootFs=true drop=["ALL"]]
+rag-api-f96cc9996-h6bmn scc=restricted-v2 fsGroup=1000670000 runAsNonRoot=true seccomp=RuntimeDefault [rag-api runAsUser=1000670000 roRootFs=true drop=["ALL"]]
+rag-ingest-7748n scc=restricted-v2 fsGroup=1000670000 runAsNonRoot=true seccomp=RuntimeDefault [ingest runAsUser=1000670000 roRootFs=true drop=["ALL"]]
+## namespace uid range
+1000670000/10000
+## id inside pods
+postgres-0: uid=1000670000(1000670000) gid=0(root) groups=0(root),1000670000
+elasticsearch-0: uid=1000670000 gid=0(root) groups=0(root),1000670000
+deploy/llamacpp: uid=1000670000(1000670000) gid=0(root) groups=0(root),1000670000
+deploy/rag-api: uid=1000670000(1000670000) gid=0(root) groups=0(root),1000670000
+deploy/prometheus: uid=1000670000(1000670000) gid=0(root) groups=0(root),1000670000
+## jobs
+NAME         STATUS     COMPLETIONS   DURATION   AGE
+rag-ingest   Complete   1/1           17m        18m
+rag-migrate PreSync Succeeded Reached expected number of succeeded pods
+rag-ingest Sync Running job.batch/rag-ingest created
+## alembic_version
+0001
+## ingest log tail
+Batches:  92%|█████████▏| 45/49 [14:08<01:08, 17.06s/it]Batches:  94%|█████████▍| 46/49 [14:23<00:49, 16.62s/it]Batches:  96%|█████████▌| 47/49 [14:37<00:31, 15.90s/it]Batches:  98%|█████████▊| 48/49 [14:52<00:15, 15.59s/it]Batches: 100%|██████████| 49/49 [15:06<00:00, 14.92s/it]Batches: 100%|██████████| 49/49 [15:06<00:00, 18.49s/it]
+indexed 9 documents, 3129 chunks in 992s
+index count: 3129
+## routes
+NAME       HOST/PORT                       PATH   SERVICES   PORT   TERMINATION     WILDCARD
+llamacpp   llamacpp-llm.apps-crc.testing          llamacpp   http   edge/Redirect   None
+rag-api    rag-api-llm.apps-crc.testing           rag-api    http   edge/Redirect   None
+## pvc
+NAME                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS                   VOLUMEATTRIBUTESCLASS   AGE
+data-elasticsearch-0   Bound    pvc-687939ba-0354-407e-891c-8708090a554e   59Gi       RWO            crc-csi-hostpath-provisioner   <unset>                 39m
+data-postgres-0        Bound    pvc-69545a29-ee23-4a1f-afa8-50dc894c1214   59Gi       RWO            crc-csi-hostpath-provisioner   <unset>                 39m
+llamacpp-models        Bound    pvc-dd409c5f-5e1d-4e33-91c5-0e5f8db8a475   59Gi       RWX            crc-csi-hostpath-provisioner   <unset>                 39m
+## 2026-10-10T08:02:45Z hosts file (crc daemon adds Route hosts)
+llamacpp-llm.apps-crc.testing
+rag-api-llm.apps-crc.testing
+## http -> https redirect
+302 https://rag-api-llm.apps-crc.testing/healthz
+## rag-api /healthz over the Route (TLS verified with the cluster ingress CA)
+{"status":"ok"}
+HTTP 200 0.060513s
+## llamacpp /v1/models over the Route
+{"models":[{"name":"/models/qwen2.5-1.5b-instruct-q4_k_m.gguf","model":"/models/qwen2.5-1.5b-instruct-q4_k_m.gguf","modified_at":"","size":"","digest":"","type":"model","description":"","tags":[""],"capabilities":["completion"],"parameters":"","details":{"parent_model":"","format":"gguf","family":"","families":[""],"parameter_size":"","quantization_level":""}}],"object":"list","data":[{"id":"/models/qwen2.5-1.5b-instruct-q4_k_m.gguf","aliases":["/models/qwen2.5-1.5b-instruct-q4_k_m.gguf"],"tags":[],"object":"model","architecture":{"input_modalities":["text"],"output_modalities":["text"]},"created":1791619371,"owned_by":"llamacpp","meta":{"vocab_type":2,"n_vocab":151936,"n_ctx":2048,"n_ctx_train":32768,"n_embd":1536,"n_params":1777088000,"size":1111370240,"ftype":"Q4_K - Medium"}}]}
+HTTP 200
+## chat over the Route
+event: session
+data: {"session_id": "b6332d87-dfbe-43a0-ba3c-70b5a8b635da", "trace_id": "00000000000000000000000000000000"}
+
+event: sources
+data: [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf", "content": "of confidence. Thus one can confidently assert that y U \u2264 Y \u2264 y + U, which is commonly written as Y = y \u00b1 U. Use expanded uncertainty U to report the results of all NIST measurements other than those for which uc has traditionally been employed. To be consistent with current international practice, the value of k to be used at NIST for calculating U is, by convention, k = 2. Values of k other than 2 are only to be used for specific applications dictated by established and documented requirements. 4) Reporting Uncertainty : Report U together with the coverage factor k used to obtain it, or report u .c\nWhen reporting a measurement result and its uncertainty, include the following information in the report itself or by referring to a published document: \u2013 A list of all components of standard uncertainty, together with their degrees of freedom "}, {"n": 2, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 16, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf", "content": "the usual \u201croot-sum-of-squares\u201d method, or equivalent established and documented methods. Commonly, u is used for reporting results ofc determinations of fundamental constants, fundamental metrological research, and international comparisons of realizations of SI units. NIST Administrative Manual 4.09 Appendix E 11\fGuidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results NIST Technical Communications Program 3) Expanded Uncertainty : Determine an expanded uncertainty U by multiplying u by a coverage factor c k: U = ku . The purpose of U is to provide an interval c\ny U to y + U about the result y within which the value of Y, the specific quantity subject to measurement and estimated by y, can be asserted to lie with a high level of confidence. Thus one can confidently assert that y U \u2264 Y \u2264 y + U, which is commonly written as Y = y \u00b1 U. Use expanded uncertainty U "}, {"n": 3, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 9, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf", "content": "industrial, and regulatory applications of NIST results (e.g., when health and safety are concerned), what is often required is a measure of uncertainty that defines an interval about the measurement result y within which the value of the measurand Y is confidently believed to lie. The measure of uncertainty intended to meet this requirement is termed expanded uncertainty, suggested symbol U, and is obtained by multiplying u (y)b y a coverage factor, suggested symbol c\nk. Thus U = ku (y) and it is confidently believed that c\ny U \u2264 Y \u2264 y + U, which is commonly written as Y = y \u00b1 U. It is to be understood that subsection 5.5 also applies to the interval defined by expanded uncertainty U. 6.2 In general, the value of the coverage factor k is chosen on the basis of the desired level of confidence to be associated with the interval defined "}, {"n": 4, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 21, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf", "content": "or \u201cthe expanded uncertainty (coverage factor k=2 and thus a two-standard-\ndeviation estimate) is U=4 \u00b5\u03a9.\u201d It should also be recognized that, while an estimated standard deviation that is a component of uncertainty of a measurement result is properly called a \u201cstandard 16\fGuidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results uncertainty,\u201d not every estimated standard deviation is necessarily a standard uncertainty. D.1.6 Words such as \u201cestimated\u201d or \u201climits of\u201d should normally not be used to modify \u201cstandard uncertainty,\u201d \u201ccombined standard uncertainty,\u201d \u201cexpanded uncertainty,\u201d the \u201crelative\u201d forms of these terms (see subsection D.1.4), or more generally \u201cuncertainty.\u201d The word \u201cuncertainty,\u201d by its very nature, implies that the uncertainty of the result of a measurement is an estimate and generally does not have well-defined limits. D.1.7 The phrase \u201ccomponents of uncertainty that contribute to the uncertainty of the measurement result\u201d can have two distinct meanings. For example, if the input "}, {"n": 5, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 21, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf", "content": "( y)\u2261 u ( y)/ y , and U \u2261U/ y .xir c,r c r\nD.1.5 As pointed out in subsection D.1.2, the use of the terms standard uncertainty, combined standard uncertainty, expanded uncertainty, or their equivalent \u201crelative\u201d forms (see subsection D.1.4), is normally required by NIST policy. Alternate terms should therefore play a subsidiary role in any NIST publication that reports the result of a measurement and its uncertainty. However, since it will take some time before the meanings of these terms become well known, they should be defined at the beginning of a paper or when first used. In the latter case, this may be done by writing, for example, \u201cthe standard uncertainty (estimated standard deviation) is u(R)=2 \u00b5\u03a9\u201d; or \u201cthe expanded uncertainty (coverage factor k=2 and thus a two-standard-\ndeviation estimate) is U=4 \u00b5\u03a9.\u201d It should also be recognized that, while an estimated standard deviation that is a component "}]
+
+event: token
+data: {"text": "N"}
+
+event: token
+data: {"text": "IST"}
+
+event: token
+data: {"text": " uses"}
+
+event: token
+data: {"text": " a"}
+
+event: token
+data: {"text": " coverage"}
+
+event: token
+data: {"text": " factor"}
+
+event: token
+data: {"text": " of"}
+
+event: token
+data: {"text": " "}
+
+event: token
+data: {"text": "2"}
+
+event: token
+data: {"text": " to"}
+
+event: token
+data: {"text": " calculate"}
+
+event: token
+data: {"text": " expanded"}
+
+event: token
+data: {"text": " uncertainty"}
+
+event: token
+data: {"text": "."}
+
+event: token
+data: {"text": " ["}
+
+event: token
+data: {"text": "1"}
+
+event: token
+data: {"text": "]"}
+
+event: done
+data: {"answer": "NIST uses a coverage factor of 2 to calculate expanded uncertainty. [1]", "citations": [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf"}], "usage": {"completion_tokens": 18, "prompt_tokens": 1273, "total_tokens": 1291, "completion_tokens_details": null, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}}
+
+
+HTTP 200 total 24.913262s
+## 2026-10-10T08:03:18Z KEDA
+NAME                            SCALETARGETKIND      SCALETARGETNAME   MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+scaledobject.keda.sh/llamacpp   apps/v1.Deployment   llamacpp          1     3     True    True     False      False    prometheus                     39m
+
+NAME                                                    REFERENCE             TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/keda-hpa-llamacpp   Deployment/llamacpp   1/2 (avg)   1         3         1          39m
+{"kind":"ExternalMetricValueList","apiVersion":"external.metrics.k8s.io/v1beta1","metadata":{},"items":[{"metricName":"s0-prometheus","metricLabels":null,"timestamp":"2026-10-10T08:03:25Z","value":"0"}]}
+
+## node allocation
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests       Limits
+  --------           --------       ------
+  cpu                4731m (81%)    15010m (258%)
+## 2026-10-10T08:09:32Z chat with the command okd-up.sh prints
+event: done
+data: {"answer": "NIST uses a coverage factor of k = 2 to calculate expanded uncertainty. [1]", "citations": [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf"}], "usage": {"completion_tokens": 20, "prompt_tokens": 1273, "total_tokens": 1293, "completion_tokens_details": null, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 1272, "image_tokens": null, "text_tokens": null}}}
+--
+HTTP 200 total 3.876944s
+## 2026-10-10T08:09:45Z oc get pod -l app=rag-api -o yaml (excerpt)
+      openshift.io/scc: restricted-v2
+      image: image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e
+      securityContext:
+        allowPrivilegeEscalation: false
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsUser: 1000670000
+    securityContext:
+      fsGroup: 1000670000
+      runAsNonRoot: true
+      seLinuxOptions:
+        level: s0:c26,c10
+        type: RuntimeDefault
+      image: image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e
+## images (all pods in llm)
+docker.io/library/elasticsearch:9.5.5 docker.io/library/elasticsearch@sha256:320bef0140dcaa30527babaae9d7a41c0ccc001e97ab87c08171d867b89e8f4f
+docker.io/library/postgres:18.6-alpine3.24 docker.io/library/postgres@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+docker.io/prom/prometheus:v3.15.0 docker.io/prom/prometheus@sha256:86b17a25c2db1d16a61b16b3c8f336679eb19e26333d03e808da387206e40faa
+ghcr.io/ggml-org/llama.cpp:server-b11459 ghcr.io/ggml-org/llama.cpp@sha256:33868c035b21dc63f7c60b7438774283fd99215bc319114eb03de5df4ce7cd6b
+image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e
+## OLM / operators
+NAME                      DISPLAY   VERSION   RELEASE   REPLACES                  PHASE
+argocd-operator.v0.19.0   Argo CD   0.19.0              argocd-operator.v0.18.0   Succeeded
+NAME	NAMESPACE	REVISION	UPDATED                              	STATUS  	CHART      	APP VERSION
+keda	keda     	3       	2026-10-10 13:07:57.3954198 +0500 PKT	deployed	keda-2.21.0	2.21.0     

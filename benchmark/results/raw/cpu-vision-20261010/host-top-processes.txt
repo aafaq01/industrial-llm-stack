@@ -1,0 +1,14 @@
+2026-10-10T14:00:40Z cursor=2.5% unity=1.2% svchost=0.4% wmiprvse=0.3% svchost=0.3%
+2026-10-10T14:01:36Z python=49.9% system=0.8% claude=0.3% cursor=0.1% msmpeng=0.1%
+2026-10-10T14:02:31Z python=49.9% cursor=0.4% vmmemwsl=0.4% cursor=0.3% cursor=0.3%
+2026-10-10T14:03:26Z python=49.8% vmmemwsl=4.6% docker desktop=3.7% svchost=3.1% unity=1.7%
+2026-10-10T14:04:22Z python=45.7% cursor=6.9% cursor=5.3% cursor=4.7% cursor=2.8%
+2026-10-10T14:05:17Z python=46.8% vmmemwsl=10.9% svchost=3.1% unity=1.1% com.docker.backend=1.1%
+2026-10-10T14:06:13Z python=49.2% tasklist=2.6% unity=2.5% conhost=1.7% wmiprvse=1.2%
+2026-10-10T14:07:08Z python=25.2% unity=1.6% system=1.0% wmiprvse=0.8% svchost=0.7%
+2026-10-10T14:08:03Z python=24.1% vmmemwsl=17.0% com.docker.backend=1.9% msmpeng=1.2% unity=1.0%
+2026-10-10T14:08:59Z python=24.7% unity=0.6% svchost=0.5% svchost=0.5% vmmemwsl=0.3%
+2026-10-10T14:09:54Z python=24.3% vmmemwsl=13.6% com.docker.backend=1.5% unity=1.0% system=0.9%
+2026-10-10T14:10:49Z python=25.0% unity=0.6% system=0.6% cursor=0.3% claude=0.2%
+2026-10-10T14:11:45Z python=24.7% wmiprvse=0.5% vmmemwsl=0.4% chrome=0.3% unity=0.3%
+2026-10-10T14:12:40Z python=25.0% wmiprvse=1.1% unity=1.0% msmpeng=0.9% system=0.5%

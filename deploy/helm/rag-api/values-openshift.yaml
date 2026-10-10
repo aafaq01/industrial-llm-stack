@@ -1,0 +1,8 @@
+# OpenShift restricted-v2 SCC assigns the UID; set none here.
+# Tested on OKD 4.22 via OpenShift Local (scripts/okd-up.sh).
+# Push the image to a registry the cluster can pull from and set it here, e.g. the internal registry
+# (scripts/okd-up.sh pushes there and passes the digest instead, as kind-up.sh does):
+image: image-registry.openshift-image-registry.svc:5000/llm/rag:0.1.0
+route:
+  enabled: true
+  host: ""  # empty: the router generates one

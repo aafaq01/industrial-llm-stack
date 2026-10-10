@@ -1,0 +1,32 @@
+Ultralytics 8.4.174 🚀 Python-3.12.13 torch-2.13.0+cu129 CUDA:0 (Tesla T4, 14912MiB)
+Loading /kaggle/working/results/models/yolov8n-fp32-opset17.onnx for ONNX Runtime inference...
+Using ONNX Runtime 1.26.0 with CUDAExecutionProvider
+Traceback (most recent call last):
+  File "/kaggle/working/bench/benchmark/vision/eval_map.py", line 108, in <module>
+    main()
+  File "/kaggle/working/bench/benchmark/vision/eval_map.py", line 68, in main
+    r = YOLO(args.model, task="detect").val(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/engine/model.py", line 642, in val
+    validator(model=self.model)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/engine/validator.py", line 223, in __call__
+    self.data = check_det_dataset(self.args.data, split=self.args.split)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/data/utils.py", line 812, in check_det_dataset
+    check_font("Arial.ttf" if is_ascii(data["names"]) else "Arial.Unicode.ttf")  # download fonts
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/utils/__init__.py", line 567, in decorated
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/utils/checks.py", line 445, in check_font
+    from matplotlib import font_manager  # scope for faster 'import ultralytics'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/matplotlib/__init__.py", line 1292, in <module>
+    rcParams['backend'] = os.environ.get('MPLBACKEND')
+    ~~~~~~~~^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/matplotlib/__init__.py", line 784, in __setitem__
+    raise ValueError(f"Key {key}: {ve}") from None
+ValueError: Key backend: 'module://matplotlib_inline.backend_inline' is not a valid value for backend; supported values are ['gtk3agg', 'gtk3cairo', 'gtk4agg', 'gtk4cairo', 'macosx', 'nbagg', 'notebook', 'qtagg', 'qtcairo', 'qt5agg', 'qt5cairo', 'tkagg', 'tkcairo', 'webagg', 'wx', 'wxagg', 'wxcairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']

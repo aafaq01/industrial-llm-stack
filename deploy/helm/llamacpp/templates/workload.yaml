@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: llamacpp-models
+  labels: {app: llamacpp}
+spec:
+  accessModes: [{{ .Values.persistence.accessMode }}]
+  {{- with .Values.persistence.storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llamacpp
+  labels: {app: llamacpp}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: 1
+  {{- end }}
+  progressDeadlineSeconds: 1800  # first start downloads 1.1 GB; the 600 s default marks it Degraded
+  selector:
+    matchLabels: {app: llamacpp}
+  template:
+    metadata:
+      labels: {app: llamacpp}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        # Downloads the pinned GGUF once into the shared PVC and verifies sha256 on every start.
+        - name: model
+          image: {{ .Values.initImage }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -e
+              f="/models/$MODEL_FILE"
+              if [ ! -f "$f" ]; then
+                tmp="$f.$HOSTNAME.part"
+                # -C -: a restarted init container resumes the partial file. The checksum decides: a partial file
+                # is kept for the next attempt, a complete but wrong one is deleted.
+                rc=0
+                curl -fL --retry 5 --retry-all-errors -C - -o "$tmp" "$MODEL_URL" || rc=$?
+                if ! echo "$MODEL_SHA256  $tmp" | sha256sum -c -; then [ "$rc" -ne 0 ] || rm -f "$tmp"; exit 1; fi
+                mv "$tmp" "$f"
+              fi
+              if ! echo "$MODEL_SHA256  $f" | sha256sum -c -; then rm -f "$f"; exit 1; fi
+          env:
+            - {name: MODEL_FILE, value: {{ .Values.model.file | quote }}}
+            - {name: MODEL_URL, value: {{ .Values.model.url | quote }}}
+            - {name: MODEL_SHA256, value: {{ .Values.model.sha256 | quote }}}
+          resources: {{- toYaml .Values.initResources | nindent 12 }}
+          securityContext: {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - {name: models, mountPath: /models}
+      containers:
+        - name: llama-server
+          image: {{ .Values.image }}
+          args:
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8080"
+            - --metrics
+            - -m
+            - /models/{{ .Values.model.file }}
+            - --ctx-size
+            - {{ .Values.server.ctxSize | quote }}
+            - --parallel
+            - {{ .Values.server.parallel | quote }}
+            - --threads
+            - {{ .Values.server.threads | quote }}
+          ports:
+            - {name: http, containerPort: 8080}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          securityContext: {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - {name: models, mountPath: /models, readOnly: true}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: llamacpp-models
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llamacpp
+  labels: {app: llamacpp}
+spec:
+  selector: {app: llamacpp}
+  ports:
+    - {name: http, port: 8080, targetPort: http}

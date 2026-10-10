@@ -1,0 +1,23 @@
+# Root of the app-of-apps, applied by scripts/kind-up.sh. scripts/okd-up.sh applies it with repoURL
+# git://host.crc.testing/..., targetRevision okd and env openshift.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git://kind-git/industrial-llm-platform
+    targetRevision: main
+    path: deploy/argocd/apps
+    helm:
+      valuesObject:
+        repoURL: git://kind-git/industrial-llm-platform
+        targetRevision: main
+        env: kind
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}

@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_23/2592251504.py", line 28, in step
+    res = fn(*args, **kw)
+  File "/tmp/ipykernel_23/314130454.py", line 87, in vision_triton
+    proc, cmd = start_proc(
+                ~~~~~~~~~~^
+        "vision-triton",
+        ^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        timeout=600,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "/tmp/ipykernel_23/2592251504.py", line 78, in start_proc
+    raise RuntimeError(
+        f"{cell}: server exited with code {proc.returncode}, see logs/server-{cell}.log"
+    )
+RuntimeError: vision-triton: server exited with code 1, see logs/server-vision-triton.log

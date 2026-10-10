@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  labels: {app: elasticsearch}
+spec:
+  serviceName: elasticsearch
+  replicas: 1
+  selector:
+    matchLabels: {app: elasticsearch}
+  template:
+    metadata:
+      labels: {app: elasticsearch}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: elasticsearch
+          image: {{ .Values.elasticsearch.image }}
+          env:
+            - {name: discovery.type, value: single-node}
+            - {name: xpack.security.enabled, value: "true"}
+            - {name: xpack.security.http.ssl.enabled, value: "false"}
+            - {name: xpack.security.transport.ssl.enabled, value: "false"}
+            - {name: ES_JAVA_OPTS, value: {{ .Values.elasticsearch.javaOpts | quote }}}
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef: {name: {{ .Values.existingSecret }}, key: ELASTIC_PASSWORD}
+          ports:
+            - {name: http, containerPort: 9200}
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - curl -fs -u "elastic:$ELASTIC_PASSWORD" 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=2s'
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket: {port: http}
+            initialDelaySeconds: 90
+            periodSeconds: 20
+          resources: {{- toYaml .Values.elasticsearch.resources | nindent 12 }}
+          securityContext: {{- toYaml .Values.elasticsearch.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - {name: data, mountPath: /usr/share/elasticsearch/data}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        {{- with .Values.storageClassName }}
+        storageClassName: {{ . }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.elasticsearch.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  labels: {app: elasticsearch}
+spec:
+  selector: {app: elasticsearch}
+  ports:
+    - {name: http, port: 9200, targetPort: http}

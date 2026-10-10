@@ -1,0 +1,142 @@
+Phase 3 RAG evidence. Host: Windows 11, Docker Desktop, 16 cores, no GPU. Times are UTC.
+Updated 2026-10-08 after the review fix round. The first round (2026-10-08 09:30 to 10:53) is summarised at the end.
+
+== 1. Image (2026-10-08 ~12:03, final rebuild)
+$ docker compose build rag-api
+Image industrial-llm-platform/rag:0.1.0 Built
+$ docker image inspect industrial-llm-platform/rag:0.1.0 --format '{{.Id}} {{.Size}} {{.Config.User}}'
+sha256:483e3833bbe8e93bee58add6ab6a6cf04c930395fcf1d5d22784067a31c9d96c 626209896 1001
+(stale: rag code changed after 12:03 on 2026-10-08; the image built from the reviewed tree is sha256:a69db154...)
+$ docker run --rm --user 123456:0 industrial-llm-platform/rag:0.1.0 sh -c 'id; touch /data/corpus/x && echo corpus-writable; python -c "import app.main"'
+uid=123456 gid=0(root) groups=0(root)
+corpus-writable
+import ok
+(arbitrary UID check from the first round; the Dockerfile user and directory setup did not change)
+hadolint: now runs as the repo pre-commit hook, see section 8.
+
+== 2. Stack up (2026-10-08 ~12:03)
+$ docker compose up -d --wait
+... rag-migrate exits 0 (alembic upgrade head), rag-api Healthy
+up exit 0
+
+== 3. Ingest after dropping NIST TN 2148 (2026-10-08 11:17:45 to 11:36:59)
+$ docker compose run --rm rag-ingest
+corpus ok: 9 files, sha256 verified
+indexed 9 documents, 3129 chunks in 1115s
+index count: 3129
+exit 0
+
+== 4. Chat with SSE, citations and history (2026-10-08 12:04 to 12:06, final image)
+$ curl -sN http://127.0.0.1:8000/chat -H 'Content-Type: application/json' \
+    -d '{"message": "What coverage factor k does NIST use to calculate expanded uncertainty?", "user": "demo"}'
+event: session
+data: {"session_id": "dff03e5b-dd28-41a5-9a3a-32a6e5016837", "trace_id": "2ac1dd88916bcd6f0561ddfa797e31a4"}
+event: done
+data: {"answer": "NIST uses the coverage factor k = 2 to calculate expanded uncertainty. [1]", "citations": [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.
+(token events omitted)
+$ curl -sN http://127.0.0.1:8000/chat -H 'Content-Type: application/json'     -d '{"message": "What level of confidence does that value give for a normal distribution?", "session_id": "dff03e5b-dd28-41a5-9a3a-32a6e5016837", "user": "demo"}'
+event: session
+data: {"session_id": "dff03e5b-dd28-41a5-9a3a-32a6e5016837", "trace_id": "532a1d891bfeacfc498d735593afde49"}
+event: done
+data: {"answer": "When the normal distribution applies and u has negligible uncertainty, U =2 u defines an interval having a level of confidence of approximately 95 percent. [2]", "citations": [{"n": 2, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressi
+(token events omitted)
+$ curl -s http://127.0.0.1:8000/sessions/dff03e5b-dd28-41a5-9a3a-32a6e5016837/messages
+[{"role":"user","content":"What coverage factor k does NIST use to calculate expanded uncertainty?","citations":null,"created_at":"2026-10-08T12:04:42.853970"},{"role":"assistant","content":"NIST uses the coverage factor k = 2 to calculate expanded uncertainty. [1]","citations":[{"n":1,"url":"https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf","page":17,"title":"NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results","source_id":"nist-tn-1297"}],"created_at":"2026-10-08T12:06:31.766266"},{"role":"user","content":"What level of confidence does that value give for a normal distribution?","citations":null,"created_at":"2026-10-08T12:06:32.231301"},{"role":"assistant","content":"When the normal distribution applies and u has negligible uncertainty, U =2 u defines an interval having a level of confidence of approximately 95 percent. [2]","citations":[{"n":2,"url":"https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf","page":9,"title":"NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results","source_id":"nist-tn-1297"}],"created_at":"2026-10-08T12:06:36.451390"}]
+The second answer resolves "that value" (k = 2) from the stored first turn. Each user message is stored when the
+request arrives (12:04:42 for the first question; its answer was stored at 12:06:31).
+
+== 5. One trace in Tempo holds the FastAPI request span and the rag.* step spans
+$ curl -s http://127.0.0.1:3200/api/traces/2ac1dd88916bcd6f0561ddfa797e31a4   (scope | span | duration)
+fastapi | POST /chat 109047.1 ms
+rag | rag.chat 109028.6 ms
+rag | rag.db_write 15.0 ms
+haystack | haystack.pipeline.run 86137.5 ms
+haystack | rag.generate 86117.3 ms
+fastapi | fastapi.dependencies 0.3 ms
+fastapi | fastapi.endpoint 18.1 ms
+haystack | rag.bm25_retrieve 833.4 ms
+haystack | rag.embed_query 6778.3 ms
+haystack | rag.dense_retrieve 64.8 ms
+haystack | rag.join 9.5 ms
+elasticsearch-api | info 30.7 ms
+elasticsearch-api | indices.exists 37.9 ms
+elasticsearch-api | search 753.6 ms
+elasticsearch-api | search 40.3 ms
+haystack | haystack.pipeline.run 22636.4 ms
+haystack | rag.rerank 14924.1 ms
+rag | rag.prompt_build 0.2 ms
+This first request after the restart was slow (generate 86 s, embed_query 6.8 s): cold model caches; later requests
+in the eval run had a median latency of 4.9 s, but 27 of 30 prompts were llama.cpp prompt-cache hits (cached_tokens = prompt_tokens - 1, repeats of earlier runs), so these are not cold numbers. Cold TTFT here (q10-12) was 21.7 to 34.5 s; the mostly cold superseded run had a TTFT median of 22.8 s.
+/healthz is excluded from tracing: a Tempo search for {name="GET /healthz"} over the 150 s after the restart returned
+{"traces":[]} although the compose healthcheck calls /healthz every 10 s.
+
+== 6. Metrics (labels pre-created at startup, status is the class)
+$ curl -s http://127.0.0.1:8000/metrics | grep '^rag_http_requests_total'     (right after restart)
+rag_http_requests_total{method="POST",path="/chat",status="2xx"} 0.0
+rag_http_requests_total{method="POST",path="/chat",status="4xx"} 0.0
+rag_http_requests_total{method="POST",path="/chat",status="5xx"} 0.0
+rag_http_requests_total{method="GET",path="/healthz",status="2xx"} 1.0
+rag_http_requests_total{method="GET",path="/metrics",status="2xx"} 1.0
+(after the two chats)
+rag_http_requests_total{method="POST",path="/chat",status="2xx"} 2.0
+rag_http_requests_total{method="POST",path="/chat",status="4xx"} 0.0
+rag_http_requests_total{method="POST",path="/chat",status="5xx"} 0.0
+rag_stage_duration_seconds_count{stage="retrieval"} 2.0
+rag_stage_duration_seconds_count{stage="ttft"} 2.0
+rag_stage_duration_seconds_count{stage="generation"} 2.0
+rag_stage_duration_seconds_count{stage="total"} 2.0
+rag_llm_tokens_total{kind="prompt"} 2628.0
+rag_llm_tokens_total{kind="completion"} 53.0
+rag_llm_tokens_total matches the first round exactly: same two prompts, temperature 0.
+
+== 7. Tests (2026-10-08, uv venv Python 3.12.13 on the host, real Postgres from compose)
+$ cd rag && TEST_PG_URL=postgresql+psycopg://postgres:<password>@127.0.0.1:5432 uv run --python 3.12 --frozen pytest -v
+tests/test_api.py::test_healthz PASSED
+tests/test_api.py::test_chat_streams_and_history_persists PASSED
+tests/test_api.py::test_unknown_session_404 PASSED
+tests/test_api.py::test_unhandled_exception_counts_as_5xx PASSED
+tests/test_api.py::test_metrics PASSED
+tests/test_chunking.py::test_chunks_are_bounded_overlapping_and_keep_page_numbers PASSED
+tests/test_chunking.py::test_cleaning_drops_nist_footer_and_blank_lines PASSED
+7 passed in 30.58s
+
+== 8. Lint
+$ uvx --python 3.12 ruff@0.16.10 check rag && uvx --python 3.12 ruff@0.16.10 format --check rag
+All checks passed!   /   12 files already formatted
+pre-commit: see the end of this file.
+
+== 9. Eval, current run 20261008T113955Z
+Retrieval and answers (2026-10-08 11:39:55 to 12:03:16):
+$ docker compose --profile eval up -d --wait llamacpp-judge
+$ cd rag && DEEPEVAL_TELEMETRY_OPT_OUT=1 uv run --python 3.12 --frozen --group eval python eval/run_eval.py --judge-ids 10,11,12
+recall_at_5 0.867 (n=30), doc_recall_at_5 1.000 (n=30), latency_s mean 7.999 (median 4.9, TTFT median 2.6;
+prompt-cache effect: 27 of 30 prompts were llama.cpp prompt-cache hits (cached_tokens = prompt_tokens - 1, repeats of earlier runs), so these are not cold numbers. Cold TTFT here (q10-12) was 21.7 to 34.5 s; the mostly cold superseded run had a TTFT median of 22.8 s.)
+Page-level misses: q12, q15, q18, q26. config.json: git_describe 2e92380-dirty (uncommitted rag tree),
+rag_api_image_id sha256:d661f3f5... (built before the 5xx middleware change, which does not affect /chat answers).
+The 3-id judge means inside that run's summary.md are superseded by the 12-id judge sample below.
+
+Judge sample (2026-10-08 12:09:52 to 13:07:15), 12 ids, every document covered:
+$ cd rag && DEEPEVAL_TELEMETRY_OPT_OUT=1 uv run --python 3.12 --frozen --group eval python eval/judge_run.py 20261008T113955Z --ids 1,4,7,10,11,12,13,16,19,22,25,28
+$ uv run --python 3.12 --frozen --group eval python eval/judge_run.py 20261008T113955Z --summarize judge-20261008T120952Z --contradicted 11:answer_relevancy,22:faithfulness
+Results: rag/eval/results/20261008T113955Z/judge-20261008T120952Z/ (raw.jsonl, config.json, summary.md)
+| faithfulness | 0.592 | 12 |
+| answer_relevancy | 0.798 | 12 |
+| faithfulness_excluding_contradicted | 0.645 | 11 |
+| answer_relevancy_excluding_contradicted | 0.870 | 11 |
+Per id (faithfulness / answer_relevancy): q1 0.0/0.75, q4 1.0/1.0, q7 0.5/1.0, q10 0.0/1.0, q11 0.0/0.0,
+q12 0.6/0.2, q13 1.0/1.0, q16 1.0/1.0, q19 1.0/1.0, q22 0.0/0.75, q25 1.0/0.875, q28 1.0/1.0.
+Judge limitations, stated plainly:
+- The judge is Qwen2.5-7B-Instruct Q4_K_M on CPU, far weaker than the hosted judges DeepEval is tuned for; no human
+  calibration was done. n=12, so one question moves a mean by about 0.08.
+- It contradicted itself on 2 of 24 scores, found by reading every reason: q11 answer_relevancy 0.0 with a reason
+  saying the answer is fully relevant, q22 faithfulness 0.0 with a reason saying it has no contradictions.
+  The headline means keep them; the excluding_contradicted rows are a labelled secondary view. A keyword rule tried
+  first flagged 9 scores, mostly wrongly, and was dropped; its flags were removed from that raw.jsonl.
+- q11: retrieval on re-ask matched the run (same source ids and pages), but llama.cpp regenerated different answer
+  text at temperature 0. The judge scored the stored answer from the run's raw.jsonl with those same chunks, so no
+  re-judge was needed.
+
+== 10. First round (superseded), for the record
+Run rag/eval/results/20261008T095250Z: 10 documents including NIST TN 2148, recall@5 0.867 (n=30),
+faithfulness 0.767 and answer relevancy 0.683 (n=10, ids 1, 4, ..., 28). Its config.json git_commit 5cf3443 does not
+contain the rag code that ran: the rag tree was uncommitted. Its summary.md is marked superseded.

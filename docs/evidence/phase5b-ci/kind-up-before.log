@@ -1,0 +1,28 @@
+2026-10-09T12:24:14Z
+[12:24:14Z] kind v0.33.0, context kind-llm, git source head
+[12:24:16Z] building and pushing the rag image
+[12:24:21Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+[12:24:22Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[12:24:32Z] installing ArgoCD v3.5.4
+[12:24:53Z] git://kind-git/industrial-llm-platform main = b8dacd5adf40d17a47410f4d84adbbc4c60709c1
+[12:24:56Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy at b8dacd5adf40d17a47410f4d84adbbc4c60709c1
+[12:24:57Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS        AGE
+elasticsearch-0               1/1     Running     1 (6m39s ago)   3h21m
+llamacpp-685c695698-9kbvj     1/1     Running     1 (6m39s ago)   3h7m
+postgres-0                    1/1     Running     1 (6m39s ago)   3h21m
+prometheus-84d4d5d7cd-nh8c5   1/1     Running     1 (6m39s ago)   3h21m
+rag-api-664cc6b865-tkg75      1/1     Running     1 (6m39s ago)   169m
+rag-ingest-gqn5n              0/1     Completed   0               169m
+[12:24:58Z] done in 0m44s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: http://127.0.0.1:8090/v1  (OpenAI API; KEDA scales it 1..3 on in-flight requests)
+ArgoCD:   kubectl --context kind-llm -n argocd port-forward svc/argocd-server 8443:443
+          password: kubectl --context kind-llm -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+rc=0
+2026-10-09T12:24:58Z

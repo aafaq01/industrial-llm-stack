@@ -1,0 +1,7 @@
+# OpenShift restricted-v2 SCC assigns the UID and fsGroup; set none here.
+# Tested on OKD 4.22 via OpenShift Local (scripts/okd-up.sh).
+persistence:
+  accessMode: ReadWriteMany  # replicas may land on different nodes
+route:
+  enabled: true
+  host: ""  # empty: the router generates one

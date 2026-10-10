@@ -1,0 +1,117 @@
+untied checkpoint in 16s
+[TensorRT-LLM] TensorRT-LLM version: 0.14.0
+converted checkpoint in 32s: ['config.json', 'rank0.safetensors']
+[TensorRT-LLM] TensorRT-LLM version: 0.14.0
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set bert_attention_plugin to auto.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set gpt_attention_plugin to float16.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set gemm_plugin to float16.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set gemm_swiglu_plugin to None.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set fp8_rowwise_gemm_plugin to None.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set nccl_plugin to auto.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set lookup_plugin to None.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set lora_plugin to None.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set moe_plugin to auto.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set mamba_conv1d_plugin to auto.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set low_latency_gemm_plugin to None.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set context_fmha to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set bert_context_fmha_fp32_acc to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set remove_input_padding to True.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set reduce_fusion to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set enable_xqa to True.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set tokens_per_block to 64.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set use_paged_context_fmha to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set use_fp8_context_fmha to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set multiple_profiles to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set paged_state to True.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set streamingllm to False.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set use_fused_mlp to True.
+[10/10/2026-14:44:18] [TRT-LLM] [W] Implicitly setting QWenConfig.qwen_type = qwen2
+[10/10/2026-14:44:18] [TRT-LLM] [W] Implicitly setting QWenConfig.moe_intermediate_size = 0
+[10/10/2026-14:44:18] [TRT-LLM] [W] Implicitly setting QWenConfig.moe_shared_expert_intermediate_size = 0
+[10/10/2026-14:44:18] [TRT-LLM] [I] Compute capability: (7, 5)
+[10/10/2026-14:44:18] [TRT-LLM] [I] SM count: 40
+[10/10/2026-14:44:18] [TRT-LLM] [I] SM clock: 1590 MHz
+[10/10/2026-14:44:18] [TRT-LLM] [I] int4 TFLOPS: 260
+[10/10/2026-14:44:18] [TRT-LLM] [I] int8 TFLOPS: 130
+[10/10/2026-14:44:18] [TRT-LLM] [I] fp8 TFLOPS: 0
+[10/10/2026-14:44:18] [TRT-LLM] [I] float16 TFLOPS: 65
+[10/10/2026-14:44:18] [TRT-LLM] [I] bfloat16 TFLOPS: 0
+[10/10/2026-14:44:18] [TRT-LLM] [I] float32 TFLOPS: 8
+[10/10/2026-14:44:18] [TRT-LLM] [I] Total Memory: 15 GiB
+[10/10/2026-14:44:18] [TRT-LLM] [I] Memory clock: 5001 MHz
+[10/10/2026-14:44:18] [TRT-LLM] [I] Memory bus width: 256
+[10/10/2026-14:44:18] [TRT-LLM] [I] Memory bandwidth: 320 GB/s
+[10/10/2026-14:44:18] [TRT-LLM] [I] PCIe speed: 2500 Mbps
+[10/10/2026-14:44:18] [TRT-LLM] [I] PCIe link width: 16
+[10/10/2026-14:44:18] [TRT-LLM] [I] PCIe bandwidth: 5 GB/s
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set dtype to float16.
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set paged_kv_cache to True.
+[10/10/2026-14:44:18] [TRT-LLM] [W] Overriding paged_state to False
+[10/10/2026-14:44:18] [TRT-LLM] [I] Set paged_state to False.
+[10/10/2026-14:44:18] [TRT-LLM] [W] remove_input_padding is enabled, while opt_num_tokens is not set, setting to max_batch_size*max_beam_width. 
+
+[10/10/2026-14:44:20] [TRT] [I] [MemUsageChange] Init CUDA: CPU +17, GPU +0, now: CPU 1628, GPU 104 (MiB)
+[10/10/2026-14:44:25] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +956, GPU +190, now: CPU 2740, GPU 294 (MiB)
+[10/10/2026-14:44:25] [TRT-LLM] [I] Set nccl_plugin to None.
+[10/10/2026-14:44:26] [TRT-LLM] [I] Total time of constructing network from module object 7.661976337432861 seconds
+[10/10/2026-14:44:26] [TRT-LLM] [I] Total optimization profiles added: 1
+[10/10/2026-14:44:26] [TRT-LLM] [I] Total time to initialize the weights in network Unnamed Network 0: 00:00:00
+[10/10/2026-14:44:26] [TRT-LLM] [I] Build TensorRT engine Unnamed Network 0
+[10/10/2026-14:44:26] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-14:44:26] [TRT] [W] Unused Input: position_ids
+[10/10/2026-14:44:26] [TRT] [W] [RemoveDeadLayers] Input Tensor position_ids is unused or used only at compile-time, but is not being removed.
+[10/10/2026-14:44:26] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-14:44:26] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[10/10/2026-14:44:26] [TRT] [I] Compiler backend is used during engine build.
+[10/10/2026-14:44:30] [TRT] [I] [GraphReduction] The approximate region cut reduction algorithm is called.
+[10/10/2026-14:44:30] [TRT] [I] Detected 16 inputs and 1 output network tensors.
+[10/10/2026-14:44:30] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: Internal Error (Internal error: plugin node QWenForCausalLM/transformer/layers/0/attention/wrapper_L561/gpt_attention_L5152/PLUGIN_V2_GPTAttention_0 requires 21978227456 bytes of scratch space, but only 15636037632 is available. Try increasing the workspace size with IBuilderConfig::setMemoryPoolLimit().
+)
+
+0it [00:00, ?it/s]
+4it [00:00, 12.88it/s]
+18it [00:00, 50.87it/s]
+33it [00:00, 78.63it/s]
+46it [00:00, 92.34it/s]
+58it [00:00, 100.02it/s]
+73it [00:00, 110.73it/s]
+86it [00:00, 114.09it/s]
+99it [00:01, 111.68it/s]
+114it [00:01, 119.64it/s]
+129it [00:01, 124.28it/s]
+142it [00:01, 122.88it/s]
+155it [00:01, 115.20it/s]
+170it [00:01, 118.75it/s]
+185it [00:01, 121.93it/s]
+198it [00:01, 120.03it/s]
+211it [00:02, 115.92it/s]
+226it [00:02, 120.64it/s]
+230it [00:02, 94.19it/s] 
+Traceback (most recent call last):
+  File "/tmp/venvs/trtllm/bin/trtllm-build", line 10, in <module>
+    sys.exit(main())
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 568, in main
+    parallel_build(model_config, ckpt_dir, build_config, args.output_dir,
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 423, in parallel_build
+    passed = build_and_save(rank, rank % workers, ckpt_dir,
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 390, in build_and_save
+    engine = build_model(build_config,
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/commands/build.py", line 383, in build_model
+    return build(model, build_config)
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/builder.py", line 1189, in build
+    engine = None if build_config.dry_run else builder.build_engine(
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/_common.py", line 204, in decorated
+    return f(*args, **kwargs)
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/builder.py", line 418, in build_engine
+    assert engine is not None, 'Engine building failed, please check the error log.'
+AssertionError: Engine building failed, please check the error log.
+Traceback (most recent call last):
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 113, in <module>
+    main()
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 108, in main
+    build(ckpt, engine, args.cmd_out)
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 87, in build
+    subprocess.run(cmd, check=True)
+  File "/root/.local/share/uv/python/cpython-3.10.20-linux-x86_64-gnu/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/tmp/venvs/trtllm/bin/trtllm-build', '--checkpoint_dir', '/tmp/trtllm/ckpt-fp16', '--output_dir', '/tmp/trtllm/engine-fp16', '--gemm_plugin', 'float16', '--gpt_attention_plugin', 'float16', '--context_fmha', 'disable', '--remove_input_padding', 'enable', '--kv_cache_type', 'paged', '--max_batch_size', '32', '--max_input_len', '3072', '--max_seq_len', '4096', '--max_num_tokens', '8192', '--workers', '1']' returned non-zero exit status 1.

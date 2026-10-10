@@ -1,0 +1,1490 @@
+lint	Set up job	﻿2026-10-09T18:05:42.9492345Z Current runner version: '2.337.0'
+lint	Set up job	2026-10-09T18:05:42.9529409Z ##[group]Runner Image Provisioner
+lint	Set up job	2026-10-09T18:05:42.9530785Z Hosted Compute Agent
+lint	Set up job	2026-10-09T18:05:42.9531925Z Version: 20261002.596
+lint	Set up job	2026-10-09T18:05:42.9533002Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+lint	Set up job	2026-10-09T18:05:42.9534701Z Build Date: 2026-10-02T22:28:27Z
+lint	Set up job	2026-10-09T18:05:42.9535998Z Worker ID: {162c05d5-475a-4ac0-9f9d-66e29b1dd856}
+lint	Set up job	2026-10-09T18:05:42.9537384Z Region: westus2
+lint	Set up job	2026-10-09T18:05:42.9538542Z Cloud: Azure
+lint	Set up job	2026-10-09T18:05:42.9539546Z ##[endgroup]
+lint	Set up job	2026-10-09T18:05:42.9542159Z ##[group]Operating System
+lint	Set up job	2026-10-09T18:05:42.9543348Z Ubuntu
+lint	Set up job	2026-10-09T18:05:42.9544565Z 24.04.5
+lint	Set up job	2026-10-09T18:05:42.9545617Z LTS
+lint	Set up job	2026-10-09T18:05:42.9546577Z ##[endgroup]
+lint	Set up job	2026-10-09T18:05:42.9547701Z ##[group]Runner Image
+lint	Set up job	2026-10-09T18:05:42.9548921Z Image: ubuntu-24.04
+lint	Set up job	2026-10-09T18:05:42.9549974Z Version: 20261004.327.1
+lint	Set up job	2026-10-09T18:05:42.9552075Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+lint	Set up job	2026-10-09T18:05:42.9555577Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+lint	Set up job	2026-10-09T18:05:42.9557507Z ##[endgroup]
+lint	Set up job	2026-10-09T18:05:42.9559413Z ##[group]GITHUB_TOKEN Permissions
+lint	Set up job	2026-10-09T18:05:42.9562215Z Contents: read
+lint	Set up job	2026-10-09T18:05:42.9563265Z Metadata: read
+lint	Set up job	2026-10-09T18:05:42.9564702Z ##[endgroup]
+lint	Set up job	2026-10-09T18:05:42.9568208Z Secret source: Actions
+lint	Set up job	2026-10-09T18:05:42.9569932Z Cache mode: write
+lint	Set up job	2026-10-09T18:05:42.9571171Z Prepare workflow directory
+lint	Set up job	2026-10-09T18:05:43.0197478Z Prepare all required actions
+lint	Set up job	2026-10-09T18:05:43.0271519Z Getting action download info
+lint	Set up job	2026-10-09T18:05:43.4690786Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+lint	Set up job	2026-10-09T18:05:43.6881814Z Complete job name: lint
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-09T18:05:43.7642429Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7643525Z with:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7643998Z   fetch-depth: 0
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7644688Z   persist-credentials: false
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7645266Z   repository: aafaq01/industrial-llm-platform
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7649023Z   token: ***
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7649475Z   ssh-strict: true
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7649925Z   ssh-user: git
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7650360Z   clean: true
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7650820Z   sparse-checkout-cone-mode: true
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7651359Z   fetch-tags: false
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7651815Z   show-progress: true
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7652272Z   lfs: false
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7652707Z   submodules: false
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7653178Z   set-safe-directory: true
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7653724Z   allow-unsafe-pr-checkout: false
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.7654664Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8775581Z Syncing repository: aafaq01/industrial-llm-platform
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8779306Z ##[group]Getting Git version info
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8781845Z Working directory is '/home/runner/work/industrial-llm-platform/industrial-llm-platform'
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8794089Z [command]/usr/bin/git version
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9174064Z git version 2.55.0
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9177341Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9183343Z Temporarily overriding HOME='/home/runner/work/_temp/02da142f-8c79-4c5c-8bc2-ac643f3b4fd3' before making global git config changes
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9186328Z Adding repository directory to the temporary git global config as a safe directory
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9188554Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/industrial-llm-platform/industrial-llm-platform
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9192122Z Deleting the contents of '/home/runner/work/industrial-llm-platform/industrial-llm-platform'
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9194489Z ##[group]Determining repository object format
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9196107Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9197340Z ##[group]Initializing the repository
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9199006Z [command]/usr/bin/git init /home/runner/work/industrial-llm-platform/industrial-llm-platform
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9382624Z hint: Using 'master' as the name for the initial branch. This default branch name
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9385075Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9386748Z hint: to use in all of your new repositories, which will suppress this warning,
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9387974Z hint: call:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9391464Z hint:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9392654Z hint: 	git config --global init.defaultBranch <name>
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9393655Z hint:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9394950Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9396608Z hint: 'development'. The just-created branch can be renamed via this command:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9397939Z hint:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9399277Z hint: 	git branch -m <name>
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9400749Z hint:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9402543Z hint: Disable this message with "git config set advice.defaultBranchName false"
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9445052Z Initialized empty Git repository in /home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9448452Z [command]/usr/bin/git remote add origin https://github.com/aafaq01/industrial-llm-platform
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9535245Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9536674Z ##[group]Disabling automatic garbage collection
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9537745Z [command]/usr/bin/git config --local gc.auto 0
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9562358Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9564519Z ##[group]Setting up auth
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9568056Z Removing SSH command configuration
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9569711Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9574828Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1089204Z Removing HTTP extra header
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1095128Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1100055Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1109278Z Removing includeIf entries pointing to credentials config files
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1111184Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1115521Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1121475Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1130156Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path /home/runner/work/_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1138589Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1146357Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1153058Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1177079Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1178797Z ##[group]Fetching the repository
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.1185224Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7231960Z From https://github.com/aafaq01/industrial-llm-platform
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7243458Z  * [new branch]      main       -> origin/main
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7255822Z [command]/usr/bin/git branch --list --remote origin/main
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7275892Z   origin/main
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7286248Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7315409Z 66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7321206Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7323241Z ##[group]Determining the checkout info
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7325798Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7328941Z [command]/usr/bin/git sparse-checkout disable
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7390562Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7429323Z ##[group]Checking out the ref
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.7435693Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8417415Z Switched to a new branch 'main'
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8420924Z branch 'main' set up to track 'origin/main'.
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8429001Z ##[endgroup]
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8478665Z [command]/usr/bin/git log -1 --format=%H
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8509607Z 66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8522523Z ##[group]Removing auth
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8524737Z Removing SSH command configuration
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8537113Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8589699Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8856763Z Removing HTTP extra header
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8859620Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.8900625Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9142616Z Removing includeIf entries pointing to credentials config files
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9153927Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9186773Z includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9191813Z includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9196720Z includeif.gitdir:/github/workspace/.git.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9203868Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9223109Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9230253Z /home/runner/work/_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9278633Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-61fb5e74\-bfb2\-4d77\-ae13\-22e698d412b4\.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9321150Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9350984Z /home/runner/work/_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9365742Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-61fb5e74\-bfb2\-4d77\-ae13\-22e698d412b4\.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9419264Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9453881Z /github/runner_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9479236Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-61fb5e74\-bfb2\-4d77\-ae13\-22e698d412b4\.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9511619Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9541060Z /github/runner_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9552721Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-61fb5e74\-bfb2\-4d77\-ae13\-22e698d412b4\.config
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9591489Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9829118Z Removing credentials config '/home/runner/work/_temp/git-credentials-61fb5e74-bfb2-4d77-ae13-22e698d412b4.config'
+lint	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.9837568Z ##[endgroup]
+lint	Run bash ci/run.sh lint	﻿2026-10-09T18:05:45.0089516Z ##[group]Run bash ci/run.sh lint
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.0090853Z ^[[36;1mbash ci/run.sh lint^[[0m
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.0370558Z shell: /usr/bin/bash -e {0}
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.0371743Z ##[endgroup]
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.1683180Z Unable to find image 'ghcr.io/astral-sh/uv:0.11.32-python3.12-trixie@sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0' locally
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.5678767Z ghcr.io/astral-sh/uv@sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0: Pulling from astral-sh/uv
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6889799Z b890c9407285: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6890454Z b453535073b6: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6896620Z 9e002cae30c4: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6897123Z 65956eab0c1c: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6900219Z 15215efaca49: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6900691Z 2b87fe8d0f10: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6901013Z 90d1f3b8a822: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6901281Z 88a9b00e1ede: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6901853Z 15215efaca49: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6902092Z 2b87fe8d0f10: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6902310Z 90d1f3b8a822: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6902530Z 88a9b00e1ede: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:45.6902751Z 65956eab0c1c: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:46.4358151Z b453535073b6: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:46.4359974Z b453535073b6: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:46.9388399Z b890c9407285: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:46.9396391Z b890c9407285: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.2671605Z 15215efaca49: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.2672374Z 15215efaca49: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.4988833Z 9e002cae30c4: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.4994144Z 9e002cae30c4: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.7007254Z 90d1f3b8a822: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.7008576Z 90d1f3b8a822: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.9960854Z 2b87fe8d0f10: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:47.9961740Z 2b87fe8d0f10: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:48.4804634Z 88a9b00e1ede: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:48.4806770Z 88a9b00e1ede: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:49.2597518Z b890c9407285: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:51.9228122Z 65956eab0c1c: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:51.9229183Z 65956eab0c1c: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:53.3908212Z b453535073b6: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:05:56.7404166Z 9e002cae30c4: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:06.8363233Z 65956eab0c1c: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:07.1523498Z 15215efaca49: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:08.0330956Z 2b87fe8d0f10: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:08.0475476Z 90d1f3b8a822: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:08.4925537Z 88a9b00e1ede: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:08.4991553Z Digest: sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:08.4996451Z Status: Downloaded newer image for ghcr.io/astral-sh/uv@sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:09.0501590Z Downloading virtualenv (5.2MiB)
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:09.1647235Z  Downloaded virtualenv
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:09.1806958Z Installed 11 packages in 15ms
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:09.9650654Z [INFO] Initializing environment for https://github.com/pre-commit/pre-commit-hooks.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:10.3873818Z [INFO] Initializing environment for https://github.com/astral-sh/ruff-pre-commit.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:10.7273903Z [INFO] Initializing environment for https://github.com/adrienverge/yamllint.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:11.1755886Z [INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:11.1757424Z [INFO] Once installed this environment will be reused.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:11.1806148Z [INFO] This may take a few minutes...
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:18.9412811Z [INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:18.9413833Z [INFO] Once installed this environment will be reused.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:18.9420470Z [INFO] This may take a few minutes...
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:24.5838091Z [INFO] Installing environment for https://github.com/adrienverge/yamllint.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:24.5841920Z [INFO] Once installed this environment will be reused.
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:24.5851890Z [INFO] This may take a few minutes...
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:30.3457110Z fix end of files.........................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:30.6111120Z trim trailing whitespace.................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:31.1339575Z check yaml...............................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:31.4776676Z check json...............................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:31.8112824Z check for added large files..............................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:31.9025916Z ruff check...............................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:31.9973730Z ruff format..............................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:32.8245546Z yamllint.................................................................Passed
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:32.8255328Z gitleaks v8.30.1........................................................Skipped
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:32.8256225Z hadolint v2.15.1........................................................Skipped
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:33.6222290Z Unable to find image 'zricethezav/gitleaks:v8.30.1' locally
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:34.5258837Z v8.30.1: Pulling from zricethezav/gitleaks
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:34.7984123Z d49a2dee86fb: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:34.7985514Z d92b655ae8e2: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:34.7986159Z 61fdfd7c0175: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:34.7986722Z a43ab0c74cc4: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:34.8003508Z a43ab0c74cc4: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.1233573Z d49a2dee86fb: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.1240713Z d49a2dee86fb: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.1349708Z d92b655ae8e2: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.1350540Z d92b655ae8e2: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.1696419Z 61fdfd7c0175: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.1698478Z 61fdfd7c0175: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.2695304Z d49a2dee86fb: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.3746819Z a43ab0c74cc4: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.3747735Z a43ab0c74cc4: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.4845062Z d92b655ae8e2: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.6373064Z 61fdfd7c0175: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.6495961Z a43ab0c74cc4: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.6535968Z Digest: sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.6547312Z Status: Downloaded newer image for zricethezav/gitleaks:v8.30.1
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7965113Z
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7966365Z     ○
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7967381Z     │╲
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7968025Z     │ ○
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7968631Z     ○ ░
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7969214Z     ░    gitleaks
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:35.7969667Z
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:58.7575738Z ^[[90m6:06PM^[[0m ^[[32mINF^[[0m ^[[1m31 commits scanned.^[[0m
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:58.7576871Z ^[[90m6:06PM^[[0m ^[[32mINF^[[0m ^[[1mscanned ~17818526 bytes (17.82 MB) in 23s^[[0m
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:58.7578126Z ^[[90m6:06PM^[[0m ^[[32mINF^[[0m ^[[1mno leaks found^[[0m
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:58.8405447Z hadolint ci/jenkins/Dockerfile
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:58.8582547Z Unable to find image 'hadolint/hadolint:v2.15.1' locally
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:59.7147409Z v2.15.1: Pulling from hadolint/hadolint
+lint	Run bash ci/run.sh lint	2026-10-09T18:06:59.9755141Z 83cf56c1bf8f: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:00.2753496Z 83cf56c1bf8f: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:00.2754050Z 83cf56c1bf8f: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:00.5467720Z 83cf56c1bf8f: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:00.5501141Z Digest: sha256:32dac94127fd60b7b7e3fbfc65e1383b9b5e25c9bfd7b8536de7a539fe68a12d
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:00.5516935Z Status: Downloaded newer image for hadolint/hadolint:v2.15.1
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:00.8224136Z hadolint infra/git-server/Dockerfile
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:01.0710323Z hadolint rag/Dockerfile
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:01.3364820Z Unable to find image 'rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667' locally
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:01.9864370Z docker.io/rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667: Pulling from rhysd/actionlint
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.2654536Z 589002ba0eae: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.2660437Z c09af8888d6a: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.2661398Z 4ccd7d76ca98: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.2662097Z b6b4b7b0e257: Pulling fs layer
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.2662860Z b6b4b7b0e257: Waiting
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.5322103Z c09af8888d6a: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.5327920Z c09af8888d6a: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.5410323Z 589002ba0eae: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.5410929Z 589002ba0eae: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.5419130Z 4ccd7d76ca98: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.5419736Z 4ccd7d76ca98: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.6634241Z 589002ba0eae: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.7220511Z c09af8888d6a: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.8552852Z 4ccd7d76ca98: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.8565048Z b6b4b7b0e257: Verifying Checksum
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:02.8565735Z b6b4b7b0e257: Download complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:03.4962910Z b6b4b7b0e257: Pull complete
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:03.4999257Z Digest: sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+lint	Run bash ci/run.sh lint	2026-10-09T18:07:03.5006590Z Status: Downloaded newer image for rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+lint	Run bash ci/run.sh charts	﻿2026-10-09T18:07:03.7532758Z ##[group]Run bash ci/run.sh charts
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:03.7533096Z ^[[36;1mbash ci/run.sh charts^[[0m
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:03.7598766Z shell: /usr/bin/bash -e {0}
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:03.7599032Z ##[endgroup]
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:03.7861786Z Unable to find image 'alpine/helm:4.2.4@sha256:76c375eed56144c68d6197c55bc5a4552fb42002190b796729901cbab3ae6e51' locally
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:04.4331798Z docker.io/alpine/helm@sha256:76c375eed56144c68d6197c55bc5a4552fb42002190b796729901cbab3ae6e51: Pulling from alpine/helm
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:04.7113731Z 55afa1ecc21d: Already exists
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:04.7135378Z 2c6c161c0991: Pulling fs layer
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:04.7139084Z f207a2ddd21d: Pulling fs layer
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:04.9385036Z f207a2ddd21d: Verifying Checksum
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:04.9385548Z f207a2ddd21d: Download complete
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:05.1358716Z 2c6c161c0991: Verifying Checksum
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:05.1361889Z 2c6c161c0991: Download complete
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:05.9915039Z 2c6c161c0991: Pull complete
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.0047238Z f207a2ddd21d: Pull complete
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.0105077Z Digest: sha256:76c375eed56144c68d6197c55bc5a4552fb42002190b796729901cbab3ae6e51
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.0110707Z Status: Downloaded newer image for alpine/helm@sha256:76c375eed56144c68d6197c55bc5a4552fb42002190b796729901cbab3ae6e51
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.8813146Z == deploy/helm/llamacpp (kind)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.9261395Z ==> Linting deploy/helm/llamacpp
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.9277197Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:06.9278409Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.3344665Z Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.3361753Z == deploy/helm/llamacpp (openshift)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.3863059Z ==> Linting deploy/helm/llamacpp
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.3876904Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.3877604Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.8057055Z Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.8068086Z == deploy/helm/platform-deps (kind)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.8573740Z ==> Linting deploy/helm/platform-deps
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.8587387Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:07.8587911Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.2347925Z Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.2365416Z == deploy/helm/platform-deps (openshift)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.2900648Z ==> Linting deploy/helm/platform-deps
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.2915911Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.2916748Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.5325485Z Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.5327659Z == deploy/helm/rag-api (kind)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.5795309Z ==> Linting deploy/helm/rag-api
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.5804032Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.5804927Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.8509712Z Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.8512687Z == deploy/helm/rag-api (openshift)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.8976717Z ==> Linting deploy/helm/rag-api
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.8977796Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:08.8979054Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.1364509Z Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.1494988Z == deploy/argocd/apps (kind)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.1845224Z ==> Linting deploy/argocd/apps
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.1847819Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.1851350Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.5819294Z Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.5835012Z == deploy/argocd/apps (openshift)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.6264828Z ==> Linting deploy/argocd/apps
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.6276739Z [INFO] Chart.yaml: icon is recommended
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.6278224Z 1 chart(s) linted, 0 chart(s) failed
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.8336394Z Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.8348318Z == deploy/argocd/apps (kind, ragImage digest set as kind-up.sh does)
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:09.8769650Z rag-api image parameters rendered: 1
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:10.0284766Z Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:10.0296943Z == deploy/argocd/root.yaml
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:10.1215925Z Summary: 1 resource found in 1 file - Valid: 1, Invalid: 0, Errors: 0, Skipped: 0
+lint	Run bash ci/run.sh charts	2026-10-09T18:07:10.1224792Z all charts pass helm lint and kubeconform
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-09T18:07:10.2282192Z Post job cleanup.
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3275086Z [command]/usr/bin/git version
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3349282Z git version 2.55.0
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3445937Z Temporarily overriding HOME='/home/runner/work/_temp/6e87ea8a-d278-466f-9d98-a11c0b0014f7' before making global git config changes
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3447646Z Adding repository directory to the temporary git global config as a safe directory
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3449442Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/industrial-llm-platform/industrial-llm-platform
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3452261Z Removing SSH command configuration
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3469665Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3565698Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3871178Z Removing HTTP extra header
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.3918099Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.4036141Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.4705085Z Removing includeIf entries pointing to credentials config files
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.4837445Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+lint	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:10.5120329Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+lint	Complete job	﻿2026-10-09T18:07:10.5300570Z Cleaning up orphan processes
+test	Set up job	﻿2026-10-09T18:05:42.6528155Z Current runner version: '2.337.0'
+test	Set up job	2026-10-09T18:05:42.6551125Z ##[group]Runner Image Provisioner
+test	Set up job	2026-10-09T18:05:42.6551897Z Hosted Compute Agent
+test	Set up job	2026-10-09T18:05:42.6552500Z Version: 20261002.596
+test	Set up job	2026-10-09T18:05:42.6553025Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+test	Set up job	2026-10-09T18:05:42.6553702Z Build Date: 2026-10-02T22:28:27Z
+test	Set up job	2026-10-09T18:05:42.6554300Z Worker ID: {8f2de008-8059-471d-9393-457cb74be127}
+test	Set up job	2026-10-09T18:05:42.6554879Z Region: eastus
+test	Set up job	2026-10-09T18:05:42.6555663Z Cloud: Azure
+test	Set up job	2026-10-09T18:05:42.6556131Z ##[endgroup]
+test	Set up job	2026-10-09T18:05:42.6558382Z ##[group]Operating System
+test	Set up job	2026-10-09T18:05:42.6559143Z Ubuntu
+test	Set up job	2026-10-09T18:05:42.6559757Z 24.04.5
+test	Set up job	2026-10-09T18:05:42.6560468Z LTS
+test	Set up job	2026-10-09T18:05:42.6561086Z ##[endgroup]
+test	Set up job	2026-10-09T18:05:42.6561851Z ##[group]Runner Image
+test	Set up job	2026-10-09T18:05:42.6562572Z Image: ubuntu-24.04
+test	Set up job	2026-10-09T18:05:42.6563257Z Version: 20261004.327.1
+test	Set up job	2026-10-09T18:05:42.6564732Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+test	Set up job	2026-10-09T18:05:42.6567199Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+test	Set up job	2026-10-09T18:05:42.6568482Z ##[endgroup]
+test	Set up job	2026-10-09T18:05:42.6569797Z ##[group]GITHUB_TOKEN Permissions
+test	Set up job	2026-10-09T18:05:42.6572393Z Contents: read
+test	Set up job	2026-10-09T18:05:42.6573110Z Metadata: read
+test	Set up job	2026-10-09T18:05:42.6573874Z ##[endgroup]
+test	Set up job	2026-10-09T18:05:42.6576402Z Secret source: Actions
+test	Set up job	2026-10-09T18:05:42.6577779Z Cache mode: write
+test	Set up job	2026-10-09T18:05:42.6578939Z Prepare workflow directory
+test	Set up job	2026-10-09T18:05:42.6943682Z Prepare all required actions
+test	Set up job	2026-10-09T18:05:42.6998010Z Getting action download info
+test	Set up job	2026-10-09T18:05:42.8930382Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+test	Set up job	2026-10-09T18:05:43.0969849Z Complete job name: test
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-09T18:05:43.1661859Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1662703Z with:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1663099Z   persist-credentials: false
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1663572Z   repository: aafaq01/industrial-llm-platform
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1666769Z   token: ***
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1667140Z   ssh-strict: true
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1667509Z   ssh-user: git
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1667865Z   clean: true
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1668232Z   sparse-checkout-cone-mode: true
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1668669Z   fetch-depth: 1
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1669033Z   fetch-tags: false
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1669502Z   show-progress: true
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1669882Z   lfs: false
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1670224Z   submodules: false
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1670591Z   set-safe-directory: true
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1671007Z   allow-unsafe-pr-checkout: false
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.1671608Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2660731Z Syncing repository: aafaq01/industrial-llm-platform
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2665638Z ##[group]Getting Git version info
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2668587Z Working directory is '/home/runner/work/industrial-llm-platform/industrial-llm-platform'
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2670151Z [command]/usr/bin/git version
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2784670Z git version 2.55.0
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2789498Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2797018Z Temporarily overriding HOME='/home/runner/work/_temp/9e4a4e40-2670-4ab4-b6d4-cc3baadd031c' before making global git config changes
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2799610Z Adding repository directory to the temporary git global config as a safe directory
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2803052Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/industrial-llm-platform/industrial-llm-platform
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2871964Z Deleting the contents of '/home/runner/work/industrial-llm-platform/industrial-llm-platform'
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2889253Z ##[group]Determining repository object format
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2906603Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2917540Z ##[group]Initializing the repository
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2919075Z [command]/usr/bin/git init /home/runner/work/industrial-llm-platform/industrial-llm-platform
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2986709Z hint: Using 'master' as the name for the initial branch. This default branch name
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2991192Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.2999711Z hint: to use in all of your new repositories, which will suppress this warning,
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3000986Z hint: call:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3001973Z hint:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3002850Z hint: 	git config --global init.defaultBranch <name>
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3004093Z hint:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3005123Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3006941Z hint: 'development'. The just-created branch can be renamed via this command:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3009593Z hint:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3010140Z hint: 	git branch -m <name>
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3010765Z hint:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3011582Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3013166Z Initialized empty Git repository in /home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3015790Z [command]/usr/bin/git remote add origin https://github.com/aafaq01/industrial-llm-platform
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3073005Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3074238Z ##[group]Disabling automatic garbage collection
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3075826Z [command]/usr/bin/git config --local gc.auto 0
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3125130Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3127896Z ##[group]Setting up auth
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3128956Z Removing SSH command configuration
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3130425Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3168079Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3599006Z Removing HTTP extra header
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3601333Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3615866Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3821487Z Removing includeIf entries pointing to credentials config files
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3834842Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.3866767Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4064566Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4098644Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path /home/runner/work/_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4130303Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4164106Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4197213Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4227025Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4233318Z ##[group]Fetching the repository
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.4235584Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a:refs/remotes/origin/main
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8896847Z From https://github.com/aafaq01/industrial-llm-platform
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8898428Z  * [new ref]         66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a -> origin/main
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8904694Z [command]/usr/bin/git branch --list --remote origin/main
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8932222Z   origin/main
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8940093Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8964533Z 66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8968203Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8969864Z ##[group]Determining the checkout info
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8971524Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.8973072Z [command]/usr/bin/git sparse-checkout disable
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9024150Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9055553Z ##[group]Checking out the ref
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9058900Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9691052Z Switched to a new branch 'main'
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9699831Z branch 'main' set up to track 'origin/main'.
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9707386Z ##[endgroup]
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9749414Z [command]/usr/bin/git log -1 --format=%H
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9774913Z 66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9783800Z ##[group]Removing auth
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9784940Z Removing SSH command configuration
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9787281Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:43.9823889Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0027590Z Removing HTTP extra header
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0031569Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0061985Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0259761Z Removing includeIf entries pointing to credentials config files
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0263492Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0288761Z includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0296302Z includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0304433Z includeif.gitdir:/github/workspace/.git.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0306293Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0310267Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0322312Z /home/runner/work/_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0347225Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-9acd33d2\-b01a\-4af0\-9939\-2a07f89113d5\.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0372185Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0397093Z /home/runner/work/_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0419861Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-9acd33d2\-b01a\-4af0\-9939\-2a07f89113d5\.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0452461Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0493277Z /github/runner_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0498367Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-9acd33d2\-b01a\-4af0\-9939\-2a07f89113d5\.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0520965Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0544267Z /github/runner_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0551611Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-9acd33d2\-b01a\-4af0\-9939\-2a07f89113d5\.config
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0583987Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0780069Z Removing credentials config '/home/runner/work/_temp/git-credentials-9acd33d2-b01a-4af0-9939-2a07f89113d5.config'
+test	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:05:44.0787204Z ##[endgroup]
+test	Run bash ci/run.sh test	﻿2026-10-09T18:05:44.0970308Z ##[group]Run bash ci/run.sh test
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.0970920Z ^[[36;1mbash ci/run.sh test^[[0m
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.1168920Z shell: /usr/bin/bash -e {0}
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.1169484Z ##[endgroup]
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.1900881Z Unable to find image 'ghcr.io/astral-sh/uv:0.11.32-python3.12-trixie@sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0' locally
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3460361Z ghcr.io/astral-sh/uv@sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0: Pulling from astral-sh/uv
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3990815Z b890c9407285: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3992732Z b453535073b6: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3993952Z 9e002cae30c4: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3995235Z 65956eab0c1c: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3996899Z 15215efaca49: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3998160Z 2b87fe8d0f10: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.3999328Z 90d1f3b8a822: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.4000494Z 88a9b00e1ede: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.4001874Z 65956eab0c1c: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.4002885Z 15215efaca49: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.4004158Z 2b87fe8d0f10: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.4005213Z 90d1f3b8a822: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.4006489Z 88a9b00e1ede: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.6806764Z b890c9407285: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.6814075Z b890c9407285: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.8176495Z b453535073b6: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:44.8177824Z b453535073b6: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.0077864Z 15215efaca49: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.0080382Z 15215efaca49: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.3649119Z 9e002cae30c4: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.3653946Z 9e002cae30c4: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.3852405Z 2b87fe8d0f10: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.3860133Z 2b87fe8d0f10: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.4413383Z 90d1f3b8a822: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.4416388Z 90d1f3b8a822: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.7079009Z 88a9b00e1ede: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:45.7080282Z 88a9b00e1ede: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:46.9794229Z b890c9407285: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:47.2936416Z 65956eab0c1c: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:05:47.2952871Z 65956eab0c1c: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:05:58.4244290Z b453535073b6: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:02.8525969Z 9e002cae30c4: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:15.5711240Z 65956eab0c1c: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:16.0037795Z 15215efaca49: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:17.4644607Z 2b87fe8d0f10: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:17.4840466Z 90d1f3b8a822: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:18.4417586Z 88a9b00e1ede: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:18.4455656Z Digest: sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0
+test	Run bash ci/run.sh test	2026-10-09T18:06:18.4467155Z Status: Downloaded newer image for ghcr.io/astral-sh/uv@sha256:5c14184583b8da2956605104e364053c863e4de51f8a83b230a89d50e34e9ab0
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.4964418Z Downloading pillow (6.6MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5008075Z Downloading lxml (5.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5011328Z Downloading hf-xet (4.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5012309Z Downloading tiktoken (1.1MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5016776Z Downloading nltk (1.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5019770Z Downloading scipy (33.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5023713Z Downloading numpy (15.9MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5027902Z Downloading pygments (1.2MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5035779Z Downloading pandas (10.3MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5042127Z Downloading pyarrow (47.8MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5055161Z Downloading fonttools (5.1MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5085005Z Downloading aiohttp (1.8MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5093247Z Downloading kiwisolver (1.4MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5098866Z Downloading scikit-learn (8.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5207057Z Downloading matplotlib (9.4MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.5265284Z Downloading lm-eval (8.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.7801114Z    Building sqlitedict==2.1.0
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.7819037Z    Building rouge-score==0.1.2
+test	Run bash ci/run.sh test	2026-10-09T18:06:21.7901722Z    Building word2number==1.1
+test	Run bash ci/run.sh test	2026-10-09T18:06:22.2955291Z  Downloaded tiktoken
+test	Run bash ci/run.sh test	2026-10-09T18:06:22.3681155Z  Downloaded kiwisolver
+test	Run bash ci/run.sh test	2026-10-09T18:06:22.5050297Z  Downloaded aiohttp
+test	Run bash ci/run.sh test	2026-10-09T18:06:22.8117411Z  Downloaded pygments
+test	Run bash ci/run.sh test	2026-10-09T18:06:22.9084901Z  Downloaded hf-xet
+test	Run bash ci/run.sh test	2026-10-09T18:06:22.9231613Z       Built rouge-score==0.1.2
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.1598117Z       Built sqlitedict==2.1.0
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.1657205Z  Downloaded nltk
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.2400443Z  Downloaded fonttools
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.2788407Z  Downloaded lxml
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.4976706Z  Downloaded pillow
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.8147440Z  Downloaded scikit-learn
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.8947488Z       Built word2number==1.1
+test	Run bash ci/run.sh test	2026-10-09T18:06:23.9166498Z  Downloaded matplotlib
+test	Run bash ci/run.sh test	2026-10-09T18:06:24.1316417Z  Downloaded numpy
+test	Run bash ci/run.sh test	2026-10-09T18:06:24.7569627Z  Downloaded scipy
+test	Run bash ci/run.sh test	2026-10-09T18:06:24.7806721Z  Downloaded pandas
+test	Run bash ci/run.sh test	2026-10-09T18:06:24.8076113Z  Downloaded pyarrow
+test	Run bash ci/run.sh test	2026-10-09T18:06:26.2825820Z  Downloaded lm-eval
+test	Run bash ci/run.sh test	2026-10-09T18:06:26.8136740Z Installed 84 packages in 530ms
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8237159Z ============================= test session starts ==============================
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8238952Z platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8240827Z rootdir: /home/runner/work/industrial-llm-platform/industrial-llm-platform
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8241787Z plugins: anyio-4.15.1
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8242260Z collected 9 items
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8242597Z
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8471639Z benchmark/tests/test_metrics.py .........                                [100%]
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8473760Z
+test	Run bash ci/run.sh test	2026-10-09T18:06:27.8474345Z ============================== 9 passed in 0.06s ===============================
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.0653361Z Unable to find image 'postgres:18.6-alpine3.24' locally
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.3971619Z 18.6-alpine3.24: Pulling from library/postgres
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5088787Z e2de96513ba9: Already exists
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5098814Z 976cd45ecd0f: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5100087Z d8f47ca787e9: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5100828Z 30b4807a96db: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5101591Z 23ebd6772525: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5102120Z e5545be08ab6: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5102659Z a7fe94998417: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5103267Z 176ab66edd39: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5103815Z 5ef7ae0adbc8: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5104524Z 23ebd6772525: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5104792Z e5545be08ab6: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5105046Z a7fe94998417: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5105515Z 176ab66edd39: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.5105780Z 5ef7ae0adbc8: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6048176Z 30b4807a96db: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6051463Z 30b4807a96db: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6054615Z 976cd45ecd0f: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6056376Z 976cd45ecd0f: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6171476Z d8f47ca787e9: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6177942Z d8f47ca787e9: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6394897Z e5545be08ab6: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6396168Z e5545be08ab6: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6470857Z a7fe94998417: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6471715Z a7fe94998417: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6656992Z 176ab66edd39: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6657525Z 176ab66edd39: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6736303Z 5ef7ae0adbc8: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.6737225Z 5ef7ae0adbc8: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:38.7016611Z 976cd45ecd0f: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:39.0099212Z 23ebd6772525: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:06:39.0099996Z 23ebd6772525: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:39.3979075Z d8f47ca787e9: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:39.6375241Z 30b4807a96db: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.2897708Z 23ebd6772525: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.3055829Z e5545be08ab6: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.3192285Z a7fe94998417: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.3358462Z 176ab66edd39: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.3445856Z 5ef7ae0adbc8: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.3482730Z Digest: sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+test	Run bash ci/run.sh test	2026-10-09T18:06:44.3493678Z Status: Downloaded newer image for postgres:18.6-alpine3.24
+test	Run bash ci/run.sh test	2026-10-09T18:06:46.6918041Z 127.0.0.1:5432 - accepting connections
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.0118262Z Using CPython 3.12.13 interpreter at: /usr/local/bin/python3.12
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.0118925Z Creating virtual environment at: .venv
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1143542Z Downloading torch (187.2MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1236600Z Downloading grpcio (6.8MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1242621Z Downloading hf-xet (4.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1254847Z Downloading transformers (11.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1255233Z Downloading tokenizers (3.2MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1266585Z Downloading sympy (6.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1266978Z Downloading pydantic-core (2.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1267454Z Downloading pygments (1.2MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1274303Z Downloading networkx (2.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1277063Z Downloading aiohttp (1.8MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1281540Z Downloading openai (2.1MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1286535Z Downloading sqlalchemy (4.5MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1290335Z Downloading numpy (15.9MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1305551Z Downloading psycopg-binary (5.0MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1317105Z Downloading scikit-learn (8.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.1325252Z Downloading scipy (33.7MiB)
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.9407474Z  Downloaded aiohttp
+test	Run bash ci/run.sh test	2026-10-09T18:06:47.9497870Z  Downloaded pydantic-core
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.0657233Z  Downloaded pygments
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.1576164Z  Downloaded tokenizers
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.2424719Z  Downloaded networkx
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.2708360Z  Downloaded hf-xet
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.3660973Z  Downloaded sqlalchemy
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.4780345Z  Downloaded psycopg-binary
+test	Run bash ci/run.sh test	2026-10-09T18:06:48.8144866Z  Downloaded grpcio
+test	Run bash ci/run.sh test	2026-10-09T18:06:49.0672095Z  Downloaded scikit-learn
+test	Run bash ci/run.sh test	2026-10-09T18:06:49.0673099Z  Downloaded sympy
+test	Run bash ci/run.sh test	2026-10-09T18:06:49.1039572Z  Downloaded numpy
+test	Run bash ci/run.sh test	2026-10-09T18:06:49.2047367Z  Downloaded openai
+test	Run bash ci/run.sh test	2026-10-09T18:06:49.4867759Z  Downloaded scipy
+test	Run bash ci/run.sh test	2026-10-09T18:06:49.6462791Z  Downloaded transformers
+test	Run bash ci/run.sh test	2026-10-09T18:06:52.8210920Z  Downloaded torch
+test	Run bash ci/run.sh test	2026-10-09T18:06:52.8226224Z warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+test	Run bash ci/run.sh test	2026-10-09T18:06:52.8226873Z          If the cache and target directories are on different filesystems, hardlinking may not be supported.
+test	Run bash ci/run.sh test	2026-10-09T18:06:52.8227541Z          If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+test	Run bash ci/run.sh test	2026-10-09T18:07:04.1844938Z Installed 104 packages in 11.36s
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0251690Z ============================= test session starts ==============================
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0252674Z platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0253726Z rootdir: /home/runner/work/industrial-llm-platform/industrial-llm-platform/rag
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0254538Z configfile: pyproject.toml
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0255687Z testpaths: tests
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0256165Z plugins: anyio-4.15.1
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0256577Z collected 7 items
+test	Run bash ci/run.sh test	2026-10-09T18:07:19.0256888Z
+test	Run bash ci/run.sh test	2026-10-09T18:07:20.7979049Z tests/test_api.py .....                                                  [ 71%]
+test	Run bash ci/run.sh test	2026-10-09T18:07:21.3982139Z tests/test_chunking.py ..                                                [100%]
+test	Run bash ci/run.sh test	2026-10-09T18:07:21.3985879Z
+test	Run bash ci/run.sh test	2026-10-09T18:07:21.3986149Z ============================== 7 passed in 15.76s ==============================
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.3121607Z Unable to find image 'prom/prometheus:v3.15.0' locally
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.6416426Z v3.15.0: Pulling from prom/prometheus
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7115017Z 487858d29734: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7115699Z 6bddf0169a34: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7118785Z 3859a559c288: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7119226Z 1e155d6744e4: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7119769Z e1db8b9e6f1c: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7120173Z fde357b1187c: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7120731Z 71af9fb8ff89: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7121570Z 4ce6fa7d0795: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7122088Z f9de78a4ea69: Pulling fs layer
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7122487Z 1e155d6744e4: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7123016Z e1db8b9e6f1c: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7123370Z fde357b1187c: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7123885Z 71af9fb8ff89: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7124240Z 4ce6fa7d0795: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7124659Z f9de78a4ea69: Waiting
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7445932Z 6bddf0169a34: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7459456Z 6bddf0169a34: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7486060Z 487858d29734: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7906560Z e1db8b9e6f1c: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.7907578Z e1db8b9e6f1c: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.8116220Z 487858d29734: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.8610453Z fde357b1187c: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.8629351Z fde357b1187c: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.9406006Z 71af9fb8ff89: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.9407579Z 71af9fb8ff89: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.9962808Z 4ce6fa7d0795: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:31.9976631Z 4ce6fa7d0795: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.0861608Z 3859a559c288: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.0869229Z 3859a559c288: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.0967864Z f9de78a4ea69: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.0968651Z f9de78a4ea69: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.1218299Z 1e155d6744e4: Verifying Checksum
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.1218795Z 1e155d6744e4: Download complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:32.4828239Z 6bddf0169a34: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:34.4832380Z 3859a559c288: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.8758415Z 1e155d6744e4: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.8870995Z e1db8b9e6f1c: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.9025720Z fde357b1187c: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.9169320Z 71af9fb8ff89: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.9244686Z 4ce6fa7d0795: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.9325971Z f9de78a4ea69: Pull complete
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.9353323Z Digest: sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e
+test	Run bash ci/run.sh test	2026-10-09T18:07:35.9365285Z Status: Downloaded newer image for prom/prometheus:v3.15.0
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0717851Z Checking observability/prometheus/prometheus.yml
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0725557Z   SUCCESS: 2 rule files found
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0726746Z  SUCCESS: observability/prometheus/prometheus.yml is valid prometheus config file syntax
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0728829Z
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0729061Z Checking observability/prometheus/rules/alerts.yml
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0751094Z   SUCCESS: 5 rules found
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0751352Z
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0753292Z Checking observability/prometheus/rules/recording.yml
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0776257Z   SUCCESS: 18 rules found
+test	Run bash ci/run.sh test	2026-10-09T18:07:36.0776523Z
+test	Run bash ci/run.sh test	2026-10-09T18:07:53.1567395Z   SUCCESS
+test	Run bash ci/run.sh test	2026-10-09T18:07:53.1568108Z
+test	Run bash ci/run.sh test	2026-10-09T18:07:57.0838092Z   SUCCESS
+test	Run bash ci/run.sh test	2026-10-09T18:07:57.0838723Z
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-09T18:07:57.3641504Z Post job cleanup.
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4428904Z [command]/usr/bin/git version
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4512572Z git version 2.55.0
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4562011Z Temporarily overriding HOME='/home/runner/work/_temp/3df7e1cc-93d0-46e0-9972-1fecc0dd4c45' before making global git config changes
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4563139Z Adding repository directory to the temporary git global config as a safe directory
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4564233Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/industrial-llm-platform/industrial-llm-platform
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4635267Z Removing SSH command configuration
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4636083Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.4689412Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.5055215Z Removing HTTP extra header
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.5056068Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.5059249Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.5504506Z Removing includeIf entries pointing to credentials config files
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.5528151Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:07:57.5532705Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Complete job	﻿2026-10-09T18:07:57.5982594Z Cleaning up orphan processes
+image	Set up job	﻿2026-10-09T18:08:03.1830658Z Current runner version: '2.337.0'
+image	Set up job	2026-10-09T18:08:03.1853315Z ##[group]Runner Image Provisioner
+image	Set up job	2026-10-09T18:08:03.1854086Z Hosted Compute Agent
+image	Set up job	2026-10-09T18:08:03.1854556Z Version: 20261002.596
+image	Set up job	2026-10-09T18:08:03.1855136Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+image	Set up job	2026-10-09T18:08:03.1855738Z Build Date: 2026-10-02T22:28:27Z
+image	Set up job	2026-10-09T18:08:03.1856382Z Worker ID: {8c2d4cfa-e13d-4213-abab-679c2f78eb0b}
+image	Set up job	2026-10-09T18:08:03.1856999Z Region: westus3
+image	Set up job	2026-10-09T18:08:03.1857439Z Cloud: Azure
+image	Set up job	2026-10-09T18:08:03.1857938Z ##[endgroup]
+image	Set up job	2026-10-09T18:08:03.1858951Z ##[group]Operating System
+image	Set up job	2026-10-09T18:08:03.1859646Z Ubuntu
+image	Set up job	2026-10-09T18:08:03.1860121Z 24.04.5
+image	Set up job	2026-10-09T18:08:03.1860548Z LTS
+image	Set up job	2026-10-09T18:08:03.1861010Z ##[endgroup]
+image	Set up job	2026-10-09T18:08:03.1861483Z ##[group]Runner Image
+image	Set up job	2026-10-09T18:08:03.1862026Z Image: ubuntu-24.04
+image	Set up job	2026-10-09T18:08:03.1862531Z Version: 20261004.327.1
+image	Set up job	2026-10-09T18:08:03.1863425Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+image	Set up job	2026-10-09T18:08:03.1864877Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+image	Set up job	2026-10-09T18:08:03.1865744Z ##[endgroup]
+image	Set up job	2026-10-09T18:08:03.1866670Z ##[group]GITHUB_TOKEN Permissions
+image	Set up job	2026-10-09T18:08:03.1868343Z Contents: read
+image	Set up job	2026-10-09T18:08:03.1868865Z Metadata: read
+image	Set up job	2026-10-09T18:08:03.1869456Z ##[endgroup]
+image	Set up job	2026-10-09T18:08:03.1871537Z Secret source: Actions
+image	Set up job	2026-10-09T18:08:03.1872356Z Cache mode: write
+image	Set up job	2026-10-09T18:08:03.1872978Z Prepare workflow directory
+image	Set up job	2026-10-09T18:08:03.2162295Z Prepare all required actions
+image	Set up job	2026-10-09T18:08:03.2218004Z Getting action download info
+image	Set up job	2026-10-09T18:08:03.5112673Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+image	Set up job	2026-10-09T18:08:03.8452257Z Complete job name: image
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-09T18:08:03.9082654Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9083536Z with:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9083931Z   persist-credentials: false
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9084403Z   repository: aafaq01/industrial-llm-platform
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9087670Z   token: ***
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9088048Z   ssh-strict: true
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9088420Z   ssh-user: git
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9088777Z   clean: true
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9089152Z   sparse-checkout-cone-mode: true
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9089771Z   fetch-depth: 1
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9090133Z   fetch-tags: false
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9090525Z   show-progress: true
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9090905Z   lfs: false
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9091250Z   submodules: false
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9091631Z   set-safe-directory: true
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9092052Z   allow-unsafe-pr-checkout: false
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:03.9092641Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.0062430Z Syncing repository: aafaq01/industrial-llm-platform
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.0081609Z ##[group]Getting Git version info
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.0090324Z Working directory is '/home/runner/work/industrial-llm-platform/industrial-llm-platform'
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.0094063Z [command]/usr/bin/git version
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1155847Z git version 2.55.0
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1175819Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1186511Z Temporarily overriding HOME='/home/runner/work/_temp/9a519d7d-da1d-4486-8104-b61ebe428f08' before making global git config changes
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1190561Z Adding repository directory to the temporary git global config as a safe directory
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1193445Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/industrial-llm-platform/industrial-llm-platform
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1237579Z Deleting the contents of '/home/runner/work/industrial-llm-platform/industrial-llm-platform'
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1240380Z ##[group]Determining repository object format
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1242561Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1243934Z ##[group]Initializing the repository
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1246702Z [command]/usr/bin/git init /home/runner/work/industrial-llm-platform/industrial-llm-platform
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1336875Z hint: Using 'master' as the name for the initial branch. This default branch name
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1340710Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1342465Z hint: to use in all of your new repositories, which will suppress this warning,
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1344060Z hint: call:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1347419Z hint:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1348162Z hint: 	git config --global init.defaultBranch <name>
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1348988Z hint:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1349921Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1351220Z hint: 'development'. The just-created branch can be renamed via this command:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1352209Z hint:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1352753Z hint: 	git branch -m <name>
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1353370Z hint:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1354188Z hint: Disable this message with "git config set advice.defaultBranchName false"
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1355840Z Initialized empty Git repository in /home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1358380Z [command]/usr/bin/git remote add origin https://github.com/aafaq01/industrial-llm-platform
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1396799Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1398092Z ##[group]Disabling automatic garbage collection
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1400725Z [command]/usr/bin/git config --local gc.auto 0
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1437088Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1440166Z ##[group]Setting up auth
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1441979Z Removing SSH command configuration
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1445631Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1479008Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1797130Z Removing HTTP extra header
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1801898Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.1835356Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2051395Z Removing includeIf entries pointing to credentials config files
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2053034Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2081429Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2282193Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2316949Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path /home/runner/work/_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2351035Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2388222Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2423174Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2453833Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2454972Z ##[group]Fetching the repository
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:04.2461296Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a:refs/remotes/origin/main
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7415624Z From https://github.com/aafaq01/industrial-llm-platform
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7421526Z  * [new ref]         66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a -> origin/main
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7424168Z [command]/usr/bin/git branch --list --remote origin/main
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7425164Z   origin/main
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7427341Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7437028Z 66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7453792Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7454685Z ##[group]Determining the checkout info
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7455877Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7456549Z [command]/usr/bin/git sparse-checkout disable
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7492816Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7525076Z ##[group]Checking out the ref
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.7529836Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8263098Z Switched to a new branch 'main'
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8271355Z branch 'main' set up to track 'origin/main'.
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8282517Z ##[endgroup]
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8330069Z [command]/usr/bin/git log -1 --format=%H
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8353784Z 66e3b23da5d86a7b3bf2ca2b657451209f3f1c7a
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8371684Z ##[group]Removing auth
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8372205Z Removing SSH command configuration
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8372962Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8412755Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8635752Z Removing HTTP extra header
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8639027Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8669747Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8869784Z Removing includeIf entries pointing to credentials config files
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8871192Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8899665Z includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8901122Z includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8902584Z includeif.gitdir:/github/workspace/.git.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8903533Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8907041Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8930668Z /home/runner/work/_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8937932Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-05e40c61\-ba98\-4dd4\-b862\-7a4d0c2d4571\.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.8980160Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9010409Z /home/runner/work/_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9012244Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/industrial-llm-platform/industrial-llm-platform/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-05e40c61\-ba98\-4dd4\-b862\-7a4d0c2d4571\.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9060060Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9086998Z /github/runner_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9145947Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-05e40c61\-ba98\-4dd4\-b862\-7a4d0c2d4571\.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9211902Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9237188Z /github/runner_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9243074Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-05e40c61\-ba98\-4dd4\-b862\-7a4d0c2d4571\.config
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9277100Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9479572Z Removing credentials config '/home/runner/work/_temp/git-credentials-05e40c61-ba98-4dd4-b862-7a4d0c2d4571.config'
+image	Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:08:05.9486918Z ##[endgroup]
+image	Run bash ci/run.sh build	﻿2026-10-09T18:08:05.9675231Z ##[group]Run bash ci/run.sh build
+image	Run bash ci/run.sh build	2026-10-09T18:08:05.9675619Z ^[[36;1mbash ci/run.sh build^[[0m
+image	Run bash ci/run.sh build	2026-10-09T18:08:05.9874347Z shell: /usr/bin/bash -e {0}
+image	Run bash ci/run.sh build	2026-10-09T18:08:05.9874723Z ##[endgroup]
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9546539Z #0 building with "default" instance using docker driver
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9595451Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9599801Z #1 [internal] load remote build context
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9600918Z #1 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9601637Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9602478Z #2 copy /context /
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9603119Z #2 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9604020Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:06.9604654Z #3 [internal] load metadata for ghcr.io/astral-sh/uv:0.11.32
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.1803001Z #3 ...
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.1803506Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.1805477Z #4 [auth] library/python:pull token for registry-1.docker.io
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.1805942Z #4 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.3238423Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.3257947Z #5 [internal] load metadata for docker.io/library/python:3.12.15-slim-trixie
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.7347387Z #5 ...
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.7348308Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.7348569Z #3 [internal] load metadata for ghcr.io/astral-sh/uv:0.11.32
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.7349059Z #3 DONE 0.9s
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8528594Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8535697Z #5 [internal] load metadata for docker.io/library/python:3.12.15-slim-trixie
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8536278Z #5 DONE 0.9s
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8536440Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8536965Z #6 [build 1/5] FROM docker.io/library/python:3.12.15-slim-trixie@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8538108Z #6 resolve docker.io/library/python:3.12.15-slim-trixie@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 done
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8539115Z #6 sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357c3201a74299113e05e 12.58MB / 29.84MB 0.1s
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8540082Z #6 sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 10.37kB / 10.37kB done
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8540983Z #6 sha256:2b4f19dae3a777dfc3b76730bda1e82e1f66ab2a2686fa93ca78edbfb4f04ffe 1.75kB / 1.75kB done
+image	Run bash ci/run.sh build	2026-10-09T18:08:07.8541957Z #6 sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316 5.66kB / 5.66kB done
+image	Run bash ci/run.sh build	2026-10-09T18:08:08.0534506Z #6 sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357c3201a74299113e05e 29.84MB / 29.84MB 0.3s
+image	Run bash ci/run.sh build	2026-10-09T18:08:09.4527558Z #6 sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a920a61784c9c32f8 0B / 1.29MB 1.7s
+image	Run bash ci/run.sh build	2026-10-09T18:08:09.6527325Z #6 sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357c3201a74299113e05e 29.84MB / 29.84MB 1.8s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:09.6528295Z #6 sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a920a61784c9c32f8 1.29MB / 1.29MB 1.9s
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.2742799Z #6 sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a920a61784c9c32f8 1.29MB / 1.29MB 2.4s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.2745096Z #6 extracting sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357c3201a74299113e05e 0.1s
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.2746020Z #6 sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5dbc4f8cd97f4 0B / 12.12MB 2.5s
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.3804481Z #6 sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5dbc4f8cd97f4 9.44MB / 12.12MB 2.6s
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.4916470Z #6 sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5dbc4f8cd97f4 12.12MB / 12.12MB 2.7s
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.7125997Z #6 sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5dbc4f8cd97f4 12.12MB / 12.12MB 2.8s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.7127283Z #6 sha256:bbc5a12237474ec0b23b5051260d56d6436a24d70d9cad961adebe7a037ed813 0B / 249B 2.9s
+image	Run bash ci/run.sh build	2026-10-09T18:08:10.8147859Z #6 sha256:bbc5a12237474ec0b23b5051260d56d6436a24d70d9cad961adebe7a037ed813 249B / 249B 3.0s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:11.6425760Z #6 extracting sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357c3201a74299113e05e 1.3s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:12.5615988Z #6 extracting sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a920a61784c9c32f8
+image	Run bash ci/run.sh build	2026-10-09T18:08:14.4094900Z #6 extracting sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a920a61784c9c32f8 1.7s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.1566372Z #6 extracting sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5dbc4f8cd97f4
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2760879Z #6 ...
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2773130Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2773652Z #7 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.11.32@sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2774293Z #7 resolve ghcr.io/astral-sh/uv:0.11.32@sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2774885Z #7 sha256:7e64aefbf9b34aa47d14e252fd1fbc0eb8fe7d07d275912a9500a5edfc06fccc 1.30kB / 1.30kB done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2775818Z #7 sha256:73f635c1b7365232b60daf8f991657597b3b9b732df92fac948a395d57803cba 27.20MB / 27.20MB 2.3s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2776337Z #7 sha256:e6baf26ea4302ea40e15999625cea18f8694b3977222e350fd2407c99d76b490 96B / 96B 0.9s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2776833Z #7 sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c 2.20kB / 2.20kB done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2777384Z #7 sha256:0d127b3a7049b879a6e18a79c7f33fea59aa83c226464248f89cfb716a6b96f5 669B / 669B done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2777883Z #7 extracting sha256:73f635c1b7365232b60daf8f991657597b3b9b732df92fac948a395d57803cba 0.6s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2778366Z #7 extracting sha256:e6baf26ea4302ea40e15999625cea18f8694b3977222e350fd2407c99d76b490 done
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2778704Z #7 DONE 9.4s
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2778799Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.2779128Z #6 [build 1/5] FROM docker.io/library/python:3.12.15-slim-trixie@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+image	Run bash ci/run.sh build	2026-10-09T18:08:17.8602117Z #6 extracting sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5dbc4f8cd97f4 0.6s done
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.2125352Z #6 extracting sha256:bbc5a12237474ec0b23b5051260d56d6436a24d70d9cad961adebe7a037ed813
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.3981816Z #6 extracting sha256:bbc5a12237474ec0b23b5051260d56d6436a24d70d9cad961adebe7a037ed813 done
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.3982664Z #6 DONE 10.5s
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.3982985Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.3983643Z #8 [stage-2 2/9] RUN useradd --uid 1001 --gid 0 --no-create-home --home-dir /tmp app     && mkdir -p /data/corpus && chown 1001:0 /data/corpus && chmod 2775 /data/corpus
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.9257009Z #8 ...
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.9257282Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.9257475Z #9 [build 2/5] COPY --from=uv /uv /usr/local/bin/uv
+image	Run bash ci/run.sh build	2026-10-09T18:08:18.9258090Z #9 DONE 0.7s
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1532213Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1533535Z #8 [stage-2 2/9] RUN useradd --uid 1001 --gid 0 --no-create-home --home-dir /tmp app     && mkdir -p /data/corpus && chown 1001:0 /data/corpus && chmod 2775 /data/corpus
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1534716Z #8 DONE 0.7s
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1535022Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1535287Z #10 [build 3/5] WORKDIR /app
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1535733Z #10 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1536021Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1536278Z #11 [stage-2 3/9] WORKDIR /app
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1536707Z #11 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1536992Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1537284Z #12 [build 4/5] COPY pyproject.toml uv.lock ./
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1538321Z #12 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1538599Z
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.1541089Z #13 [build 5/5] RUN uv sync --frozen --no-default-groups --no-cache     && .venv/bin/python -c "from huggingface_hub import snapshot_download as d; d('BAAI/bge-small-en-v1.5', revision='5c38ec7c405ec4b44b94cc5a9bb96e735b38267a', local_dir='/opt/models/bge-small-en-v1.5', allow_patterns=['*.json', '*.txt', 'model.safetensors', '1_Pooling/*']); d('cross-encoder/ms-marco-MiniLM-L6-v2', revision='233902d25c440f23af6f7d6e94d2946bac0bee0a', local_dir='/opt/models/ms-marco-MiniLM-L6-v2', allow_patterns=['*.json', '*.txt', 'model.safetensors'])"
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3649886Z #13 0.260 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3651018Z #13 0.261 Creating virtual environment at: .venv
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3651929Z #13 0.333 Downloading tokenizers (3.2MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3652723Z #13 0.333 Downloading networkx (2.0MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3653490Z #13 0.333 Downloading pydantic-core (2.0MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3654272Z #13 0.351 Downloading grpcio (6.8MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3654679Z #13 0.351 Downloading psycopg-binary (5.0MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3655065Z #13 0.351 Downloading aiohttp (1.8MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3655431Z #13 0.351 Downloading scikit-learn (8.7MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3655811Z #13 0.351 Downloading pygments (1.2MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3656186Z #13 0.351 Downloading sqlalchemy (4.5MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3656545Z #13 0.352 Downloading hf-xet (4.0MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3656899Z #13 0.352 Downloading openai (2.1MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3657241Z #13 0.353 Downloading numpy (15.9MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3657586Z #13 0.353 Downloading scipy (33.7MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3657937Z #13 0.354 Downloading transformers (11.7MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3658308Z #13 0.354 Downloading sympy (6.0MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:19.3658651Z #13 0.363 Downloading torch (187.2MiB)
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.2757534Z #13 1.273  Downloaded aiohttp
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.4461215Z #13 1.284  Downloaded pydantic-core
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.4464818Z #13 1.343  Downloaded pygments
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.6026809Z #13 1.443  Downloaded tokenizers
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.6027513Z #13 1.511  Downloaded networkx
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.6028011Z #13 1.600  Downloaded hf-xet
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.7105968Z #13 1.707  Downloaded sqlalchemy
+image	Run bash ci/run.sh build	2026-10-09T18:08:20.9670295Z #13 1.964  Downloaded psycopg-binary
+image	Run bash ci/run.sh build	2026-10-09T18:08:21.3922321Z #13 2.239  Downloaded grpcio
+image	Run bash ci/run.sh build	2026-10-09T18:08:21.4262802Z #13 2.423  Downloaded scikit-learn
+image	Run bash ci/run.sh build	2026-10-09T18:08:21.5661170Z #13 2.435  Downloaded sympy
+image	Run bash ci/run.sh build	2026-10-09T18:08:21.5661878Z #13 2.563  Downloaded numpy
+image	Run bash ci/run.sh build	2026-10-09T18:08:21.7747114Z #13 2.621  Downloaded openai
+image	Run bash ci/run.sh build	2026-10-09T18:08:22.0860312Z #13 2.932  Downloaded scipy
+image	Run bash ci/run.sh build	2026-10-09T18:08:22.0945138Z #13 3.092  Downloaded transformers
+image	Run bash ci/run.sh build	2026-10-09T18:08:24.6300279Z #13 5.628  Downloaded torch
+image	Run bash ci/run.sh build	2026-10-09T18:08:24.7959468Z #13 5.643 Prepared 101 packages in 5.37s
+image	Run bash ci/run.sh build	2026-10-09T18:08:38.3777728Z #13 19.38 Installed 101 packages in 13.73s
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.0230514Z #13 44.02 Bytecode compiled 15405 files in 24.64s
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1875493Z #13 44.02  + aiohappyeyeballs==2.7.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1876330Z #13 44.02  + aiohttp==3.14.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1876897Z #13 44.02  + aiosignal==1.4.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1877210Z #13 44.02  + alembic==1.20.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1877578Z #13 44.02  + annotated-doc==0.0.5
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1877869Z #13 44.02  + annotated-types==0.8.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1878155Z #13 44.02  + anyio==4.15.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1878402Z #13 44.02  + attrs==26.1.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1878671Z #13 44.02  + backoff==2.2.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1878956Z #13 44.02  + certifi==2026.7.22
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1879411Z #13 44.02  + charset-normalizer==3.5.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1879727Z #13 44.02  + click==8.3.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1880016Z #13 44.02  + cloudpickle==3.1.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1880290Z #13 44.02  + distro==1.9.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1880566Z #13 44.02  + docstring-parser==0.18.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1880911Z #13 44.02  + elastic-transport==8.19.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1881625Z #13 44.02  + elasticsearch==8.19.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1881956Z #13 44.02  + elasticsearch-haystack==6.4.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1882294Z #13 44.02  + fastapi==0.142.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1882570Z #13 44.02  + filelock==4.0.12
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1882863Z #13 44.02  + filetype==1.2.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1883164Z #13 44.02  + frozenlist==1.8.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1883464Z #13 44.02  + fsspec==2026.9.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1883829Z #13 44.02  + googleapis-common-protos==1.75.5
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1884163Z #13 44.02  + grpcio==1.84.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1884407Z #13 44.02  + h11==0.16.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1884649Z #13 44.02  + haystack-ai==2.31.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1884944Z #13 44.03  + haystack-experimental==0.19.0.post1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1885279Z #13 44.03  + hf-xet==1.7.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1885530Z #13 44.03  + httpcore==1.0.9
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1885797Z #13 44.03  + httpcore2==2.13.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1886057Z #13 44.03  + httpx==0.28.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1886318Z #13 44.03  + httpx2==2.13.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1886798Z #13 44.03  + huggingface-hub==1.16.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1887070Z #13 44.03  + idna==3.20
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1887294Z #13 44.03  + jinja2==3.1.6
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1887535Z #13 44.03  + jiter==0.17.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1887793Z #13 44.03  + joblib==1.6.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1888055Z #13 44.03  + jsonschema==4.26.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1888381Z #13 44.03  + jsonschema-specifications==2025.9.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1888733Z #13 44.03  + lazy-imports==1.2.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1889030Z #13 44.03  + mako==1.4.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1890211Z #13 44.03  + markdown-it-py==4.2.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1890551Z #13 44.03  + markupsafe==3.0.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1890850Z #13 44.03  + mdurl==0.1.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1891647Z #13 44.03  + more-itertools==11.1.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1891963Z #13 44.03  + mpmath==1.3.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1892243Z #13 44.03  + multidict==6.9.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1893506Z #13 44.03  + narwhals==2.26.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1893809Z #13 44.03  + networkx==3.7
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1894091Z #13 44.03  + numpy==2.5.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1894848Z #13 44.03  + openai==3.26.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1895158Z #13 44.03  + opentelemetry-api==1.45.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1896012Z #13 44.03  + opentelemetry-exporter-otlp-common==0.66b1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1896507Z #13 44.03  + opentelemetry-exporter-otlp-proto-common==1.45.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1897483Z #13 44.03  + opentelemetry-exporter-otlp-proto-grpc==1.45.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1897795Z #13 44.03  + opentelemetry-proto==1.45.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1898020Z #13 44.03  + opentelemetry-sdk==1.45.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1898387Z #13 44.03  + opentelemetry-semantic-conventions==0.66b1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1898769Z #13 44.03  + packaging==26.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1899043Z #13 44.03  + posthog==7.64.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1899383Z #13 44.03  + prometheus-client==0.26.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1899703Z #13 44.03  + propcache==0.5.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1899986Z #13 44.03  + protobuf==7.36.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1900282Z #13 44.03  + psycopg==3.3.6
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1900665Z #13 44.03  + psycopg-binary==3.3.6
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1900961Z #13 44.03  + pydantic==2.13.5
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1901240Z #13 44.03  + pydantic-core==2.46.5
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1901528Z #13 44.03  + pygments==2.21.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1901809Z #13 44.03  + pypdf==6.19.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1902086Z #13 44.03  + python-dateutil==2.9.0.post0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1902300Z #13 44.03  + pyyaml==6.0.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1902483Z #13 44.03  + referencing==0.37.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1902688Z #13 44.03  + regex==2026.9.29
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1902937Z #13 44.03  + requests==2.34.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1903210Z #13 44.03  + rich==14.3.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1903461Z #13 44.03  + rpds-py==2026.9.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1903658Z #13 44.03  + safetensors==0.8.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1903856Z #13 44.03  + scikit-learn==1.9.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1904243Z #13 44.03  + scipy==1.18.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1904528Z #13 44.03  + sentence-transformers==5.6.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1905088Z #13 44.03  + setuptools==84.0.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1905399Z #13 44.03  + shellingham==1.5.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1905694Z #13 44.03  + six==1.17.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1905968Z #13 44.03  + sniffio==1.3.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1906262Z #13 44.03  + sqlalchemy==2.1.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1906567Z #13 44.03  + starlette==1.7.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1906825Z #13 44.03  + sympy==1.14.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1907027Z #13 44.03  + tenacity==9.2.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1907231Z #13 44.03  + threadpoolctl==3.7.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1907444Z #13 44.03  + tokenizers==0.23.2
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1907739Z #13 44.03  + torch==2.14.1+cpu
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1908027Z #13 44.03  + tqdm==4.70.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1908266Z #13 44.03  + transformers==5.17.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1908460Z #13 44.03  + truststore==0.10.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1908647Z #13 44.03  + typer==0.27.3
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1908842Z #13 44.03  + typing-extensions==4.16.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1909147Z #13 44.03  + typing-inspection==0.4.4
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1909689Z #13 44.03  + urllib3==2.8.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1910042Z #13 44.03  + uvicorn==0.54.0
+image	Run bash ci/run.sh build	2026-10-09T18:09:03.1910229Z #13 44.03  + yarl==1.25.1
+image	Run bash ci/run.sh build	2026-10-09T18:09:08.7725710Z #13 49.77
+image	Run bash ci/run.sh build	2026-10-09T18:09:08.8801055Z Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+image	Run bash ci/run.sh build	2026-10-09T18:09:09.1207504Z #13 49.97
+image	Run bash ci/run.sh build	2026-10-09T18:09:12.2361352Z Fetching 10 files:  80%|████████  | 8/10 [00:00<00:00, 40.49it/s]
+image	Run bash ci/run.sh build	2026-10-09T18:09:12.2362550Z Fetching 10 files: 100%|██████████| 10/10 [00:03<00:00,  2.89it/s]
+image	Run bash ci/run.sh build	2026-10-09T18:09:12.4492351Z #13 53.31
+image	Run bash ci/run.sh build	2026-10-09T18:09:12.4492791Z Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]
+image	Run bash ci/run.sh build	2026-10-09T18:09:14.9777062Z Fetching 6 files:  50%|█████     | 3/6 [00:00<00:00, 22.67it/s]
+image	Run bash ci/run.sh build	2026-10-09T18:09:15.1280228Z Fetching 6 files: 100%|██████████| 6/6 [00:02<00:00,  2.26it/s]
+image	Run bash ci/run.sh build	2026-10-09T18:09:15.1281563Z Fetching 6 files: 100%|██████████| 6/6 [00:02<00:00,  2.25it/s]
+image	Run bash ci/run.sh build	2026-10-09T18:09:17.8006010Z #13 DONE 58.8s
+image	Run bash ci/run.sh build	2026-10-09T18:09:21.2290966Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:21.2291636Z #14 [stage-2 4/9] COPY --from=build /app/.venv /app/.venv
+image	Run bash ci/run.sh build	2026-10-09T18:09:39.7819612Z #14 DONE 18.6s
+image	Run bash ci/run.sh build	2026-10-09T18:09:39.9334720Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.0206272Z #15 [stage-2 5/9] COPY --from=build /opt/models /opt/models
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.0206770Z #15 DONE 2.2s
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2434820Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2435372Z #16 [stage-2 6/9] COPY alembic.ini ./
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2435793Z #16 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2436159Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2436321Z #17 [stage-2 7/9] COPY migrations ./migrations
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2436687Z #17 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2436910Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2437232Z #18 [stage-2 8/9] COPY data/sources.json ./data/sources.json
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2439781Z #18 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2440191Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2440315Z #19 [stage-2 9/9] COPY app ./app
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2440616Z #19 DONE 0.0s
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2440767Z
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2440926Z #20 exporting to image
+image	Run bash ci/run.sh build	2026-10-09T18:09:42.2441211Z #20 exporting layers
+image	Run bash ci/run.sh build	2026-10-09T18:09:54.1889120Z #20 exporting layers 12.1s done
+image	Run bash ci/run.sh build	2026-10-09T18:09:54.2062535Z #20 writing image sha256:5e13075d61f2d4573bb783a9ae279272bf8ad5bd7dce1cfd7c03fc20b5398644 done
+image	Run bash ci/run.sh build	2026-10-09T18:09:54.2063363Z #20 naming to localhost:5001/industrial-llm-platform/rag:ci-1 done
+image	Run bash ci/run.sh build	2026-10-09T18:09:54.2063805Z #20 DONE 12.1s
+image	Run bash ci/run.sh scan	﻿2026-10-09T18:09:54.2157597Z ##[group]Run bash ci/run.sh scan
+image	Run bash ci/run.sh scan	2026-10-09T18:09:54.2157879Z ^[[36;1mbash ci/run.sh scan^[[0m
+image	Run bash ci/run.sh scan	2026-10-09T18:09:54.2231160Z shell: /usr/bin/bash -e {0}
+image	Run bash ci/run.sh scan	2026-10-09T18:09:54.2231396Z ##[endgroup]
+image	Run bash ci/run.sh scan	2026-10-09T18:09:54.2455038Z Unable to find image 'aquasec/trivy:0.75.0' locally
+image	Run bash ci/run.sh scan	2026-10-09T18:09:54.9907428Z 0.75.0: Pulling from aquasec/trivy
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.2163154Z e2de96513ba9: Already exists
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.2178085Z c716e0146a8a: Pulling fs layer
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.2178776Z 08201c795fbc: Pulling fs layer
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.2179106Z e3614b31dd78: Pulling fs layer
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.3871266Z e3614b31dd78: Download complete
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.4302198Z c716e0146a8a: Verifying Checksum
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.4303192Z c716e0146a8a: Download complete
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.5788894Z 08201c795fbc: Verifying Checksum
+image	Run bash ci/run.sh scan	2026-10-09T18:09:55.5790320Z 08201c795fbc: Download complete
+image	Run bash ci/run.sh scan	2026-10-09T18:09:56.3513023Z c716e0146a8a: Pull complete
+image	Run bash ci/run.sh scan	2026-10-09T18:09:58.0544512Z 08201c795fbc: Pull complete
+image	Run bash ci/run.sh scan	2026-10-09T18:09:58.8469923Z e3614b31dd78: Pull complete
+image	Run bash ci/run.sh scan	2026-10-09T18:09:58.8506134Z Digest: sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa
+image	Run bash ci/run.sh scan	2026-10-09T18:09:58.8516844Z Status: Downloaded newer image for aquasec/trivy:0.75.0
+image	Run bash ci/run.sh scan	2026-10-09T18:09:59.0858194Z 2026-10-09T18:09:59Z	INFO	[vulndb] Need to update DB
+image	Run bash ci/run.sh scan	2026-10-09T18:09:59.0858855Z 2026-10-09T18:09:59Z	INFO	[vulndb] Downloading vulnerability DB...
+image	Run bash ci/run.sh scan	2026-10-09T18:09:59.0859747Z 2026-10-09T18:09:59Z	INFO	[vulndb] Downloading artifact...	repo="mirror.gcr.io/aquasec/trivy-db:2"
+image	Run bash ci/run.sh scan	2026-10-09T18:10:06.6619652Z 2026-10-09T18:10:06Z	INFO	[vulndb] Artifact successfully downloaded	repo="mirror.gcr.io/aquasec/trivy-db:2"
+image	Run bash ci/run.sh scan	2026-10-09T18:10:06.8913781Z 2026-10-09T18:10:06Z	INFO	[vuln] Vulnerability scanning is enabled
+image	Run bash ci/run.sh scan	2026-10-09T18:10:46.9903106Z 2026-10-09T18:10:46Z	INFO	[python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+image	Run bash ci/run.sh scan	2026-10-09T18:10:52.5626460Z 2026-10-09T18:10:52Z	INFO	Detected OS	family="debian" version="13.7"
+image	Run bash ci/run.sh scan	2026-10-09T18:10:52.5627008Z 2026-10-09T18:10:52Z	INFO	[debian] Detecting vulnerabilities...	os_version="13" pkg_num=87
+image	Run bash ci/run.sh scan	2026-10-09T18:10:52.6213273Z 2026-10-09T18:10:52Z	INFO	Number of language-specific files	num=1
+image	Run bash ci/run.sh scan	2026-10-09T18:10:52.6213959Z 2026-10-09T18:10:52Z	INFO	[python-pkg] Detecting vulnerabilities...
+image	Run bash ci/run.sh scan	2026-10-09T18:10:52.6403272Z 2026-10-09T18:10:52Z	WARN	Using severities from other vendors for some vulnerabilities. Read https://trivy.dev/docs/v0.75/guide/scanner/vulnerability#severity-selection for details.
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2518322Z
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2519193Z Report Summary
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2520477Z
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2528262Z ┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┐
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2529424Z │                                      Target                                      │    Type    │ Vulnerabilities │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2530255Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2531221Z │ localhost:5001/industrial-llm-platform/rag:ci-1 (debian 13.7)                    │   debian   │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2532201Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2533124Z │ app/.venv/lib/python3.12/site-packages/aiohappyeyeballs-2.7.1.dist-info/METADATA │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2534133Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2535080Z │ app/.venv/lib/python3.12/site-packages/aiohttp-3.14.4.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2535979Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2536820Z │ app/.venv/lib/python3.12/site-packages/aiosignal-1.4.0.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2538087Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2538911Z │ app/.venv/lib/python3.12/site-packages/alembic-1.20.0.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2539983Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2540866Z │ app/.venv/lib/python3.12/site-packages/annotated_doc-0.0.5.dist-info/METADATA    │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2542080Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2543004Z │ app/.venv/lib/python3.12/site-packages/annotated_types-0.8.0.dist-info/METADATA  │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2543970Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2544869Z │ app/.venv/lib/python3.12/site-packages/anyio-4.15.1.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2545823Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2546624Z │ app/.venv/lib/python3.12/site-packages/attrs-26.1.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2547486Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2548321Z │ app/.venv/lib/python3.12/site-packages/backoff-2.2.1.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2549194Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2550666Z │ app/.venv/lib/python3.12/site-packages/certifi-2026.7.22.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2551794Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2552791Z │ app/.venv/lib/python3.12/site-packages/charset_normalizer-3.5.2.dist-info/METAD- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2553648Z │ ATA                                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2554419Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2555482Z │ app/.venv/lib/python3.12/site-packages/click-8.3.3.dist-info/METADATA            │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2556424Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2557313Z │ app/.venv/lib/python3.12/site-packages/cloudpickle-3.1.2.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2558324Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2559447Z │ app/.venv/lib/python3.12/site-packages/distro-1.9.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2560407Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2561359Z │ app/.venv/lib/python3.12/site-packages/docstring_parser-0.18.0.dist-info/METADA- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2562246Z │ TA                                                                               │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2563039Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2563964Z │ app/.venv/lib/python3.12/site-packages/elastic_transport-8.19.0.dist-info/METAD- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2564947Z │ ATA                                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2566046Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2566896Z │ app/.venv/lib/python3.12/site-packages/elasticsearch-8.19.3.dist-info/METADATA   │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2567793Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2568914Z │ app/.venv/lib/python3.12/site-packages/elasticsearch_haystack-6.4.1.dist-info/M- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2569891Z │ ETADATA                                                                          │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2570641Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2571502Z │ app/.venv/lib/python3.12/site-packages/fastapi-0.142.2.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2572376Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2573214Z │ app/.venv/lib/python3.12/site-packages/filelock-4.0.12.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2574130Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2575013Z │ app/.venv/lib/python3.12/site-packages/filetype-1.2.0.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2575964Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2576815Z │ app/.venv/lib/python3.12/site-packages/frozenlist-1.8.0.dist-info/METADATA       │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2577744Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2578626Z │ app/.venv/lib/python3.12/site-packages/fsspec-2026.9.0.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2581590Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2582491Z │ app/.venv/lib/python3.12/site-packages/googleapis_common_protos-1.75.5.dist-inf- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2583585Z │ o/METADATA                                                                       │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2584346Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2585231Z │ app/.venv/lib/python3.12/site-packages/grpcio-1.84.0.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2586328Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2587170Z │ app/.venv/lib/python3.12/site-packages/h11-0.16.0.dist-info/METADATA             │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2588113Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2588973Z │ app/.venv/lib/python3.12/site-packages/haystack_ai-2.31.0.dist-info/METADATA     │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2590217Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2591086Z │ app/.venv/lib/python3.12/site-packages/haystack_experimental-0.19.0.post1.dist-- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2591873Z │ info/METADATA                                                                    │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2592685Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2593580Z │ app/.venv/lib/python3.12/site-packages/hf_xet-1.7.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2594518Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2595409Z │ app/.venv/lib/python3.12/site-packages/httpcore-1.0.9.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2596703Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2597590Z │ app/.venv/lib/python3.12/site-packages/httpcore2-2.13.1.dist-info/METADATA       │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2598409Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2599526Z │ app/.venv/lib/python3.12/site-packages/httpx-0.28.1.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2600474Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2601375Z │ app/.venv/lib/python3.12/site-packages/httpx2-2.13.1.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2602318Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2603429Z │ app/.venv/lib/python3.12/site-packages/huggingface_hub-1.16.1.dist-info/METADATA │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2604124Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2604760Z │ app/.venv/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA              │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2605424Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2606082Z │ app/.venv/lib/python3.12/site-packages/jinja2-3.1.6.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2606764Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2607423Z │ app/.venv/lib/python3.12/site-packages/jiter-0.17.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2608103Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2608688Z │ app/.venv/lib/python3.12/site-packages/joblib-1.6.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2609613Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2610257Z │ app/.venv/lib/python3.12/site-packages/jsonschema-4.26.0.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2611076Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2611750Z │ app/.venv/lib/python3.12/site-packages/jsonschema_specifications-2025.9.1.dist-- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2612314Z │ info/METADATA                                                                    │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2613017Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2613647Z │ app/.venv/lib/python3.12/site-packages/lazy_imports-1.2.0.dist-info/METADATA     │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2614319Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2614947Z │ app/.venv/lib/python3.12/site-packages/mako-1.4.3.dist-info/METADATA             │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2615562Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2616178Z │ app/.venv/lib/python3.12/site-packages/markdown_it_py-4.2.0.dist-info/METADATA   │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2616839Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2617470Z │ app/.venv/lib/python3.12/site-packages/markupsafe-3.0.4.dist-info/METADATA       │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2618152Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2618700Z │ app/.venv/lib/python3.12/site-packages/mdurl-0.1.2.dist-info/METADATA            │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2619576Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2620560Z │ app/.venv/lib/python3.12/site-packages/more_itertools-11.1.0.dist-info/METADATA  │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2621498Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2622094Z │ app/.venv/lib/python3.12/site-packages/mpmath-1.3.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2622759Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2623529Z │ app/.venv/lib/python3.12/site-packages/multidict-6.9.1.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2624178Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2624799Z │ app/.venv/lib/python3.12/site-packages/narwhals-2.26.0.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2625568Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2626115Z │ app/.venv/lib/python3.12/site-packages/networkx-3.7.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2626780Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2627387Z │ app/.venv/lib/python3.12/site-packages/numpy-2.5.3.dist-info/METADATA            │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2628051Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2628680Z │ app/.venv/lib/python3.12/site-packages/openai-3.26.0.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2629726Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2630447Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_api-1.45.1.dist-info/METAD- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2631059Z │ ATA                                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2631552Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2632201Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_exporter_otlp_common-0.66b- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2632999Z │ 1.dist-info/METADATA                                                             │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2633601Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2634235Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_exporter_otlp_proto_common- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2637757Z │ -1.45.1.dist-info/METADATA                                                       │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2638389Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2639024Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_exporter_otlp_proto_grpc-1- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2639806Z │ .45.1.dist-info/METADATA                                                         │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2640413Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2641146Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_proto-1.45.1.dist-info/MET- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2641795Z │ ADATA                                                                            │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2642307Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2642962Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_sdk-1.45.1.dist-info/METAD- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2643494Z │ ATA                                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2643974Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2644542Z │ app/.venv/lib/python3.12/site-packages/opentelemetry_semantic_conventions-0.66b- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2645174Z │ 1.dist-info/METADATA                                                             │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2645690Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2646422Z │ app/.venv/lib/python3.12/site-packages/packaging-26.3.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2647007Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2647543Z │ app/.venv/lib/python3.12/site-packages/posthog-7.64.1.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2648119Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2648866Z │ app/.venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METAD- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2649590Z │ ATA                                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2650075Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2650640Z │ app/.venv/lib/python3.12/site-packages/propcache-0.5.4.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2651238Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2651772Z │ app/.venv/lib/python3.12/site-packages/protobuf-7.36.2.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2652346Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2652892Z │ app/.venv/lib/python3.12/site-packages/psycopg-3.3.6.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2653479Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2654028Z │ app/.venv/lib/python3.12/site-packages/psycopg_binary-3.3.6.dist-info/METADATA   │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2654620Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2655152Z │ app/.venv/lib/python3.12/site-packages/pydantic-2.13.5.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2655814Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2656359Z │ app/.venv/lib/python3.12/site-packages/pydantic_core-2.46.5.dist-info/METADATA   │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2657090Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2657872Z │ app/.venv/lib/python3.12/site-packages/pygments-2.21.0.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2658668Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2659547Z │ app/.venv/lib/python3.12/site-packages/pypdf-6.19.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2660402Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2660962Z │ app/.venv/lib/python3.12/site-packages/python_dateutil-2.9.0.post0.dist-info/ME- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2661490Z │ TADATA                                                                           │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2661991Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2662536Z │ app/.venv/lib/python3.12/site-packages/pyyaml-6.0.3.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2663108Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2663664Z │ app/.venv/lib/python3.12/site-packages/referencing-0.37.0.dist-info/METADATA     │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2664260Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2664811Z │ app/.venv/lib/python3.12/site-packages/regex-2026.9.29.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2665396Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2665948Z │ app/.venv/lib/python3.12/site-packages/requests-2.34.2.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2666532Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2667065Z │ app/.venv/lib/python3.12/site-packages/rich-14.3.4.dist-info/METADATA            │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2667782Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2668324Z │ app/.venv/lib/python3.12/site-packages/rpds_py-2026.9.1.dist-info/METADATA       │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2668901Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2669686Z │ app/.venv/lib/python3.12/site-packages/safetensors-0.8.0.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2670406Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2670956Z │ app/.venv/lib/python3.12/site-packages/scikit_learn-1.9.1.dist-info/METADATA     │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2671535Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2672089Z │ app/.venv/lib/python3.12/site-packages/scipy-1.18.1.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2672670Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2673221Z │ app/.venv/lib/python3.12/site-packages/sentence_transformers-5.6.1.dist-info/ME- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2673742Z │ TADATA                                                                           │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2674245Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2674784Z │ app/.venv/lib/python3.12/site-packages/setuptools-84.0.0.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2675367Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2676031Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/autocommand-2.2.2.dis- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2676578Z │ t-info/METADATA                                                                  │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2677071Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2677629Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/backports.tarfile-1.2- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2678256Z │ .0.dist-info/METADATA                                                            │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2678759Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2679445Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/importlib_metadata-8.- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2680007Z │ 7.1.dist-info/METADATA                                                           │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2680514Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2681068Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/jaraco.text-4.0.0.dis- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2681606Z │ t-info/METADATA                                                                  │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2682113Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2682686Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/jaraco_context-6.1.0.- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2683225Z │ dist-info/METADATA                                                               │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2683724Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2684299Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/jaraco_functools-4.4.- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2684846Z │ 0.dist-info/METADATA                                                             │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2685354Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2686035Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/more_itertools-10.8.0- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2686575Z │ .dist-info/METADATA                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2687076Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2687623Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/packaging-26.0.dist-i- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2688261Z │ nfo/METADATA                                                                     │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2688765Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2689481Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/platformdirs-4.4.0.di- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2690025Z │ st-info/METADATA                                                                 │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2690538Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2691087Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/tomli-2.4.0.dist-info- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2691616Z │ /METADATA                                                                        │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2692130Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2692680Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/wheel-0.46.3.dist-inf- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2693217Z │ o/METADATA                                                                       │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2693721Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2694281Z │ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/zipp-3.23.0.dist-info- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2694804Z │ /METADATA                                                                        │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2695326Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2696128Z │ app/.venv/lib/python3.12/site-packages/shellingham-1.5.4.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2696724Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2697261Z │ app/.venv/lib/python3.12/site-packages/six-1.17.0.dist-info/METADATA             │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2697828Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2698499Z │ app/.venv/lib/python3.12/site-packages/sniffio-1.3.1.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2699083Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2699946Z │ app/.venv/lib/python3.12/site-packages/sqlalchemy-2.1.3.dist-info/METADATA       │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2700726Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2701269Z │ app/.venv/lib/python3.12/site-packages/starlette-1.7.0.dist-info/METADATA        │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2701846Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2702378Z │ app/.venv/lib/python3.12/site-packages/sympy-1.14.0.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2702976Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2703525Z │ app/.venv/lib/python3.12/site-packages/tenacity-9.2.1.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2704110Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2704811Z │ app/.venv/lib/python3.12/site-packages/threadpoolctl-3.7.0.dist-info/METADATA    │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2705403Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2705948Z │ app/.venv/lib/python3.12/site-packages/tokenizers-0.23.2.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2706527Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2707183Z │ app/.venv/lib/python3.12/site-packages/torch-2.14.1+cpu.dist-info/METADATA       │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2707773Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2708308Z │ app/.venv/lib/python3.12/site-packages/tqdm-4.70.1.dist-info/METADATA            │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2708903Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2709592Z │ app/.venv/lib/python3.12/site-packages/transformers-5.17.0.dist-info/METADATA    │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2710194Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2710738Z │ app/.venv/lib/python3.12/site-packages/truststore-0.10.4.dist-info/METADATA      │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2711341Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2711885Z │ app/.venv/lib/python3.12/site-packages/typer-0.27.3.dist-info/METADATA           │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2712456Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.2713179Z │ app/.venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METAD- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4209368Z │ ATA                                                                              │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4210245Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4211189Z │ app/.venv/lib/python3.12/site-packages/typing_inspection-0.4.4.dist-info/METADA- │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4212454Z │ TA                                                                               │            │                 │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4213235Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4214112Z │ app/.venv/lib/python3.12/site-packages/urllib3-2.8.0.dist-info/METADATA          │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4215259Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4216164Z │ app/.venv/lib/python3.12/site-packages/uvicorn-0.54.0.dist-info/METADATA         │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4217122Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4218012Z │ app/.venv/lib/python3.12/site-packages/yarl-1.25.1.dist-info/METADATA            │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4218998Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4222936Z │ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4223901Z └──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┘
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4224416Z Legend:
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4224636Z - '-': Not scanned
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4224947Z - '0': Clean (no security findings detected)
+image	Run bash ci/run.sh scan	2026-10-09T18:10:53.4225192Z
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	﻿2026-10-09T18:10:53.6270352Z Post job cleanup.
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.8802965Z [command]/usr/bin/git version
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.8955001Z git version 2.55.0
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9009126Z Temporarily overriding HOME='/home/runner/work/_temp/9c40e44b-59ea-43c0-9330-020d34a524f6' before making global git config changes
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9014935Z Adding repository directory to the temporary git global config as a safe directory
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9017517Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/industrial-llm-platform/industrial-llm-platform
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9021081Z Removing SSH command configuration
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9021584Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9074560Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9546812Z Removing HTTP extra header
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9549458Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9551386Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9927378Z Removing includeIf entries pointing to credentials config files
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9929970Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+image	Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1	2026-10-09T18:10:53.9931252Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+image	Complete job	﻿2026-10-09T18:10:54.0366190Z Cleaning up orphan processes

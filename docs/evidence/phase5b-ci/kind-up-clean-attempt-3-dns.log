@@ -1,0 +1,56 @@
+2026-10-09T14:45:25Z
+[14:47:45Z] kind v0.33.0, context kind-llm, git source head
+Creating cluster "llm" ...
+ • Ensuring node image (kindest/node:v1.36.4) 🖼️  ...
+ ✓ Ensuring node image (kindest/node:v1.36.4) 🖼️
+ • Preparing nodes 📦   ...
+ ✓ Preparing nodes 📦 
+ • Writing configuration 📜  ...
+ ✓ Writing configuration 📜
+ • Starting control-plane 🕹️  ...
+ ✓ Starting control-plane 🕹️
+ • Installing CNI 🔌  ...
+ ✓ Installing CNI 🔌
+ • Installing StorageClass 💾  ...
+ ✓ Installing StorageClass 💾
+ • Waiting ≤ 2m0s for control-plane = Ready ⏳  ...
+ ✓ Waiting ≤ 2m0s for control-plane = Ready ⏳
+ • Ready after 13s 💚
+Set kubectl context to "kind-llm"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-llm
+
+Have a nice day! 👋
+[14:48:25Z] pre-pulling images on the host and loading them into the node
+[14:52:18Z] building and pushing the rag image
+[14:52:26Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:214fcc7f224ef7b3ed1d1597529609c305e6a150380fd0c19102c0a99c26b1b1
+[14:52:30Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[14:53:41Z] installing ArgoCD v3.5.4
+[14:55:38Z] git://kind-git/industrial-llm-platform main = 7e951464128cda2cfd4ffdadccccf849fc12fe2d
+[14:55:40Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy at 7e951464128cda2cfd4ffdadccccf849fc12fe2d
+[14:55:41Z] root=/ 
+[14:55:57Z] platform-deps=/ root=OutOfSync/Missing 
+[14:56:13Z] platform-deps=Synced/Progressing root=OutOfSync/Healthy 
+[14:56:30Z] platform-deps=Synced/Progressing root=OutOfSync/Progressing 
+[14:57:02Z] platform-deps=Synced/Healthy root=OutOfSync/Healthy 
+[14:57:18Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Healthy 
+[14:57:34Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Progressing 
+[15:27:27Z] llamacpp=Synced/Degraded platform-deps=Synced/Healthy root=OutOfSync/Degraded 
+[15:37:55Z] 
+[15:46:46Z] root=OutOfSync/Missing 
+[15:47:02Z] platform-deps=Synced/Progressing root=OutOfSync/Progressing 
+[15:47:51Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Progressing 
+[15:53:13Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Missing root=Synced/Progressing 
+[15:53:30Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Missing root=Synced/Healthy 
+[15:54:03Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing 
+[15:55:55Z] timed out
+NAME                          READY   STATUS    RESTARTS   AGE
+elasticsearch-0               1/1     Running   0          9m9s
+llamacpp-7c44466945-r92nx     1/1     Running   0          8m12s
+postgres-0                    1/1     Running   0          9m9s
+prometheus-84d4d5d7cd-zbq86   1/1     Running   0          9m9s
+rag-api-59bd4bc487-smzt2      1/1     Running   0          2m3s
+rag-ingest-9fgrg              1/1     Running   0          2m3s
+rc=1 wall=4231s
+2026-10-09T15:55:56Z

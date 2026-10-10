@@ -1,0 +1,296 @@
+# v3 item 11: YOLOv8n CPU baseline, ONNX Runtime CPU FP32 (session cpu-vision-20261010)
+date: 2026-10-10 UTC. Measured 14:01:01Z to 14:12:54Z; machine quiet from 13:59:21Z, restored from 14:13:26Z.
+host: Windows 11 Pro 10.0.26200, AMD Ryzen 7 7730U (8C/16T laptop CPU), native Windows Python 3.12.13 (not WSL or
+  Docker, unlike the llama.cpp runs).
+git: cpu_baseline.sh aligned with the GPU cells and committed first (ec9f14e "Vision CPU baseline: batch 1, 8, 32 and
+  640 images per run, same as the GPU cells"); raw output was written outside the repo during the run, so all 18
+  raw files record git_commit ec9f14e003505c64a302538bb35ca8fccfda0da5 without "-dirty".
+venv: benchmark/vision/.venv from benchmark/vision/requirements.txt: onnxruntime 1.26.0 (CPUExecutionProvider;
+  AzureExecutionProvider also listed, not used), numpy 2.5.3, pillow 12.3.0. The Kaggle vision venv had
+  onnxruntime-gpu 1.26.0, numpy 1.26.4, pillow 12.3.0 (results/env/pip-freeze-vision.txt of v3c): same ORT and Pillow
+  version, different numpy (numpy only builds the input arrays before timing starts).
+
+## Model file and images: same as the GPU cells
+Each Kaggle session re-exported the ONNX file and the bytes differ between sessions (same weights sha256
+f59b3d83..., same ultralytics 8.4.174 / opset 17 / imgsz 640):
+  v3c yolov8n-fp32-opset17.onnx sha256 c3a4c32fa3939177778425a9384c75d2202473cce75d1afefc2ca54d684d7eb4
+  v3e yolov8n-fp32-opset17.onnx sha256 9f29af4a18a944c7cdcda32de27b67246de558274260cb9938e32d5520359e85
+  v3g yolov8n-fp32-opset17.onnx sha256 a1b5783436403b9100fc5a0ae7f70fbbc1a8cea0cb52e5abc848442e5fc12d25
+Each file on disk matches its own session's results/models/exports.json. The ONNX GPU speed cell (ORT CUDA) is in
+v3c and its 9 raw files record model_sha256 c3a4c32fa393..., so the CPU baseline uses the v3c file:
+  benchmark/results/raw/kaggle-20261010-v3c/results/models/yolov8n-fp32-opset17.onnx (git-ignored)
+and all 18 CPU raw files record model_sha256 c3a4c32fa3939177778425a9384c75d2202473cce75d1afefc2ca54d684d7eb4.
+The v3g mAP rows used a different export (a1b5...) of the same weights, so the CPU speed rows and the mAP rows do
+not share a byte-identical file; mAP was not measured on CPU.
+Images: benchmark/vision/fetch_coco_subset.py --limit 64 (sha256 checked against coco_val2017_first500.txt); the 64
+names used are identical, in order, to config.images in the v3c ORT CUDA raw files (checked: True).
+Settings identical to the GPU cells: --num-images 64 --imgsz 640 --images-per-run 640 --warmup 10, batch 1, 8, 32,
+3 repeats; letterbox preprocessing done once before timing, as on GPU.
+Threads: two settings, each its own label. Default: intra_op_num_threads 0 in the raw files (ONNX Runtime picks; the
+top-process samples show python at 45.7 to 49.9% of the 16 logical CPUs, i.e. about 8 busy threads, the physical core
+count). Fixed: THREADS=4 (python 24.1 to 25.2%). Default is the headline; label vision-cpu-yolov8n-onnx-fp32-t4 is
+the 4-thread run.
+
+## Quieting the machine (exact commands, output)
+## before 2026-10-10T13:58:50Z
+industrial-llm-platform-rag-api-1	Up 7 hours (healthy)
+industrial-llm-platform-otel-collector-1	Up 7 hours
+industrial-llm-platform-alloy-1	Up 7 hours (healthy)
+industrial-llm-platform-loki-1	Up 7 hours
+kind-git	Up 5 hours
+llm-control-plane	Up 5 hours
+kind-registry	Up 5 hours
+industrial-llm-platform-tempo-1	Up 7 hours
+industrial-llm-platform-prometheus-1	Up 7 hours (healthy)
+industrial-llm-platform-grafana-1	Up 7 hours (healthy)
+industrial-llm-platform-llamacpp-1	Up 7 hours (healthy)
+industrial-llm-platform-postgres-1	Up 7 hours (healthy)
+industrial-llm-platform-elasticsearch-1	Up 7 hours (healthy)
+buildx_buildkit_default	Up 7 hours
+## docker stop llm-control-plane kind-registry kind-git
+llm-control-plane
+kind-registry
+kind-git
+## docker compose stop
+ Container industrial-llm-platform-prometheus-1 Stopped
+ Container industrial-llm-platform-alloy-1 Stopped
+ Container industrial-llm-platform-grafana-1 Stopped
+ Container industrial-llm-platform-loki-1 Stopped
+ Container industrial-llm-platform-rag-api-1 Stopped
+ Container industrial-llm-platform-rag-migrate-1 Stopped
+ Container industrial-llm-platform-postgres-1 Stopped
+ Container industrial-llm-platform-otel-collector-1 Stopped
+ Container industrial-llm-platform-llamacpp-1 Stopped
+ Container industrial-llm-platform-model-init-1 Stopped
+ Container industrial-llm-platform-elasticsearch-1 Stopped
+ Container industrial-llm-platform-tempo-1 Stopped
+## after 2026-10-10T13:59:21Z
+buildx_buildkit_default	Up 7 hours
+Not stopped: buildx_buildkit_default (BuildKit builder container, not part of the compose project; idle at 0.01% CPU
+in earlier sessions). Desktop apps stayed open (list below).
+
+## Idle state
+## idle 2026-10-10T13:59:51Z
+## host % Processor Time, 15 samples 2 s apart
+10.3  16.4  14.2  2.2  11.9  17.5  5.5  7.2  5.8  4.8  14.0  13.6  13.7  5.9  2.9
+## top 12 processes by CPU (3 s sample, % of host)
+vmmemwsl                               3.6%
+svchost                                1.1%
+docker desktop                         0.8%
+com.docker.backend                     0.6%
+system                                 0.6%
+unity                                  0.4%
+wmiprvse                               0.3%
+unity                                  0.2%
+msmpeng                                0.2%
+cursor                                 0.2%
+claude                                 0.2%
+svchost                                0.2%
+## apps with a window
+ApplicationFrameHost  chrome  Cursor  Docker Desktop  Notepad  Slack  SystemSettings  TextInputHost
+
+## Commands
+Prep (before quieting): uv venv -q --python 3.12 benchmark/vision/.venv; uv pip install -q --python
+  benchmark/vision/.venv -r benchmark/vision/requirements.txt; fetch_coco_subset.py --out .data/coco500 --limit 64;
+  a smoke run (batch 1 and 32, 20 requests, --smoke) into the scratchpad, discarded.
+Driver (scratchpad run.sh), full text:
+#!/usr/bin/env bash
+# Vision CPU baseline driver: host sampler + cpu_baseline.sh twice (ORT default threads, then 4 intra-op threads).
+set -euo pipefail
+cd /c/Users/<user>/Desktop/work/industrial-llm-platform
+S=$1 OUT=$2
+W=$(cygpath -w "$S")
+ONNX=benchmark/results/raw/kaggle-20261010-v3c/results/models/yolov8n-fp32-opset17.onnx
+HW="Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python"
+rm -f "$S/stop"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$W\hostsampler.ps1" -Out "$W\host-samples.csv" \
+  -TopOut "$W\host-top-processes.txt" -Stop "$W\stop" &
+SAMPLER=$!
+sleep 20
+echo "start $(date -u +%FT%TZ)"
+bash benchmark/vision/cpu_baseline.sh "$ONNX" "$HW" "$OUT" \
+  --notes "ORT default intra-op threads (intra_op_num_threads 0 = ORT chooses)"
+echo "default threads done $(date -u +%FT%TZ)"
+THREADS=4 bash benchmark/vision/cpu_baseline.sh "$ONNX" "$HW" "$OUT" \
+  --label vision-cpu-yolov8n-onnx-fp32-t4 --notes "ORT intra_op_num_threads fixed at 4"
+echo "end $(date -u +%FT%TZ)"
+sleep 20
+touch "$S/stop"; wait $SAMPLER || true
+echo "sampler stopped $(date -u +%FT%TZ)"
+Host sampler: same hostsampler.ps1 as the CPU rerun (every ~10 s: total CPU %, processor performance %, frequency,
+ACPI thermal zone C, passive limit %; top 5 processes every ~60 s) ->
+benchmark/results/raw/cpu-vision-20261010/host-samples.csv and host-top-processes.txt.
+
+## Run log
+start 2026-10-10T14:00:59Z
+64 images (sha256 ok), 64 with labels, 440 boxes -> C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\vision\.data\coco500
+vision-cpu-yolov8n-onnx-fp32-b1-r1-20261010T140101Z.json: ok 640/640 images/s 22.9 p50 43.35 ms p99 69.36 ms
+vision-cpu-yolov8n-onnx-fp32-b1-r2-20261010T140129Z.json: ok 640/640 images/s 23.4 p50 42.55 ms p99 69.40 ms
+vision-cpu-yolov8n-onnx-fp32-b1-r3-20261010T140157Z.json: ok 640/640 images/s 23.0 p50 43.58 ms p99 69.22 ms
+vision-cpu-yolov8n-onnx-fp32-b8-r1-20261010T140226Z.json: ok 80/80 images/s 20.0 p50 400.55 ms p99 522.55 ms
+vision-cpu-yolov8n-onnx-fp32-b8-r2-20261010T140302Z.json: ok 80/80 images/s 19.8 p50 401.56 ms p99 519.91 ms
+vision-cpu-yolov8n-onnx-fp32-b8-r3-20261010T140338Z.json: ok 80/80 images/s 19.6 p50 404.97 ms p99 500.12 ms
+vision-cpu-yolov8n-onnx-fp32-b32-r1-20261010T140415Z.json: ok 20/20 images/s 19.5 p50 1632.82 ms p99 1773.83 ms
+vision-cpu-yolov8n-onnx-fp32-b32-r2-20261010T140505Z.json: ok 20/20 images/s 19.4 p50 1632.81 ms p99 1828.74 ms
+vision-cpu-yolov8n-onnx-fp32-b32-r3-20261010T140555Z.json: ok 20/20 images/s 19.1 p50 1671.67 ms p99 1830.82 ms
+default threads done 2026-10-10T14:06:45Z
+64 images (sha256 ok), 64 with labels, 440 boxes -> C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\vision\.data\coco500
+vision-cpu-yolov8n-onnx-fp32-t4-b1-r1-20261010T140647Z.json: ok 640/640 images/s 21.3 p50 44.75 ms p99 84.14 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b1-r2-20261010T140718Z.json: ok 640/640 images/s 21.2 p50 44.98 ms p99 82.73 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b1-r3-20261010T140749Z.json: ok 640/640 images/s 21.3 p50 44.73 ms p99 84.25 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b8-r1-20261010T140819Z.json: ok 80/80 images/s 18.8 p50 414.58 ms p99 570.83 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b8-r2-20261010T140858Z.json: ok 80/80 images/s 18.2 p50 427.31 ms p99 630.04 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b8-r3-20261010T140937Z.json: ok 80/80 images/s 18.8 p50 418.39 ms p99 560.18 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b32-r1-20261010T141016Z.json: ok 20/20 images/s 17.7 p50 1786.02 ms p99 2287.56 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b32-r2-20261010T141109Z.json: ok 20/20 images/s 18.4 p50 1712.01 ms p99 1849.28 ms
+vision-cpu-yolov8n-onnx-fp32-t4-b32-r3-20261010T141202Z.json: ok 20/20 images/s 18.4 p50 1712.36 ms p99 1883.37 ms
+end 2026-10-10T14:12:54Z
+sampler stopped 2026-10-10T14:13:16Z
+
+## Restore (exact commands, output)
+docker compose up -d --wait; bash scripts/smoke.sh; docker start kind-registry kind-git; docker start llm-control-plane
+## restore 2026-10-10T14:13:26Z
+ Container industrial-llm-platform-rag-migrate-1 Recreated
+ Container industrial-llm-platform-rag-api-1 Recreate
+ Container industrial-llm-platform-rag-api-1 Recreated
+ Container industrial-llm-platform-model-init-1 Exited
+ Container industrial-llm-platform-postgres-1 Healthy
+ Container industrial-llm-platform-llamacpp-1 Healthy
+ Container industrial-llm-platform-rag-migrate-1 Exited
+ Container industrial-llm-platform-elasticsearch-1 Healthy
+ Container industrial-llm-platform-rag-migrate-1 Exited
+ Container industrial-llm-platform-loki-1 Healthy
+ Container industrial-llm-platform-llamacpp-1 Healthy
+ Container industrial-llm-platform-model-init-1 Exited
+ Container industrial-llm-platform-tempo-1 Healthy
+ Container industrial-llm-platform-grafana-1 Healthy
+ Container industrial-llm-platform-prometheus-1 Healthy
+ Container industrial-llm-platform-otel-collector-1 Healthy
+ Container industrial-llm-platform-alloy-1 Healthy
+ Container industrial-llm-platform-elasticsearch-1 Healthy
+ Container industrial-llm-platform-postgres-1 Healthy
+ Container industrial-llm-platform-rag-api-1 Healthy
+## smoke 2026-10-10T14:14:22Z
+  reply: "message":{"role":"assistant","content":"Hello, world!"
+PASS llamacpp chat completion
+PASS postgres SELECT 1
+PASS elasticsearch health green/yellow
+PASS grafana /api/health
+PASS prometheus scrapes llamacpp
+PASS tempo /ready
+PASS loki /ready
+PASS alloy /-/ready
+PASS otel-collector metrics :8888
+PASS prometheus scrapes otel-collector
+all checks passed
+smoke exit 0
+kind-registry
+kind-git
+llm-control-plane
+## kind 2026-10-10T14:16:16Z
+NAME                STATUS   ROLES           AGE   VERSION
+llm-control-plane   Ready    control-plane   22h   v1.36.4
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+      1 Completed
+     25 Running
+compose recreated rag-migrate and rag-api on up (their config had changed since they were started, not by me); both
+came back healthy and smoke passed.
+
+## Per run (scratchpad perrun.py over the raw files; host columns = host-samples.csv rows inside each run window)
+vision-cpu-yolov8n-onnx-fp32-b1-r1-20261010T140101Z.json       14:01:01-14:01:29 threads 0 img/s 22.9 p50 43.3 p99 69.4 ms | host n=3 cpu mean 66 max 71 perf 118 temp 76-80
+vision-cpu-yolov8n-onnx-fp32-b1-r2-20261010T140129Z.json       14:01:29-14:01:57 threads 0 img/s 23.4 p50 42.6 p99 69.4 ms | host n=3 cpu mean 64 max 66 perf 118 temp 76-77
+vision-cpu-yolov8n-onnx-fp32-b1-r3-20261010T140157Z.json       14:01:57-14:02:26 threads 0 img/s 23.0 p50 43.6 p99 69.2 ms | host n=3 cpu mean 65 max 70 perf 118 temp 77-77
+vision-cpu-yolov8n-onnx-fp32-b8-r1-20261010T140226Z.json       14:02:26-14:03:02 threads 0 img/s 20.0 p50 400.6 p99 522.5 ms | host n=4 cpu mean 61 max 66 perf 122 temp 78-78
+vision-cpu-yolov8n-onnx-fp32-b8-r2-20261010T140302Z.json       14:03:02-14:03:38 threads 0 img/s 19.8 p50 401.6 p99 519.9 ms | host n=4 cpu mean 67 max 79 perf 122 temp 78-78
+vision-cpu-yolov8n-onnx-fp32-b8-r3-20261010T140338Z.json       14:03:38-14:04:15 threads 0 img/s 19.6 p50 405.0 p99 500.1 ms | host n=4 cpu mean 67 max 81 perf 121 temp 78-78
+vision-cpu-yolov8n-onnx-fp32-b32-r1-20261010T140415Z.json      14:04:15-14:05:05 threads 0 img/s 19.5 p50 1632.8 p99 1773.8 ms | host n=5 cpu mean 61 max 64 perf 124 temp 78-79
+vision-cpu-yolov8n-onnx-fp32-b32-r2-20261010T140505Z.json      14:05:05-14:05:55 threads 0 img/s 19.4 p50 1632.8 p99 1828.7 ms | host n=6 cpu mean 70 max 84 perf 120 temp 79-79
+vision-cpu-yolov8n-onnx-fp32-b32-r3-20261010T140555Z.json      14:05:55-14:06:45 threads 0 img/s 19.1 p50 1671.7 p99 1830.8 ms | host n=6 cpu mean 63 max 84 perf 123 temp 79-79
+vision-cpu-yolov8n-onnx-fp32-t4-b1-r1-20261010T140647Z.json    14:06:47-14:07:18 threads 4 img/s 21.3 p50 44.7 p99 84.1 ms | host n=4 cpu mean 40 max 51 perf 132 temp 79-81
+vision-cpu-yolov8n-onnx-fp32-t4-b1-r2-20261010T140718Z.json    14:07:18-14:07:49 threads 4 img/s 21.2 p50 45.0 p99 82.7 ms | host n=4 cpu mean 43 max 51 perf 127 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b1-r3-20261010T140749Z.json    14:07:49-14:08:19 threads 4 img/s 21.3 p50 44.7 p99 84.2 ms | host n=3 cpu mean 37 max 52 perf 134 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b8-r1-20261010T140819Z.json    14:08:19-14:08:58 threads 4 img/s 18.8 p50 414.6 p99 570.8 ms | host n=4 cpu mean 31 max 37 perf 138 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b8-r2-20261010T140858Z.json    14:08:58-14:09:37 threads 4 img/s 18.2 p50 427.3 p99 630.0 ms | host n=5 cpu mean 38 max 48 perf 131 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b8-r3-20261010T140937Z.json    14:09:37-14:10:15 threads 4 img/s 18.8 p50 418.4 p99 560.2 ms | host n=4 cpu mean 37 max 50 perf 132 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b32-r1-20261010T141016Z.json   14:10:16-14:11:09 threads 4 img/s 17.7 p50 1786.0 p99 2287.6 ms | host n=6 cpu mean 39 max 57 perf 132 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b32-r2-20261010T141109Z.json   14:11:09-14:12:02 threads 4 img/s 18.4 p50 1712.0 p99 1849.3 ms | host n=5 cpu mean 45 max 63 perf 129 temp 81-81
+vision-cpu-yolov8n-onnx-fp32-t4-b32-r3-20261010T141202Z.json   14:12:02-14:12:54 threads 4 img/s 18.4 p50 1712.4 p99 1883.4 ms | host n=6 cpu mean 32 max 34 perf 138 temp 81-81
+Whole session: 82 samples over the whole session, host CPU mean 48.0%.
+Note: runs are 28 to 53 s long, so each has only 3 to 6 host samples; the host numbers describe the run, not fine
+detail.
+
+## Report
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q -> 26 passed in 0.44s
+benchmark/.venv/Scripts/python benchmark/report.py -> wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 69 runs, 4 accuracy rows, 45 vision runs, 3 vision accuracy rows
+report.py: ort-cpu rows show the intra-op thread setting in the backend column, every vision cell note shows the
+model sha256 prefix, and a host line per vision session summarises host-samples.csv (with a link here). New test:
+test_vision_cpu_rows_show_threads_and_model_sha.
+
+Vision table as generated (CPU rows next to the GPU rows; the section states "CPU and GPU rows are not like for like"):
+## Vision (YOLOv8n, Ultralytics, AGPL-3.0)
+
+One request is one batch of 640x640 images, sent as soon as the previous one returns. Timed: the model call including host to device copies and the output copy back; not JPEG decode, letterbox or NMS. Latency is per batch. CPU and GPU rows are not like for like. Mean ± stdev across repeats.
+
+| cell | hardware | backend | precision | batch | repeats | images/s | latency p50 ms | latency p95 ms | latency p99 ms | err rate | GPU util mean % | SM clock p50 MHz |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| cpu-vision-20261010/vision-cpu-yolov8n-onnx-fp32 | Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python | ort-cpu 1.26.0 (intra-op threads ORT default) | fp32 | 1 | 3 | 23.1 ± 0.3 | 43.2 ± 0.5 | 54.1 ± 2.9 | 69.3 ± 0.1 | 0.000 ± 0.000 | n/a | n/a |
+| cpu-vision-20261010/vision-cpu-yolov8n-onnx-fp32 | Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python | ort-cpu 1.26.0 (intra-op threads ORT default) | fp32 | 8 | 3 | 19.8 ± 0.2 | 402.4 ± 2.3 | 463.1 ± 16.5 | 514.2 ± 12.3 | 0.000 ± 0.000 | n/a | n/a |
+| cpu-vision-20261010/vision-cpu-yolov8n-onnx-fp32 | Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python | ort-cpu 1.26.0 (intra-op threads ORT default) | fp32 | 32 | 3 | 19.3 ± 0.2 | 1645.8 ± 22.4 | 1804.5 ± 29.9 | 1811.1 ± 32.3 | 0.000 ± 0.000 | n/a | n/a |
+| cpu-vision-20261010/vision-cpu-yolov8n-onnx-fp32-t4 | Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python | ort-cpu 1.26.0 (intra-op threads 4) | fp32 | 1 | 3 | 21.3 ± 0.1 | 44.8 ± 0.1 | 63.5 ± 2.0 | 83.7 ± 0.8 | 0.000 ± 0.000 | n/a | n/a |
+| cpu-vision-20261010/vision-cpu-yolov8n-onnx-fp32-t4 | Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python | ort-cpu 1.26.0 (intra-op threads 4) | fp32 | 8 | 3 | 18.6 ± 0.3 | 420.1 ± 6.5 | 527.1 ± 3.6 | 587.0 ± 37.6 | 0.000 ± 0.000 | n/a | n/a |
+| cpu-vision-20261010/vision-cpu-yolov8n-onnx-fp32-t4 | Windows 11 host, AMD Ryzen 7 7730U (8C/16T), ONNX Runtime CPU, native Windows Python | ort-cpu 1.26.0 (intra-op threads 4) | fp32 | 32 | 3 | 18.2 ± 0.4 | 1736.8 ± 42.6 | 1892.2 ± 62.6 | 2006.7 ± 243.8 | 0.000 ± 0.000 | n/a | n/a |
+| kaggle-20261010-v3c/vision-t4-yolov8n-onnx-fp32-ortcuda | 1x Tesla T4 (Kaggle) | ort-cuda 1.26.0 | fp32 | 1 | 3 | 162.3 ± 1.3 | 6.118 ± 0.009 | 6.277 ± 0.093 | 6.796 ± 0.906 | 0.000 ± 0.000 | 69.0 ± 2.2 | 1387.5 ± 7.5 |
+| kaggle-20261010-v3c/vision-t4-yolov8n-onnx-fp32-ortcuda | 1x Tesla T4 (Kaggle) | ort-cuda 1.26.0 | fp32 | 8 | 3 | 187.0 ± 0.2 | 42.6 ± 0.1 | 44.5 ± 0.1 | 44.8 ± 0.2 | 0.000 ± 0.000 | 80.8 ± 0.4 | 1070.0 ± 37.7 |
+| kaggle-20261010-v3c/vision-t4-yolov8n-onnx-fp32-ortcuda | 1x Tesla T4 (Kaggle) | ort-cuda 1.26.0 | fp32 | 32 | 3 | 180.5 ± 0.6 | 177.1 ± 0.4 | 179.8 ± 1.2 | 181.8 ± 2.2 | 0.000 ± 0.000 | 82.7 ± 0.1 | 590.0 ± 8.7 |
+| kaggle-20261010-v3c/vision-t4-yolov8n-trt-fp16 | 1x Tesla T4 (Kaggle) | trt 10.16.1.11 | fp16 | 1 | 3 | 295.1 ± 3.3 | 3.341 ± 0.010 | 3.790 ± 0.480 | 3.911 ± 0.431 | 0.000 ± 0.000 | 48.1 ± 0.3 | 1575.0 ± 0.0 |
+| kaggle-20261010-v3c/vision-t4-yolov8n-trt-fp16 | 1x Tesla T4 (Kaggle) | trt 10.16.1.11 | fp16 | 8 | 3 | 390.4 ± 5.0 | 20.4 ± 0.2 | 21.3 ± 0.7 | 21.7 ± 0.7 | 0.000 ± 0.000 | 57.5 ± 5.8 | 1537.5 ± 34.4 |
+| kaggle-20261010-v3c/vision-t4-yolov8n-trt-fp16 | 1x Tesla T4 (Kaggle) | trt 10.16.1.11 | fp16 | 32 | 3 | 227.7 ± 4.3 | 138.8 ± 0.8 | 149.3 ± 14.3 | 159.0 ± 26.8 | 0.000 ± 0.000 | 34.1 ± 0.9 | 1370.0 ± 153.8 |
+| kaggle-20261010-v3e/vision-t4-yolov8n-trt-fp16-triton | 1x Tesla T4 (Kaggle) | triton 2.51.0 (Python backend via PyTriton running the TensorRT engine; not Triton's native TensorRT backend; TensorRT 10.16.1.11) | fp16 | 1 | 3 | 32.8 ± 4.8 | 30.9 ± 4.8 | 32.8 ± 5.5 | 36.7 ± 5.1 | 0.000 ± 0.000 | 12.1 ± 1.9 | 585.0 ± 0.0 |
+| kaggle-20261010-v3e/vision-t4-yolov8n-trt-fp16-triton | 1x Tesla T4 (Kaggle) | triton 2.51.0 (Python backend via PyTriton running the TensorRT engine; not Triton's native TensorRT backend; TensorRT 10.16.1.11) | fp16 | 8 | 3 | 28.2 ± 0.2 | 282.6 ± 3.9 | 300.0 ± 3.4 | 307.2 ± 3.8 | 0.000 ± 0.000 | 6.389 ± 0.419 | 585.0 ± 0.0 |
+| kaggle-20261010-v3e/vision-t4-yolov8n-trt-fp16-triton | 1x Tesla T4 (Kaggle) | triton 2.51.0 (Python backend via PyTriton running the TensorRT engine; not Triton's native TensorRT backend; TensorRT 10.16.1.11) | fp16 | 32 | 3 | 23.3 ± 0.1 | 1369.6 ± 7.9 | 1426.3 ± 13.5 | 1450.3 ± 28.1 | 0.000 ± 0.000 | 4.937 ± 0.628 | 585.0 ± 0.0 |
+Host for cpu-vision-20261010: samples during the measured windows (79, every ~10 s, [host-samples.csv](results/raw/cpu-vision-20261010/host-samples.csv)): total host CPU 51% mean (27 to 84%, the benchmark itself included), processor performance 127% of base clock mean (115 to 146%), ACPI thermal zone 76 to 81 C, passive limit min 100%. Kind cluster and the whole compose stack stopped; desktop apps open but idle. Idle state, ONNX file match, thread settings and run log: [v3-vision-cpu.txt](../docs/evidence/v3-vision-cpu.txt).
+
+## Flags and observations
+- No flags on any CPU cell: 3 repeats each, 0 errors, CV on images/s at most 0.022 (4-thread b32: 17.7, 18.4,
+  18.4), same model sha256, config and git commit across repeats.
+- Throughput does not grow with batch on CPU: 23.1 (b1), 19.8 (b8), 19.3 (b32) images/s with default threads; the same
+  shape with 4 threads (21.3, 18.6, 18.2). On the T4 the ORT CUDA path goes 162.3, 187.0, 180.5. A plausible reason
+  is cache and memory pressure from larger activations on CPU; not investigated.
+- Default (about 8) threads beat 4 threads by only 6 to 9% (b1 23.1 vs 21.3, b8 19.8 vs 18.6, b32 19.3 vs 18.2). The processor performance counter was
+  lower with more cores busy (118 to 124% of base clock vs 127 to 138% for 4 threads), consistent with lower boost
+  clocks under wider load. Run order is a confound: the 4-thread runs came second, with the ACPI zone at 79 to 81 C
+  vs 76 to 79 C.
+- Host CPU while measuring: 61 to 70% mean per run with default threads, 31 to 45% with 4 threads, the benchmark
+  itself included. Other processes in the top-process samples: cursor up to 6.9% (14:04:22), vmmemwsl (the WSL2 VM,
+  with only the idle BuildKit container running) 10.9 to 17.0% at 14:05:17, 14:08:03 and 14:09:54, Docker Desktop
+  3.7%, svchost 3.1%. The vmmemwsl bursts are unexplained. They overlap default b32 r2 (14:05:05 to 14:05:55),
+  4-thread b1 r3 (14:07:49 to 14:08:19) and 4-thread b8 r3 (14:09:37 to 14:10:15); those three runs are within 1.6%
+  of their cell means.
+- CPU vs GPU is not like for like (laptop CPU FP32 vs T4; different host, OS, driver stack). Side by side only:
+  ORT CPU b1 23.1 images/s vs ORT CUDA b1 162.3 and TensorRT FP16 b1 295.1 on the T4, same ONNX file for the two ORT
+  rows.
+
+## Files
+benchmark/results/raw/cpu-vision-20261010/ (18 raw JSON, host-samples.csv, host-top-processes.txt),
+benchmark/vision/cpu_baseline.sh and inference/README.md (committed in ec9f14e), benchmark/report.py,
+benchmark/tests/test_vision.py, benchmark/RESULTS.md, docs/evidence/v3-vision-cpu.txt.
+
+# Review round 1 (2026-10-10, report and provenance only; no load)
+- Host line: samples deduplicated (77 unique; 2 fell on run boundaries and were counted twice), and it now says
+  "inside the run windows, warmup included".
+- ONNX provenance, reproducible with the committed script:
+  uvx --python 3.12 --with onnx==1.23.2 python benchmark/vision/compare_onnx.py
+    --out benchmark/results/raw/onnx-compare-20261010/onnx-compare.json
+    benchmark/results/raw/kaggle-20261010-v3{c,e,g}/results/models/yolov8n-fp32-opset17.onnx
+  -> the three files (c3a4c32f, 9f29af4a, a1b57834) have identical canonical graphs (321 nodes) and identical weights
+  (12,607,848 initializer bytes); they differ only in metadata_props (key: date, the export time) and value_info
+  (1548, 989, 1548 entries). The script's hashes use its own canonical form, so they differ from the reviewer's
+  (d035a3087813 / 637cf7ac04aa) while agreeing on identity.
+- RESULTS.md: vision accuracy table has a model sha256 column; generated lines for ONNX identity, TensorRT engine
+  builds per session (b1: 0b5ffbf7 timed, 15be2884 behind Triton, c9b34364 for mAP), the 500-image subset and COCO
+  licence, the TensorRT b32 throughput drop (likely input copies, not proven), Triton rows (PyTriton Python backend
+  over HTTP, 9 to 14x slower than direct TensorRT), and GPU clock event reasons per vision GPU cell.

@@ -1,0 +1,429 @@
+Phase 4 observability evidence. Host: Windows 11, Docker Desktop, Git Bash. Date: 2026-10-08 (UTC times below).
+Images: prom/prometheus:v3.15.0 (server and promtool), grafana/grafana:13.2.3, grafana/tempo:3.1.0.
+Passwords are read from .env and shown as ***.
+
+== 1. Config load
+prometheus.yml gained `rule_files: [rules/*.yml]` and the rag-api scrape job. The compose mount
+./observability/prometheus:/etc/prometheus already covers rules/ and tests/.
+At the time of sections 1 to 5, Prometheus ran without --web.enable-lifecycle and without a data volume,
+so reloads used restarts. The compose change applied later (31d retention, lifecycle, volume) is in section 6.
+$ docker compose restart prometheus     (once after adding the scrape job, once after adding the rules; alerts activeAt 11:24:01Z)
+$ docker compose restart grafana        (11:37Z; Docker Desktop on Windows does not deliver file change events,
+                                         so the provisioner did not see rag.json until the restart)
+Bucket label check before writing the TTFT rule:
+$ curl -s localhost:9090/api/v1/series --data-urlencode 'match[]=rag_stage_duration_seconds_bucket{stage="ttft"}'
+  le values: +Inf 0.05 0.1 0.25 0.5 1.0 10.0 120.0 2.0 20.0 30.0 5.0 60.0   (not normalised, so the rule matches "60|60.0")
+
+== 2. promtool (each: MSYS_NO_PATHCONV=1 docker run --rm -v "<repo>/observability/prometheus:/etc/prometheus:ro" --entrypoint promtool prom/prometheus:v3.15.0 ...)
+(first run 11:35Z, 10 test groups, passed; the review found it did not pin thresholds or windows. Rerun below
+after adding per-window-pair tests, exact ratio checks and pair booleans.)
+2026-10-08T12:00:07Z
+$ promtool check config /etc/prometheus/prometheus.yml
+Checking /etc/prometheus/prometheus.yml
+  SUCCESS: 2 rule files found
+ SUCCESS: /etc/prometheus/prometheus.yml is valid prometheus config file syntax
+
+Checking /etc/prometheus/rules/alerts.yml
+  SUCCESS: 5 rules found
+
+Checking /etc/prometheus/rules/recording.yml
+  SUCCESS: 18 rules found
+
+exit=0
+$ promtool check rules /etc/prometheus/rules/recording.yml /etc/prometheus/rules/alerts.yml
+Checking /etc/prometheus/rules/recording.yml
+  SUCCESS: 18 rules found
+
+Checking /etc/prometheus/rules/alerts.yml
+  SUCCESS: 5 rules found
+
+exit=0
+$ promtool test rules /etc/prometheus/tests/slo_test.yml   (34 test groups)
+  SUCCESS
+
+exit=0
+took 77 s
+$ curl -s -X POST localhost:9090/-/reload -w "%{http_code}"
+  200
+
+== 2b. Mutation check (reviewer's 9 mutants from %TEMP%/rv4/m1..m9; each mutant's rules/ copied with the new
+tests/slo_test.yml into a scratch dir and run with promtool test rules). All 9 must FAIL.
+  m1 alerts.yml availability 1h threshold 14.4x -> 100x
+     exit=1 (FAIL); failing: rag-availability 1h/5m at 14.4x (0.144), only this pair over
+  m2 alerts.yml availability 6h threshold 6x -> 60x
+     exit=1 (FAIL); failing: availability page clears after errors stop | rag-availability 6h/30m at 6x (0.06), only this pair over
+  m3 alerts.yml availability 1d threshold 3x -> 30x
+     exit=1 (FAIL); failing: rag-availability 1d/2h at 3x (0.03), only this pair over
+  m4 alerts.yml ttft 3d threshold 1x -> 3x
+     exit=1 (FAIL); failing: ttft 10% slow tickets but does not page | rag-ttft 3d/6h at 1x (0.05), only this pair over
+  m5 alerts.yml availability fast short window 5m -> 1h
+     exit=1 (FAIL); failing: rag-availability 1h/5m at 14.4x (0.144), short window just below
+  m6 recording.yml ttft budget (1 - 0.95) -> (1 - 0.99)
+     exit=1 (FAIL); failing: "round(slo:error_budget:remaining{slo=\"rag-ttft\"}, 0.001)"
+  m7 alerts.yml ttft 1h threshold 14.4x -> 100x
+     exit=1 (FAIL); failing: rag-ttft 1h/5m at 14.4x (0.72), only this pair over
+  m8 alerts.yml ttft 1d threshold 3x -> 30x
+     exit=1 (FAIL); failing: rag-ttft 1d/2h at 3x (0.15), only this pair over
+  m9 recording.yml availability 5m denominator status!~"4.." -> status=~".*"
+     exit=1 (FAIL); failing: "slo:sli_error:ratio_rate5m{slo=\"rag-availability\"}"
+  Same tests on the real rules: exit=0 (SUCCESS, above).
+
+== 3. Live /chat traffic
+Batch 1 (sent while another agent was re-running `rag-ingest`, so the index did not exist). Each request got HTTP 200
+and an in-stream error event: the case the availability SLI counts through rag_chat_errors_total.
+$ for q in ...; do curl -sN -X POST 127.0.0.1:8000/chat -d '{"message":"<q>","user":"phase4-verify"}' | grep -A1 '^event: (done|error)'; done
+2026-10-08T11:21:59Z
+event: error
+data: {"detail": "The following component failed to run:\nComponent name: 'bm25_retrieve'\nComponent type: 'ElasticsearchBM25Retriever'\nError: NotFoundError(404, 'index_not_found_exception', 'no such
+2026-10-08T11:22:00Z
+event: error
+data: {"detail": "The following component failed to run:\nComponent name: 'bm25_retrieve'\nComponent type: 'ElasticsearchBM25Retriever'\nError: NotFoundError(404, 'index_not_found_exception', 'no such
+2026-10-08T11:22:01Z
+event: error
+data: {"detail": "The following component failed to run:\nComponent name: 'bm25_retrieve'\nComponent type: 'ElasticsearchBM25Retriever'\nError: NotFoundError(404, 'index_not_found_exception', 'no such
+2026-10-08T11:22:02Z
+event: error
+data: {"detail": "The following component failed to run:\nComponent name: 'bm25_retrieve'\nComponent type: 'ElasticsearchBM25Retriever'\nError: NotFoundError(404, 'index_not_found_exception', 'no such
+2026-10-08T11:22:03Z
+event: error
+data: {"detail": "The following component failed to run:\nComponent name: 'bm25_retrieve'\nComponent type: 'ElasticsearchBM25Retriever'\nError: NotFoundError(404, 'index_not_found_exception', 'no such
+invalid body -> 422
+
+[exited with code 0]
+
+Batch 2 (after ingest finished and rag-api was restarted by the other agent; sequential):
+2026-10-08T11:38:07Z
+2026-10-08T11:38:08Z What is a Type B evaluation of uncertainty?
+event: session
+data: {"session_id": "0f263e7f-5bb0-49e3-8c04-c9dea264d80d", "trace_id": "a9d5f33fe98a336193779edbbe1e3997"}
+--
+event: done
+data: {"answer": "A Type B evaluation of uncertainty is usually based on scientific judgment using all the relevant information available, which may include pre
+elapsed 36 s
+2026-10-08T11:38:45Z What is a coverage factor?
+event: session
+data: {"session_id": "a07108fc-d41f-4165-ae34-7a4e0947a97a", "trace_id": "ea13f4c2b60322e5bc19b20e1c55794f"}
+--
+event: done
+data: {"answer": "A coverage factor k is used to define an interval about the measurement result y within which the value of the measurand Y is confidently beli
+elapsed 27 s
+2026-10-08T11:39:11Z What is the expanded uncertainty?
+event: session
+data: {"session_id": "cc45bb08-59e3-4122-bf07-aeadd6bdc454", "trace_id": "68c5f6046ceb221b22763ece76de5771"}
+--
+event: done
+data: {"answer": "The expanded uncertainty is U = ku (y), where u (y) is the standard uncertainty, and k is the coverage factor. [1]", "citations": [{"n": 1, "s
+elapsed 22 s
+2026-10-08T11:39:33Z What is a standard uncertainty?
+event: session
+data: {"session_id": "81b58cff-3927-47d8-9b79-ea37a98652fb", "trace_id": "5c864fc05a1d0426173cb41586d01e6a"}
+--
+event: done
+data: {"answer": "A standard uncertainty is a measure of the uncertainty of a measurement result, which is a measure of the uncertainty of the result due to inc
+elapsed 16 s
+2026-10-08T11:39:49Z What is a Type A evaluation of uncertainty?
+event: session
+data: {"session_id": "0c199592-014e-471d-b2ea-d8dd0dae5611", "trace_id": "31e696ce98026f9c619ea01ed5a74389"}
+--
+event: done
+data: {"answer": "A Type A evaluation of uncertainty is based on any valid statistical method for treating data, such as calculating the standard deviation of t
+elapsed 25 s
+
+[exited with code 0]
+
+== 4. Live Prometheus (2026-10-08T11:40:36Z)
+$ curl -s localhost:9090/api/v1/targets  (job, url, health, lastError)
+  llamacpp http://llamacpp:8080/metrics up ''
+  otel-collector http://otel-collector:8888/metrics up ''
+  prometheus http://localhost:9090/metrics up ''
+  rag-api http://rag-api:8000/metrics up ''
+  tempo http://tempo:3200/metrics up ''
+$ curl -s localhost:9090/api/v1/rules  (group, rule, health, lastError, state)
+  rag-api-up RagApiDown ok '' inactive
+  slo-rag-availability-alerts RagAvailabilityErrorBudgetBurnFast ok '' firing
+  slo-rag-availability-alerts RagAvailabilityErrorBudgetBurnSlow ok '' firing
+  slo-rag-ttft-alerts RagTTFTErrorBudgetBurnFast ok '' inactive
+  slo-rag-ttft-alerts RagTTFTErrorBudgetBurnSlow ok '' inactive
+  slo-error-budget slo:error_budget:remaining ok ''
+  slo-error-budget slo:error_budget:remaining ok ''
+  slo-rag-availability slo:sli_error:ratio_rate5m ok ''
+  slo-rag-availability slo:sli_error:ratio_rate30m ok ''
+  slo-rag-availability slo:sli_error:ratio_rate1h ok ''
+  slo-rag-availability slo:sli_error:ratio_rate2h ok ''
+  slo-rag-availability slo:sli_error:ratio_rate6h ok ''
+  slo-rag-availability slo:sli_error:ratio_rate1d ok ''
+  slo-rag-availability slo:sli_error:ratio_rate3d ok ''
+  slo-rag-availability slo:sli_error:ratio_rate30d ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate5m ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate30m ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate1h ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate2h ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate6h ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate1d ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate3d ok ''
+  slo-rag-ttft slo:sli_error:ratio_rate30d ok ''
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=sum by (path,status) (rag_http_requests_total{path="/chat"})'
+  {'path': '/chat', 'status': '200'} 11
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=rag_chat_errors_total'
+  {'__name__': 'rag_chat_errors_total', 'instance': 'rag-api:8000', 'job': 'rag-api'} 0
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=rag_stage_duration_seconds_count'
+  {'__name__': 'rag_stage_duration_seconds_count', 'instance': 'rag-api:8000', 'job': 'rag-api', 'stage': 'retrieval'} 11
+  {'__name__': 'rag_stage_duration_seconds_count', 'instance': 'rag-api:8000', 'job': 'rag-api', 'stage': 'ttft'} 11
+  {'__name__': 'rag_stage_duration_seconds_count', 'instance': 'rag-api:8000', 'job': 'rag-api', 'stage': 'generation'} 10
+  {'__name__': 'rag_stage_duration_seconds_count', 'instance': 'rag-api:8000', 'job': 'rag-api', 'stage': 'total'} 10
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=slo:sli_error:ratio_rate1h'
+  {'__name__': 'slo:sli_error:ratio_rate1h', 'slo': 'rag-availability'} 0.3824751247126181
+  {'__name__': 'slo:sli_error:ratio_rate1h', 'slo': 'rag-ttft'} 0
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=slo:sli_error:ratio_rate6h'
+  {'__name__': 'slo:sli_error:ratio_rate6h', 'slo': 'rag-availability'} 0.3824751247126181
+  {'__name__': 'slo:sli_error:ratio_rate6h', 'slo': 'rag-ttft'} 0
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=slo:error_budget:remaining'
+  {'__name__': 'slo:error_budget:remaining', 'slo': 'rag-availability'} -37.24751247126177
+  {'__name__': 'slo:error_budget:remaining', 'slo': 'rag-ttft'} 1
+$ curl -s localhost:9090/api/v1/query --data-urlencode 'query=histogram_quantile(0.95, sum by (le) (rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft"}[15m])))'
+  {} 40.500000000000014
+$ curl -s localhost:9090/api/v1/alerts
+  RagAvailabilityErrorBudgetBurnFast page firing 2026-10-08T11:24:01.598388183Z 3.824751247126181e-01
+  RagAvailabilityErrorBudgetBurnSlow ticket firing 2026-10-08T11:24:01.598388183Z 3.824751247126181e-01
+Reading: the availability burn-rate alerts fire because of the 5 batch-1 failures (error ratio 0.38 over the last hour;
+the 30d ratio equals the 1h ratio since Prometheus has under an hour of rag-api data). That is the
+rules working on real failures, not a test artefact. They clear once the 5m and 30m windows hold no errors and
+the 1h and 6h ratios drop below thresholds. rag_chat_errors_total and the /chat count read 0 and 11 because
+rag-api restarted at 11:37Z (counters reset; rate() handles the reset). Of those 11 /chat requests, 5 are batch 2
+and 6 came from other agents' traffic in the same window. The TTFT SLI is 0 bad: all TTFTs <= 60 s.
+
+== 5. Grafana (2026-10-08T11:40:55Z)
+$ curl -s -u admin:*** "127.0.0.1:3000/api/search?type=dash-db"
+  llamacpp | llama.cpp | /d/llamacpp/llama-cpp
+  rag | RAG API and SLOs | /d/rag/rag-api-and-slos
+$ curl -s -u admin:*** 127.0.0.1:3000/api/dashboards/uid/rag  (provisioned, panel count)
+  provisioned: True file: rag.json panels: 15
+$ POST /api/ds/query  (panel query, last 15m, instant): slo:error_budget:remaining
+  status: 200 error: None
+   [{'__name__': 'slo:error_budget:remaining', 'slo': 'rag-availability'}] [-30.078018663262224]
+   [{'__name__': 'slo:error_budget:remaining', 'slo': 'rag-ttft'}] [1]
+$ POST /api/ds/query  (panel query, last 15m, instant): histogram_quantile(0.95, sum by (le) (rate(rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft"}[15m])))
+  status: 200 error: None
+   [{}] [37.5]
+$ POST /api/ds/query  (Tempo panel: TraceQL { resource.service.name = "rag-api" && name = "rag.chat" }, last 30m)
+  status: 200 error: None
+  fields: ['traceID', 'startTime', 'traceService', 'traceName', 'traceDuration', 'nested'] rows: 17
+  traceIDs: ['271338cbc9ea802731a51c9c725a9c5a', '84fb259c38bdc9a80c688a0b6854597', '8d4e2d0c9e823c303864fc7aaf5d83ea', 'ae0b029be220a09bdf224585b958bee0', '988af1ff509889c7d36172c26aa8cdfb', '31e696ce98026f9c619ea01ed5a74389']
+Trace 31e696ce98026f9c619ea01ed5a74389 is the trace_id the 5th batch-2 chat returned in its session event.
+
+== 6. Prometheus after the compose change (2026-10-08T11:59:02Z)
+The coordinator applied the retention/lifecycle/volume snippet to docker-compose.yml. Recreating the container
+at 11:43:55Z dropped all data collected before it (there was no volume until then), so the firing alerts in
+section 4 are no longer in Prometheus.
+$ curl -s localhost:9090/api/v1/status/flags  (selected)
+  config.file = /etc/prometheus/prometheus.yml
+  storage.tsdb.path = /prometheus
+  storage.tsdb.retention.time = 31d
+  web.enable-lifecycle = true
+$ docker inspect industrial-llm-platform-prometheus-1 --format "{{range .Mounts}}{{.Type}} {{.Name}} -> {{.Destination}}{{println}}{{end}}"
+  volume industrial-llm-platform_prometheus -> /prometheus
+  bind  -> /etc/prometheus
+$ curl -s localhost:9090/api/v1/status/tsdb   (before recreate)
+  headStats.minTime 1791459835517 maxTime 1791460742223
+$ docker compose up -d --no-deps --force-recreate prometheus
+   Container industrial-llm-platform-prometheus-1 Recreate
+   Container industrial-llm-platform-prometheus-1 Recreated
+   Container industrial-llm-platform-prometheus-1 Starting
+   Container industrial-llm-platform-prometheus-1 Started
+$ curl -s localhost:9090/api/v1/status/tsdb   (after recreate)
+  headStats.minTime 1791459835517 maxTime 1791460749222
+$ curl -s -X POST localhost:9090/-/reload -w "%{http_code}"
+  200
+$ curl -s localhost:9090/api/v1/status/runtimeinfo  (reload state)
+  reloadConfigSuccess True lastConfigTime 2026-10-08T11:59:10Z
+$ curl -s localhost:9090/api/v1/rules  (health count)
+  {('unknown', ''): 15, ('ok', ''): 8}
+2026-10-08T12:01:39Z
+$ curl -s localhost:9090/api/v1/rules  (health, lastError counts)
+  {('ok', ''): 23}
+$ curl -s localhost:9090/api/v1/alerts
+  (none)
+$ curl -s localhost:9090/api/v1/query --data-urlencode query=slo:sli_error:ratio_rate1h
+  {'__name__': 'slo:sli_error:ratio_rate1h', 'slo': 'rag-ttft'} 0
+  {'__name__': 'slo:sli_error:ratio_rate1h', 'slo': 'rag-availability'} 0
+
+== 7. Round 2: recording rules pinned end to end (2026-10-08T12:31:37Z)
+Changes: new tests/slo_windows_test.yml (raw counters, stepped error rate, exact values for all 8 windows of both
+SLOs and both budgets); test series use status classes 2xx/4xx/5xx like the current rag middleware;
+slo:error_budget:remaining moved into the same rule group as its 30d ratio (groups evaluate independently live;
+one group guarantees the budget uses the same evaluation's ratio). Correction 2026-10-09: an earlier version of this
+line said the separate-group layout "was empty in a 10m-interval test"; the reviewer could not reproduce that
+(the round 1 layout passes both test files), so the claim is withdrawn. TTFT threshold unchanged at 60 s.
+2026-10-08T12:20:32Z
+$ promtool check config /etc/prometheus/prometheus.yml
+Checking /etc/prometheus/prometheus.yml
+  SUCCESS: 2 rule files found
+ SUCCESS: /etc/prometheus/prometheus.yml is valid prometheus config file syntax
+
+Checking /etc/prometheus/rules/alerts.yml
+  SUCCESS: 5 rules found
+
+Checking /etc/prometheus/rules/recording.yml
+  SUCCESS: 18 rules found
+
+exit=0
+$ promtool check rules /etc/prometheus/rules/recording.yml /etc/prometheus/rules/alerts.yml
+Checking /etc/prometheus/rules/recording.yml
+  SUCCESS: 18 rules found
+
+Checking /etc/prometheus/rules/alerts.yml
+  SUCCESS: 5 rules found
+
+exit=0
+$ promtool test rules /etc/prometheus/tests/slo_test.yml /etc/prometheus/tests/slo_windows_test.yml   (34 + 3 test groups)
+  SUCCESS
+
+  SUCCESS
+
+exit=0
+took 83 s
+$ curl -s -X POST localhost:9090/-/reload -w "%{http_code}"
+  200
+
+== 7b. Mutation check, round 2. The rules changed shape since round 1 (budget rules moved group), so the reviewer's
+15 mutants (rv4 m1-m9, n1-n6) were re-created as the same edits on the current rules by a script, plus o1, o2 of
+mine and o3, a tolerance probe expected to PASS. Each mutant: rules + both test files, promtool test rules.
+  m1 availability 1h page threshold 14.4x -> 100x
+     exit=1 (FAIL); first failing: name: rag-availability 1h/5m at 14.4x (0.144), only this pair over
+  m2 availability 6h page threshold 6x -> 60x
+     exit=1 (FAIL); first failing: name: availability page clears after errors stop | name: rag-availability 6h/30m at 6x (0.06), only this pair over
+  m3 availability 1d ticket threshold 3x -> 30x
+     exit=1 (FAIL); first failing: name: rag-availability 1d/2h at 3x (0.03), only this pair over
+  m4 ttft 3d ticket threshold 1x -> 3x
+     exit=1 (FAIL); first failing: name: ttft 10% slow tickets but does not page | name: rag-ttft 3d/6h at 1x (0.05), only this pair over
+  m5 availability fast short window 5m -> 1h
+     exit=1 (FAIL); first failing: name: rag-availability 1h/5m at 14.4x (0.144), short window just below
+  m6 ttft budget (1 - 0.95) -> (1 - 0.99)
+     exit=1 (FAIL); first failing: expr: "round(slo:error_budget:remaining{slo=\"rag-ttft\"}, 0.001)", time: 1d1h | expr: "round(slo:error_budget:remaining{slo=\"rag-ttft\"}, 0.0001)", time: 3d1h20m
+  m7 ttft 1h page threshold 14.4x -> 100x
+     exit=1 (FAIL); first failing: name: rag-ttft 1h/5m at 14.4x (0.72), only this pair over
+  m8 ttft 1d ticket threshold 3x -> 30x
+     exit=1 (FAIL); first failing: name: rag-ttft 1d/2h at 3x (0.15), only this pair over
+  m9 availability 5m denominator counts 4xx
+     exit=1 (FAIL); first failing: expr: "slo:sli_error:ratio_rate5m{slo=\"rag-availability\"}", time: 1h | expr: "round(slo:sli_error:ratio_rate5m{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m
+  n1 availability slow 3d/6h short window 6h -> 2h
+     exit=1 (FAIL); first failing: name: rag-availability 3d/6h at 1x (0.01), only this pair over
+  n2 ttft 6h page threshold 6x -> 8x
+     exit=1 (FAIL); first failing: name: rag-ttft 6h/30m at 6x (0.3), only this pair over
+  n3 availability budget (1 - 0.99) -> (1 - 0.98)
+     exit=1 (FAIL); first failing: expr: "round(slo:error_budget:remaining{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m | expr: "round(slo:error_budget:remaining{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m
+  n4 availability ratio_rate6h computed over [1h]
+     exit=1 (FAIL); first failing: expr: "round(slo:sli_error:ratio_rate6h{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m | expr: "round(slo:sli_error:ratio_rate6h{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m
+  n5 ttft ratio_rate30m computed over [5m]
+     exit=1 (FAIL); first failing: expr: "round(slo:sli_error:ratio_rate30m{slo=\"rag-ttft\"}, 0.0001)", time: 3d1h20m
+  n6 availability ratio_rate1d drops rag_chat_errors_total
+     exit=1 (FAIL); first failing: expr: "round(slo:sli_error:ratio_rate1d{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m
+  o1 ttft ratio_rate1d computed over [6h]
+     exit=1 (FAIL); first failing: expr: "round(slo:sli_error:ratio_rate1d{slo=\"rag-ttft\"}, 0.0001)", time: 3d1h20m
+  o2 availability ratio_rate1h numerator also counts 4xx
+     exit=1 (FAIL); first failing: expr: "round(slo:sli_error:ratio_rate1h{slo=\"rag-availability\"}, 0.0001)", time: 2h | expr: "round(slo:sli_error:ratio_rate1h{slo=\"rag-availability\"}, 0.0001)", time: 3d1h20m
+  o3 tolerance probe: availability 1h page threshold 14.4x -> 15x (expected to PASS)
+     exit=0 (PASS); first failing: -
+  Real rules: exit=0 (section 7).
+
+== 7c. Live state after reload
+$ curl -s localhost:9090/api/v1/rules  (health, lastError counts; groups)
+  {('ok', ''): 23} ['rag-api-up', 'slo-rag-availability-alerts', 'slo-rag-ttft-alerts', 'slo-rag-availability', 'slo-rag-ttft']
+$ curl -s 127.0.0.1:8000/metrics | grep "^rag_http_requests_total{method=\"POST\",path=\"/chat\""
+  rag_http_requests_total{method="POST",path="/chat",status="2xx"} 7.0
+  rag_http_requests_total{method="POST",path="/chat",status="4xx"} 0.0
+  rag_http_requests_total{method="POST",path="/chat",status="5xx"} 0.0
+$ curl -s localhost:9090/api/v1/query --data-urlencode query=slo:error_budget:remaining
+  {'__name__': 'slo:error_budget:remaining', 'slo': 'rag-availability'} 1
+  {'__name__': 'slo:error_budget:remaining', 'slo': 'rag-ttft'} 1
+
+== 7d. TTFT threshold check against eval run 20261008T113955Z
+$ python: ttft_s and cached_tokens per question from rag/eval/results/20261008T113955Z/raw.jsonl
+  n 30 median 2.575 p95 nearest-rank 26.7 max 34.54
+  <= 5 s: 26
+  <= 30 s: 29
+  <= 60 s: 30
+  cache hits (cached_tokens >= half of prompt): 27  cold: [(10, 34.54, 1731, 62), (11, 26.7, 1211, 64), (12, 21.72, 1413, 62)]
+  Earlier run 20261008T095250Z (mostly cold: at most 42% of any prompt cached): 23 of 30 <= 30 s, 30 of 30 <= 60 s, max 59.09 s.
+  Decision: keep 60 s (rationale in observability/SLOs.md).
+
+== 8. GPU replay dashboard (2026-10-09, UTC)
+Source: benchmark/results/raw/kaggle-20261009/results/raw/vllm-*/*.json, gpu_samples (nvidia-smi every 500 ms; no DCGM
+on Kaggle), committed in c0ad34e; run started 05:54:36Z, finished 06:33:53Z (env/run.json, finished_utc.txt).
+nvidia-smi timestamps carry no zone; convert.py reads them as UTC and exits if any sample falls outside its run's
+started_utc/finished_utc +-60 s. All 2265 rows passed.
+Backfill handling: promtool writes a block straight into the Prometheus data volume. Prometheus 3 always allows
+overlapping blocks (the old --storage.tsdb.allow-overlapping-blocks flag was for v2.38 and earlier), so a block
+inside the head's time range is fine; the replay series are new names anyway, so no sample conflicts. New block
+directories are loaded on restart. Time retention (31d) will drop the block around 2026-11-09.
+
+First backfill (07:14Z) wrote values with Python {v:g}, which rounds to 6 significant digits (13731 MiB became
+1.4398e10 bytes). The raw-vs-Grafana check below caught it (max abs diff 0.04). Fixed to repr, block removed, redone:
+$ docker compose stop prometheus
+   Container industrial-llm-platform-prometheus-1 Stopping
+   Container industrial-llm-platform-prometheus-1 Stopped
+$ docker run --rm -v industrial-llm-platform_prometheus:/prometheus --entrypoint rm prom/prometheus:v3.15.0 -rf /prometheus/01M4FR7M1H6J79DJKF6TDYQYAX   (first backfill wrote values with 6 significant digits; removed)
+  exit=0
+  01M4DZH560DGCGFYMQRH1019PH
+  01M4EVXFWHVGHB6CW93X0HV1ST
+  01M4F9MZ40JCGWT62YQAC48PJT
+  01M4F9MZ5E4YY8EKMA9QZQCSJF
+  01M4FGGP09YHG2C83JE7VW60ZA
+  01M4FQCCRQ9JD8AP7MN9T7CBRK
+  chunks_head
+  queries.active
+  wal
+$ observability/gpu-replay/backfill.sh
+2026-10-09T07:17:18Z
+24 files, 2265 gpu_samples rows, 13590 samples -> observability/gpu-replay/out/gpu.om
+BLOCK ULID                  MIN TIME       MAX TIME       DURATION     NUM SAMPLES  NUM CHUNKS   NUM SERIES   SIZE
+01M4FRC46MTB9RXYSTD50PDJVD  1791525706207  1791527631686  32m5.479s    13590        216          162          64281
+ Container industrial-llm-platform-prometheus-1 Restarting
+ Container industrial-llm-platform-prometheus-1 Started
+exit=0
+$ observability/gpu-replay/backfill.sh   (second run)
+  gpu_replay_* already in Prometheus; nothing to do
+$ curl -s localhost:9090/api/v1/query --data-urlencode "query=sum(count_over_time(gpu_replay_power_watts[1h]))" --data-urlencode time=2026-10-09T06:40:00Z
+   [{'metric': {}, 'value': [1791528000, '2265']}]
+$ curl -s -u admin:*** "127.0.0.1:3000/api/search?type=dash-db"
+  gpu | GPU replay: Kaggle T4 run 2026-10-09 (nvidia-smi, not live)
+  llamacpp | llama.cpp
+  rag | RAG API and SLOs
+  gpu provisioned: True panels: 7 time: {'from': '2026-10-09T05:55:00.000Z', 'to': '2026-10-09T06:40:00.000Z'}
+$ POST /api/ds/query, from 2026-10-09T05:55Z to 06:40Z, variables at All, intervalMs 2000 (about what a 1350 px panel gets)
+  SM clock panel: status 200, 27 series, 596 points, min 480 MHz, max 1575 MHz
+  memory used panel: status 200, 27 series, 596 points, min 12927 MiB, max 13731 MiB
+  power panel: status 200, 27 series, 596 points, min 38.95 W, max 77.5 W
+  utilization panel: status 200, 27 series, 596 points, min 61 %, max 100 %
+  temperature panel: status 200, 27 series, 596 points, min 58 C, max 82 C
+  table panel vs raw gpu_samples: median SM MHz / max memory MiB / median power W, per run and GPU
+    vllm-2xt4-1.5b-fp16-tp2-c32-r1-20261009T063255Z gpu0: grafana 1320 / 13731 / 67.04   raw 1320 / 13731 / 67.04   match
+    vllm-2xt4-1.5b-fp16-tp2-c32-r1-20261009T063255Z gpu1: grafana 1500 / 13731 / 69.32   raw 1500 / 13731 / 69.32   match
+    vllm-2xt4-1.5b-fp16-tp2-c32-r2-20261009T063315Z gpu0: grafana 1290 / 13731 / 66.48   raw 1290 / 13731 / 66.48   match
+    vllm-2xt4-1.5b-fp16-tp2-c32-r2-20261009T063315Z gpu1: grafana 1455 / 13731 / 68.58   raw 1455 / 13731 / 68.58   match
+    vllm-2xt4-1.5b-fp16-tp2-c32-r3-20261009T063333Z gpu0: grafana 1335 / 13731 / 66.74   raw 1335 / 13731 / 66.74   match
+    vllm-2xt4-1.5b-fp16-tp2-c32-r3-20261009T063333Z gpu1: grafana 1410 / 13731 / 67.975   raw 1410 / 13731 / 67.975   match
+    vllm-t4-1.5b-awq-c1-r1-20261009T061733Z gpu0: grafana 1050 / 13295 / 65.98   raw 1050 / 13295 / 65.98   match
+    vllm-t4-1.5b-awq-c1-r2-20261009T061848Z gpu0: grafana 1035 / 13295 / 66.025   raw 1035 / 13295 / 66.025   match
+    vllm-t4-1.5b-awq-c1-r3-20261009T062002Z gpu0: grafana 1050 / 13295 / 66.23   raw 1050 / 13295 / 66.23   match
+    vllm-t4-1.5b-awq-c32-r1-20261009T062206Z gpu0: grafana 1230 / 13401 / 66.19   raw 1230 / 13401 / 66.19   match
+    vllm-t4-1.5b-awq-c32-r2-20261009T062228Z gpu0: grafana 1215 / 13401 / 66.61   raw 1215 / 13401 / 66.61   match
+    vllm-t4-1.5b-awq-c32-r3-20261009T062251Z gpu0: grafana 1245 / 13401 / 66.28   raw 1245 / 13401 / 66.28   match
+    vllm-t4-1.5b-awq-c8-r1-20261009T062115Z gpu0: grafana 1245 / 13401 / 66.07   raw 1245 / 13401 / 66.07   match
+    vllm-t4-1.5b-awq-c8-r2-20261009T062132Z gpu0: grafana 1245 / 13401 / 66.91   raw 1245 / 13401 / 66.91   match
+    vllm-t4-1.5b-awq-c8-r3-20261009T062149Z gpu0: grafana 1260 / 13401 / 66.37   raw 1260 / 13401 / 66.37   match
+    vllm-t4-1.5b-fp16-c1-r1-20261009T060141Z gpu0: grafana 615 / 13209 / 66.75   raw 615 / 13209 / 66.75   match
+    vllm-t4-1.5b-fp16-c1-r2-20261009T060418Z gpu0: grafana 555 / 13209 / 66.44   raw 555 / 13209 / 66.44   match
+    vllm-t4-1.5b-fp16-c1-r3-20261009T060706Z gpu0: grafana 555 / 13209 / 66.38   raw 555 / 13209 / 66.38   match
+    vllm-t4-1.5b-fp16-c32-r1-20261009T061113Z gpu0: grafana 1080 / 13315 / 66.415   raw 1080 / 13315 / 66.415   match
+    vllm-t4-1.5b-fp16-c32-r2-20261009T061142Z gpu0: grafana 1080 / 13315 / 65.58   raw 1080 / 13315 / 65.58   match
+    vllm-t4-1.5b-fp16-c32-r3-20261009T061211Z gpu0: grafana 1080 / 13315 / 66.11   raw 1080 / 13315 / 66.11   match
+    vllm-t4-1.5b-fp16-c8-r1-20261009T060953Z gpu0: grafana 1050 / 13315 / 66.05   raw 1050 / 13315 / 66.05   match
+    vllm-t4-1.5b-fp16-c8-r2-20261009T061020Z gpu0: grafana 1080 / 13315 / 66.505   raw 1080 / 13315 / 66.505   match
+    vllm-t4-1.5b-fp16-c8-r3-20261009T061047Z gpu0: grafana 1080 / 13315 / 66.57   raw 1080 / 13315 / 66.57   match
+    vllm-t4-7b-awq-c8-r1-20261009T062813Z gpu0: grafana 1005 / 12927 / 65.955   raw 1005 / 12927 / 65.955   match
+    vllm-t4-7b-awq-c8-r2-20261009T062906Z gpu0: grafana 1005 / 12927 / 65.88   raw 1005 / 12927 / 65.88   match
+    vllm-t4-7b-awq-c8-r3-20261009T062958Z gpu0: grafana 1020 / 12927 / 65.98   raw 1020 / 12927 / 65.98   match
+  0 mismatches, max abs difference 0
+  (the timeseries panels above use last_over_time; the power panel uses max_over_time per interval:
+   27 series, 596 points, max 81.82 W, equal to the raw maximum; 100 of 2265 raw samples exceed 70 W)

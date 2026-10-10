@@ -1,0 +1,706 @@
+Phase 5a (Platform) evidence. All times UTC, 2026-10-09 unless stated. Host: Windows 11, Git Bash, Docker Desktop
+(WSL2, 16 CPUs, 31 GiB for Docker), kubectl 1.36.1, helm 4.2.4. The Phase 1-4 compose stack ran alongside the
+whole time and was not modified. Logs below are verbatim except that non-ASCII glyphs in kind's progress output
+were stripped and where a filter is named. Pinned versions: docs/VERSIONS.md ("Phase 5a platform").
+
+== 1. Images run as an arbitrary UID with group 0 (OpenShift style)
+Current image (after the orchestrator bumped rag/Dockerfile to python:3.12.15-slim-trixie, both FROM lines):
+# 2026-10-09T07:39:45Z. rag image: rag/Dockerfile on python:3.12.15-slim-trixie, built by kind-up.sh with --provenance=false
+$ docker image inspect industrial-llm-platform/rag:0.1.0 --format "{{.Id}} {{.Created}}"
+sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e 2026-10-09T06:19:48.273647432Z
+$ docker run --rm --user 123456:0 --entrypoint sh industrial-llm-platform/rag:0.1.0 -c 'id; python -c "import app.main" && echo import-ok; touch /data/corpus/x && echo corpus-writable; dpkg-query -W perl-base'
+uid=123456 gid=0(root) groups=0(root)
+import-ok
+corpus-writable
+perl-base	5.40.1-6+deb13u1
+$ docker run --rm --user 123456:0 --read-only --tmpfs /tmp --entrypoint python industrial-llm-platform/rag:0.1.0 -c 'import app.main; print("read-only root ok")'
+read-only root ok
+$ docker image inspect ghcr.io/ggml-org/llama.cpp:server-b11459 --format "{{.Id}}"
+sha256:33868c035b21dc63f7c60b7438774283fd99215bc319114eb03de5df4ce7cd6b
+$ docker run --rm --user 123456:0 --read-only ghcr.io/ggml-org/llama.cpp:server-b11459 --version
+version: 0.6.0-dev (build 11459, commit f498f864f)
+built with GNU 14.2.0 for Linux x86_64
+
+History: the same checks passed on the pre-bump image (python:3.12.13-slim-trixie) at 2026-10-09T05:39:59Z.
+The image ID differs from the reviewer's scan below (sha256:6e3d2cb3...) because kind-up.sh now builds with
+--provenance=false (section 8): same build and Created time, no provenance attestation.
+
+In the cluster every pod runs as UID 1000650000, GID 0 (values-kind.yaml), in namespace llm with Pod Security
+"restricted" enforced; see section 3.
+
+== 2. Trivy (aquasec/trivy:0.75.0; severities HIGH and CRITICAL; DB UpdatedAt 2026-10-08T19:05:21Z)
+Current (after the base bump, applied by the orchestrator on 2026-10-09):
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.75.0 image --scanners vuln --severity HIGH,CRITICAL --format json --quiet industrial-llm-platform/rag:0.1.0   # 2026-10-09T07:39:24Z
+exit=0
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.75.0 image --scanners vuln --severity HIGH,CRITICAL --format json --quiet ghcr.io/ggml-org/llama.cpp:server-b11459   # 2026-10-09T07:39:28Z
+exit=0
+{"Version":2,"NextUpdate":"2026-10-09T19:05:21.721408648Z","UpdatedAt":"2026-10-08T19:05:21.721409049Z","DownloadedAt":"2026-10-08T20:42:11.106725816Z"}
+Summary (jq over the JSON reports):
+  industrial-llm-platform/rag:0.1.0 sha256:c07aa644... (debian 13.7 + python packages): CRITICAL 0, HIGH 44, 0 with a fixed version; python-pkg: 0 HIGH/CRITICAL
+  ghcr.io/ggml-org/llama.cpp:server-b11459 sha256:33868c03... (ubuntu 24.04): CRITICAL 0, HIGH 0
+The reviewer's scan of the rebuilt image (sha256:6e3d2cb3..., source docs/evidence/phase5a-review/trivy-*.summary.json,
+2026-10-09T06:27Z) gives the same counts: rag CRITICAL 0, HIGH 44, 0 fixable, Debian 13.7; llama.cpp 0/0.
+The 44 HIGH are Debian base packages (util-linux, login, ncurses, systemd libraries and similar) with no fixed version yet.
+
+History, before the bump (rag on python:3.12.13-slim-trixie), scanned 2026-10-09T05:39Z:
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.75.0 image --scanners vuln --severity HIGH,CRITICAL --format json --quiet industrial-llm-platform/rag:0.1.0   # 2026-10-09T05:39:36Z
+exit=0
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.75.0 image --scanners vuln --severity HIGH,CRITICAL --format json --quiet ghcr.io/ggml-org/llama.cpp:server-b11459   # 2026-10-09T05:39:38Z
+exit=0
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.75.0 image --scanners vuln --severity HIGH,CRITICAL --format json --quiet python:3.12.15-slim-trixie   # 2026-10-09T05:39:40Z
+exit=0
+
+Summary (jq over the JSON reports):
+  ghcr.io/ggml-org/llama.cpp:server-b11459 (ubuntu 24.04): CRITICAL 0, HIGH 0
+  industrial-llm-platform/rag:0.1.0 (debian 13.6 + python packages): CRITICAL 3, HIGH 91 (47 with a fixed version), python-pkg: 0 HIGH/CRITICAL
+  python:3.12.15-slim-trixie (candidate base): CRITICAL 0, HIGH 44 (none fixable yet)
+
+rag image CRITICAL findings, all in the base image (python:3.12.13-slim-trixie, built 2026-08-05), none in our code
+or Python dependencies:
+  CVE-2026-13221 perl-base 5.40.1-6, fixed in 5.40.1-6+deb13u1: perl: Perl: Incorrect regular expression processing via large regular expressions
+  CVE-2026-42496 perl-base 5.40.1-6, fixed in 5.40.1-6+deb13u1: perl-archive-tar: perl-archive-tar: Path traversal via crafted symlinks allows arbitrary file access
+  CVE-2026-8376 perl-base 5.40.1-6, fixed in 5.40.1-6+deb13u1: perl: Perl: Heap buffer overflow when compiling regular expressions on 32-bit builds
+Reason they were present: perl-base is an Essential Debian package in the upstream python slim image; the app
+never runs perl. The python:3.12.13-slim-trixie tag was re-pulled on 2026-10-08 and still had perl-base 5.40.1-6.
+Fix applied: both FROM lines in rag/Dockerfile now use python:3.12.15-slim-trixie (perl-base 5.40.1-6+deb13u1,
+section 1); result above.
+
+== 3. One-command bring-up from a clean state
+$ bash scripts/kind-down.sh   # 2026-10-09T05:28:14Z
+Deleting cluster "llm" ...
+Deleted nodes: ["llm-control-plane"]
+[05:28:24Z] kind cluster llm, kind-registry and kind-git removed
+$ docker ps -a --filter name=kind ; kind get clusters
+No kind clusters found.
+
+$ time bash scripts/kind-up.sh   # start 2026-10-09T05:28:31Z
+[05:28:32Z] kind v0.33.0, context kind-llm, git source worktree
+Creating cluster "llm" ...
+  Ensuring node image (kindest/node:v1.36.4)   ...
+  Ensuring node image (kindest/node:v1.36.4)
+  Preparing nodes    ...
+  Preparing nodes
+  Writing configuration   ...
+  Writing configuration
+  Starting control-plane   ...
+  Starting control-plane
+  Installing CNI   ...
+  Installing CNI
+  Installing StorageClass   ...
+  Installing StorageClass
+  Waiting  2m0s for control-plane = Ready   ...
+  Waiting  2m0s for control-plane = Ready
+  Ready after 16s
+Set kubectl context to "kind-llm"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-llm
+
+Have a nice day!
+[05:29:14Z] building and pushing the rag image
+[05:29:24Z] git://kind-git/industrial-llm-platform main = 01e123da63ade43f23afadf5db9f317f1c28fc76
+[05:29:28Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[05:32:17Z] installing ArgoCD v3.5.4
+[05:34:36Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[05:34:36Z] root=/
+[05:34:51Z] platform-deps=Synced/Progressing root=OutOfSync/Progressing
+[05:41:47Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Progressing
+[05:51:47Z] llamacpp=Synced/Degraded platform-deps=Synced/Healthy root=OutOfSync/Degraded
+[05:52:18Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Missing root=Synced/Healthy
+[05:53:05Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing
+[06:02:56Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS   AGE
+elasticsearch-0               1/1     Running     0          28m
+llamacpp-685c695698-cm4nm     1/1     Running     0          21m
+postgres-0                    1/1     Running     0          28m
+prometheus-84d4d5d7cd-cp425   1/1     Running     0          28m
+rag-api-547c49cdfb-9r4b7      1/1     Running     0          10m
+rag-ingest-ssgrg              0/1     Completed   0          10m
+[06:02:56Z] done in 34m24s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: http://127.0.0.1:8090/v1  (OpenAI API; KEDA scales it 1..3 on in-flight requests)
+ArgoCD:   kubectl --context kind-llm -n argocd port-forward svc/argocd-server 8443:443
+          password: kubectl --context kind-llm -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+
+real	34m25.085s
+user	0m11.753s
+sys	0m16.607s
+exit=0 end 2026-10-09T06:02:56Z
+
+Wall time 34m25s. Clean state means: no kind cluster, no kind-registry or kind-git container, no served repo; Docker's
+local image cache (kind node image, registry, rag image layers) was warm from earlier debug runs, the images inside
+the cluster were pulled fresh. Most of the time is the 1.1 GB model download (initContainer, 05:41 to 05:52) and the
+corpus ingest Job (9m52s).
+Observed: llamacpp went Degraded at 05:51:47 for 31 s. Cause: the Deployment's default 600 s progressDeadlineSeconds
+expired during the model download (the Deployment was created about 05:41:4x). Fixed by setting
+progressDeadlineSeconds: 1800 in deploy/helm/llamacpp/templates/workload.yaml; verified by the second clean run below.
+
+Second clean run, with the fix, run by the reviewer (verbatim from docs/evidence/phase5a-review/clean-run2-kind-up.log,
+non-ASCII stripped). It used the worktree source, the default at that time (section 4):
+2026-10-09T06:23:56Z
+Deleting cluster "llm" ...
+Deleted nodes: ["llm-control-plane"]
+[06:24:07Z] kind cluster llm, kind-registry and kind-git removed
+DOWN_RC=0
+2026-10-09T06:24:07Z
+[06:24:08Z] kind v0.33.0, context kind-llm, git source worktree
+Creating cluster "llm" ...
+  Ensuring node image (kindest/node:v1.36.4)   ...
+  Ensuring node image (kindest/node:v1.36.4)
+  Preparing nodes    ...
+  Preparing nodes
+  Writing configuration   ...
+  Writing configuration
+  Starting control-plane   ...
+  Starting control-plane
+  Installing CNI   ...
+  Installing CNI
+  Installing StorageClass   ...
+  Installing StorageClass
+  Waiting  2m0s for control-plane = Ready   ...
+  Waiting  2m0s for control-plane = Ready
+  Ready after 14s
+Set kubectl context to "kind-llm"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-llm
+
+Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community
+[06:24:46Z] building and pushing the rag image
+[06:24:55Z] git://kind-git/industrial-llm-platform main = eaa9e2131bf24ad1b64d0df19e868ab97181c239
+[06:24:59Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[06:28:31Z] installing ArgoCD v3.5.4
+[06:30:55Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[06:30:55Z] root=/
+[06:31:11Z] platform-deps=Synced/Progressing root=OutOfSync/Progressing
+[06:38:39Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Progressing
+[06:49:44Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Missing root=Synced/Healthy
+[06:50:15Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing
+[07:03:11Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS   AGE
+elasticsearch-0               1/1     Running     0          32m
+llamacpp-685c695698-54cjd     1/1     Running     0          24m
+postgres-0                    1/1     Running     0          32m
+prometheus-84d4d5d7cd-nrfzv   1/1     Running     0          32m
+rag-api-547c49cdfb-2jc8c      1/1     Running     0          13m
+rag-ingest-lxdfv              0/1     Completed   0          13m
+[07:03:12Z] done in 39m5s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: http://127.0.0.1:8090/v1  (OpenAI API; KEDA scales it 1..3 on in-flight requests)
+ArgoCD:   kubectl --context kind-llm -n argocd port-forward svc/argocd-server 8443:443
+          password: kubectl --context kind-llm -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+UP_RC=0 WALL=2345s
+2026-10-09T07:03:12Z
+
+Second run: 06:24:07Z to 07:03:12Z, 39m05s, exit 0, no Degraded state at any point; llamacpp Healthy after 10m57s
+from the start of the app wait; rag-ingest 12m46s (718 s indexing); rag image sha256:6e3d2cb3...; published revision
+eaa9e21.
+
+Third clean run, by the reviewer with the digest change (docs/evidence/phase5a-review/clean-run3-kind-up.log and
+clean-run3-watch*.log): 07:55:43Z (kind-down first) to 08:42:27Z, kind-up "done in 46m28s", exit 0, 550 s of indexing. It showed the root-apply ordering
+bug fixed in section 8b. The three clean runs took 34m25s, 39m05s and 46m28s.
+
+# 2026-10-09T06:03:16Z
+$ kubectl --context kind-llm -n argocd get applications -o custom-columns=NAME:.metadata.name,WAVE:.metadata.annotations.argocd\.argoproj\.io/sync-wave,SYNC:.status.sync.status,HEALTH:.status.health.status,REPO:.spec.source.repoURL,REVISION:.status.sync.revision
+NAME            WAVE     SYNC     HEALTH    REPO                                     REVISION
+llamacpp        1        Synced   Healthy   git://kind-git/industrial-llm-platform   01e123da63ade43f23afadf5db9f317f1c28fc76
+platform-deps   0        Synced   Healthy   git://kind-git/industrial-llm-platform   01e123da63ade43f23afadf5db9f317f1c28fc76
+rag-api         2        Synced   Healthy   git://kind-git/industrial-llm-platform   01e123da63ade43f23afadf5db9f317f1c28fc76
+root            <none>   Synced   Healthy   git://kind-git/industrial-llm-platform   01e123da63ade43f23afadf5db9f317f1c28fc76
+
+$ docker ps --filter name=kind- --format "{{.Names}} {{.Image}} {{.Status}}"
+kind-git industrial-llm-platform/git-server:0.1.0 Up 33 minutes
+kind-registry registry:3.1.2 Up 34 minutes
+
+$ git --git-dir=.tools/git/industrial-llm-platform.git log --oneline -1 main
+01e123d kind-up worktree snapshot
+
+$ kubectl --context kind-llm get ns llm --show-labels
+NAME   STATUS   AGE   LABELS
+llm    Active   28m   kubernetes.io/metadata.name=llm,pod-security.kubernetes.io/enforce-version=v1.36,pod-security.kubernetes.io/enforce=restricted
+
+$ kubectl --context kind-llm -n llm get pods,svc,ingress,pvc,jobs,scaledobject,hpa
+NAME                              READY   STATUS      RESTARTS   AGE
+pod/elasticsearch-0               1/1     Running     0          28m
+pod/llamacpp-685c695698-cm4nm     1/1     Running     0          21m
+pod/postgres-0                    1/1     Running     0          28m
+pod/prometheus-84d4d5d7cd-cp425   1/1     Running     0          28m
+pod/rag-api-547c49cdfb-9r4b7      1/1     Running     0          10m
+pod/rag-ingest-ssgrg              0/1     Completed   0          10m
+
+NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/elasticsearch   ClusterIP   10.96.175.203   <none>        9200/TCP   28m
+service/llamacpp        ClusterIP   10.96.76.187    <none>        8080/TCP   21m
+service/postgres        ClusterIP   10.96.104.183   <none>        5432/TCP   28m
+service/prometheus      ClusterIP   10.96.183.84    <none>        9090/TCP   28m
+service/rag-api         ClusterIP   10.96.80.191    <none>        8000/TCP   10m
+
+NAME                                 CLASS     HOSTS               ADDRESS     PORTS   AGE
+ingress.networking.k8s.io/llamacpp   traefik   *                   127.0.0.1   80      21m
+ingress.networking.k8s.io/rag-api    traefik   rag-api.localhost   127.0.0.1   80      10m
+
+NAME                                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-elasticsearch-0   Bound    pvc-e4f64228-84f6-4298-9a75-50072d3dbf22   4Gi        RWO            standard       <unset>                 28m
+persistentvolumeclaim/data-postgres-0        Bound    pvc-ed61a78d-effb-4287-9332-acd24be7e39a   2Gi        RWO            standard       <unset>                 28m
+persistentvolumeclaim/llamacpp-models        Bound    pvc-179384ef-4adf-46a4-8872-2f74d88930e2   2Gi        RWO            standard       <unset>                 21m
+
+NAME                   STATUS     COMPLETIONS   DURATION   AGE
+job.batch/rag-ingest   Complete   1/1           9m52s      10m
+
+NAME                            SCALETARGETKIND      SCALETARGETNAME   MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+scaledobject.keda.sh/llamacpp   apps/v1.Deployment   llamacpp          1     3     True    False    False      False    prometheus                     21m
+
+NAME                                                    REFERENCE             TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/keda-hpa-llamacpp   Deployment/llamacpp   0/2 (avg)   1         3         1          21m
+
+$ for each running pod: kubectl exec <pod> -- id
+pod/elasticsearch-0: uid=1000650000 gid=0(root) groups=0(root)
+pod/llamacpp-685c695698-cm4nm: Defaulted container "llama-server" out of: llama-server, model (init)
+pod/postgres-0: uid=1000650000 gid=0(root) groups=0(root)
+pod/prometheus-84d4d5d7cd-cp425: uid=1000650000 gid=0(root) groups=0(root)
+pod/rag-api-547c49cdfb-9r4b7: uid=1000650000 gid=0(root) groups=0(root)
+llamacpp: uid=1000650000 gid=0(root) groups=0(root)
+$ kubectl --context kind-llm -n llm logs deploy/llamacpp -c model | tail -2
+/models/qwen2.5-1.5b-instruct-q4_k_m.gguf.llamacpp-685c695698-cm4nm.part: OK
+/models/qwen2.5-1.5b-instruct-q4_k_m.gguf: OK
+$ kubectl --context kind-llm -n llm logs job/rag-migrate (hook pod deleted on success; ArgoCD sync history instead):
+Job/rag-migrate Succeeded PreSync Reached expected number of succeeded pods
+Service/rag-api Running Sync service/rag-api created
+Deployment/rag-api Running Sync deployment.apps/rag-api created
+Job/rag-ingest Running Sync job.batch/rag-ingest created
+Ingress/rag-api Running Sync ingress.networking.k8s.io/rag-api created
+$ kubectl --context kind-llm -n llm logs job/rag-ingest | tail -2
+indexed 9 documents, 3129 chunks in 534s
+index count: 3129
+
+The rag-migrate Job is a Helm pre-install/pre-upgrade hook; ArgoCD ran it as PreSync and deleted it on success,
+so its result is shown from the ArgoCD sync result. The model initContainer verified the sha256 of the download
+and again of the final file.
+
+Re-run (publishes working-tree changes to the local git server; ArgoCD picks them up):
+$ bash scripts/kind-up.sh   # re-run to publish the progressDeadlineSeconds change, 2026-10-09T06:04:03Z
+[06:04:03Z] kind v0.33.0, context kind-llm, git source worktree
+[06:04:05Z] building and pushing the rag image
+[06:04:10Z] git://kind-git/industrial-llm-platform main = bdc9b12d96fc00822d40d67fab07561a10e3f77d
+[06:04:12Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[06:04:20Z] installing ArgoCD v3.5.4
+[06:04:41Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[06:04:41Z] llamacpp=OutOfSync/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+[06:04:56Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS   AGE
+elasticsearch-0               1/1     Running     0          30m
+llamacpp-685c695698-cm4nm     1/1     Running     0          23m
+postgres-0                    1/1     Running     0          30m
+prometheus-84d4d5d7cd-cp425   1/1     Running     0          30m
+rag-api-547c49cdfb-9r4b7      1/1     Running     0          12m
+rag-ingest-ssgrg              0/1     Completed   0          12m
+[06:04:57Z] done in 0m54s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: http://127.0.0.1:8090/v1  (OpenAI API; KEDA scales it 1..3 on in-flight requests)
+ArgoCD:   kubectl --context kind-llm -n argocd port-forward svc/argocd-server 8443:443
+          password: kubectl --context kind-llm -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+$ kubectl --context kind-llm -n llm get deploy llamacpp -o jsonpath={.spec.progressDeadlineSeconds}
+1800
+
+== 4. ArgoCD git source (no remote)
+ArgoCD reads git://kind-git/industrial-llm-platform (branch main): a git daemon container (infra/git-server) on the
+kind Docker network serving .tools/git/industrial-llm-platform.git read-only. kind-up.sh pushes either the committed
+HEAD (GIT_SOURCE=head, now the default) or a synthetic snapshot commit of the working tree (GIT_SOURCE=worktree,
+opt-in; it includes untracked files, is not in the repo history, and its objects stay in .git/objects until git gc
+prunes them). All runs in this file used worktree, which was the default when they ran, because Phase 5a was not
+committed; the REVISION column in section 3 is such a snapshot commit. Limitation: ArgoCD sees only what kind-up.sh
+last published, never live edits. Expected follow-up after the 5a commit: GIT_SOURCE=head bash scripts/kind-up.sh.
+
+== 5. Chat through the in-cluster rag-api (Traefik ingress, kind host port 8090)
+# 2026-10-09T06:03:33Z
+$ curl -sN http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}' | grep -A1 -E '^event: (session|sources|done|error)'
+event: session
+data: {"session_id": "a0072b85-71c5-45c7-aa90-44bb58782dc6", "trace_id": "00000000000000000000000000000000"}
+--
+event: sources
+data: [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf", "content": "of confidence. Thus one can confidently assert that y U \u2264 Y \u2264 y + U, which is commonly written as Y = y \u00b1 U. Use expanded uncertainty U to report the results of all NIST measurements other than those for which uc has traditionally been employed. To be consistent with current international practice, the value of k to be used at NIST for calculating U is, by convention, k = 2. Values of k other than 2 are only to be used for specific applications dictated by established and documented requirements. 4) Reporting Uncertainty : Report U together with the coverage factor k used to obtain it, or report u .c\nWhen reporting a measurement result and its uncertainty, include the following information in the report itself or by referring to a published document: \u2013 A list of all components of standard uncertainty, together with their degrees of freedom "}, {"n": 2, "source_id": "nist-tn-1297", "title": "NIST TN 12
+--
+event: done
+data: {"answer": "NIST uses a coverage factor of 2 to calculate expanded uncertainty. [1]", "citations": [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf"}], "usage": {"completion_tokens": 18, "prompt_tokens": 1273, "total_tokens": 1291, "completion_tokens_details": null, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}}
+# end 2026-10-09T06:03:52Z
+$ curl -s http://rag-api.localhost:8090/sessions/a0072b85-71c5-45c7-aa90-44bb58782dc6/messages
+[{"role":"user","content":"What coverage factor does NIST use for expanded uncertainty?","citations":null,"created_at":"2026-10-09T06:03:33.667507"},{"role":"assistant","content":"NIST uses a coverage factor of 2 to calculate expanded uncertainty. [1]","citations":[{"n":1,"url":"https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf","page":17,"title":"NIST TN 1297 (1994) Guidelines
+
+(the sources event is cut at 1200 characters). trace_id is all zeros because kind has no OpenTelemetry collector,
+so rag-api does not export traces there.
+
+== 6. KEDA scale up and down
+ScaledObject: prometheus trigger, query sum(llamacpp:requests_processing + llamacpp:requests_deferred) (in-flight
+requests over all replicas), AverageValue target 2 per replica (= --parallel 2 slots), min 1, max 3, polling 5 s,
+HPA scale-down stabilization 60 s then 1 pod per 30 s. Load: benchmark/loadgen/run.py (benchmark/.venv, read-only use)
+through the Traefik ingress so requests spread over the replicas. Raw loadgen output:
+docs/evidence/phase5a-keda/kind-keda-c6-r1-20261009T060504Z.json (marked smoke; a scaling demo, not a benchmark).
+The reviewer repeated it on the second clean cluster (docs/evidence/phase5a-review/clean-run2-keda.log, raw loadgen
+output docs/evidence/phase5a-keda/kind-keda-c6-r1-20261009T070422Z.json, 07:04 to 07:12):
+HPA events New size 2 at 07:04:38, 3 at 07:05:38, 2 at 07:11:55, 1 at 07:12:25, 60/60 requests ok.
+$ bash scripts/keda-demo.sh 6 60   # 2026-10-09T06:05:03Z
+[06:05:03Z] ScaledObject and HPA before load
+NAME                            SCALETARGETKIND      SCALETARGETNAME   MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+scaledobject.keda.sh/llamacpp   apps/v1.Deployment   llamacpp          1     3     True    False    False      False    prometheus                     23m
+
+NAME                                                    REFERENCE             TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/keda-hpa-llamacpp   Deployment/llamacpp   0/2 (avg)   1         3         1          23m
+[06:05:04Z] load: concurrency 6, 60 requests, 128 tokens each
+06:05:04Z inflight=0 hpa_desired/current=1/1 pods=[ cm4nm:1/1:Running ]
+06:05:15Z inflight=6 hpa_desired/current=3/1 pods=[ cm4nm:1/1:Running pdzqh:0/1:Init:0/1 s8dm5:0/1:Init:0/1 ]
+06:05:26Z inflight=4 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:0/1:Running s8dm5:0/1:Running ]
+06:05:37Z inflight=2 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:05:48Z inflight=2 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:06:00Z inflight=2 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:06:11Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:06:23Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:06:35Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:06:46Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:06:58Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:07:09Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:07:21Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:07:32Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:07:44Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:07:56Z inflight=3 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:08:07Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:08:19Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:08:30Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:08:42Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:08:54Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:09:05Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:09:17Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:09:29Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:09:40Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:09:52Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:10:03Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:10:14Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:10:26Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:10:38Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:10:49Z inflight=5 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:11:01Z inflight=6 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:11:12Z inflight=2 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:11:23Z inflight=2 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+kind-keda-c6-r1-20261009T060504Z.json: ok 60/60 out_tok/s 23.266758644081772 ttft_p50 2.2967189999999995 e2e_p95 70.98947935000001
+[06:11:28Z] load finished, waiting for scale-down to 1 replica
+06:11:34Z inflight=0 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:11:44Z inflight=0 hpa_desired/current=3/3 pods=[ cm4nm:1/1:Running pdzqh:1/1:Running s8dm5:1/1:Running ]
+06:11:55Z inflight=0 hpa_desired/current=2/3 pods=[ cm4nm:1/1:Running s8dm5:1/1:Running ]
+06:12:05Z inflight=0 hpa_desired/current=2/3 pods=[ cm4nm:1/1:Running s8dm5:1/1:Running ]
+06:12:16Z inflight=0 hpa_desired/current=2/2 pods=[ cm4nm:1/1:Running s8dm5:1/1:Running ]
+06:12:27Z inflight=0 hpa_desired/current=1/2 pods=[ cm4nm:1/1:Running ]
+06:12:37Z inflight=0 hpa_desired/current=1/2 pods=[ cm4nm:1/1:Running ]
+[06:12:39Z] after
+NAME                            SCALETARGETKIND      SCALETARGETNAME   MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+scaledobject.keda.sh/llamacpp   apps/v1.Deployment   llamacpp          1     3     True    False    False      False    prometheus                     31m
+
+NAME                                                    REFERENCE             TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/keda-hpa-llamacpp   Deployment/llamacpp   0/2 (avg)   1         3         1          31m
+NAME                        READY   STATUS    RESTARTS   AGE
+llamacpp-685c695698-cm4nm   1/1     Running   0          31m
+LAST                   MSG
+2026-10-09T06:05:06Z   New size: 3; reason: external metric s0-prometheus(&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: llamacpp,},MatchExpressions:[]LabelSelectorRequirement{},}) above target
+2026-10-09T06:11:52Z   New size: 2; reason: All metrics below target
+2026-10-09T06:12:22Z   New size: 1; reason: All metrics below target
+exit=0
+
+Load spread over the three replicas (Prometheus in the cluster):
+$ kubectl --context kind-llm get --raw '/api/v1/namespaces/llm/services/prometheus:9090/proxy/api/v1/query?query=sum by (pod)(increase(llamacpp:tokens_predicted_total[10m]))'   # 2026-10-09T06:12:51Z
+llamacpp-685c695698-cm4nm 3352 tokens
+llamacpp-685c695698-pdzqh 2576 tokens
+llamacpp-685c695698-s8dm5 2575 tokens
+
+Timeline: load starts 06:05:04; HPA "New size: 3" at 06:05:06; both new pods Ready by 06:05:37 (model already on
+the shared PVC, sha256 check plus load about 20 s); load ends 06:11:28; New size 2 at 06:11:52, New size 1 at 06:12:22.
+
+== 7. helm lint and kubeconform (both values sets, CRD and Route schemas pinned, no -ignore-missing-schemas)
+Verbatim output:
+$ bash scripts/helm-check.sh   # 2026-10-09T07:51:29Z
+== deploy/helm/llamacpp (kind)
+==> Linting deploy/helm/llamacpp
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/llamacpp (openshift)
+==> Linting deploy/helm/llamacpp
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/platform-deps (kind)
+==> Linting deploy/helm/platform-deps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/platform-deps (openshift)
+==> Linting deploy/helm/platform-deps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/rag-api (kind)
+==> Linting deploy/helm/rag-api
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/rag-api (openshift)
+==> Linting deploy/helm/rag-api
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (kind)
+==> Linting deploy/argocd/apps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (openshift)
+==> Linting deploy/argocd/apps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/root.yaml
+Summary: 1 resource found in 1 file - Valid: 1, Invalid: 0, Errors: 0, Skipped: 0
+all charts pass helm lint and kubeconform
+exit=0
+
+Rendered kinds and fixed-UID lines per values set:
+  llamacpp/kind: Deployment x1, Ingress x1, PersistentVolumeClaim x1, ScaledObject x1, Service x1, runAsUser lines: 1
+  llamacpp/openshift: Deployment x1, PersistentVolumeClaim x1, Route x1, ScaledObject x1, Service x1, runAsUser lines: 0
+  rag-api/kind: Deployment x1, Ingress x1, Job x2, Service x1, runAsUser lines: 3
+  rag-api/openshift: Deployment x1, Job x2, Route x1, Service x1, runAsUser lines: 0
+  platform-deps/kind: ConfigMap x1, Deployment x1, Role x1, RoleBinding x1, Service x3, ServiceAccount x1, StatefulSet x2, runAsUser lines: 3
+  platform-deps/openshift: ConfigMap x1, Deployment x1, Role x1, RoleBinding x1, Service x3, ServiceAccount x1, StatefulSet x2, runAsUser lines: 0
+
+== 8. Image digest rollout (review finding: a rebuilt image did not roll out)
+The tag rag:0.1.0 is mutable and the pod template only named the tag, so a rebuilt image never rolled out on a
+re-run. Fix: kind-up.sh pushes the image, reads the pushed digest and sets it in the root Application
+(valuesObject.ragImage); the apps chart passes it to rag-api as the Helm parameter image=...@sha256:...
+The build uses --provenance=false: with the default provenance attestation every build, even fully cached, got a new
+digest (07c50a6f... then 5fa06ab9... from the same sources), which would roll rag-api on every re-run. The ingest Job
+now has sync-options Force=true,Replace=true; plain Replace=true failed on the digest change with "Job.batch
+rag-ingest is invalid ... field is immutable". The sync attempt started with the old option kept retrying; it was
+stopped with: kubectl --context kind-llm -n argocd patch application rag-api --type merge
+-p '{"status":{"operationState":{"phase":"Terminating"}}}'.
+kind-up.sh also now waits until all four Applications report the revision it just published.
+A changed image recreates the ingest Job, which rebuilds the index (about 10 to 13 minutes).
+
+Rebuilt image rolls out (rag-api ReplicaSet 7b9fcb8c9d to 664cc6b865, ingest Job recreated):
+# before 2026-10-09T07:38:20Z: image=localhost:5001/industrial-llm-platform/rag@sha256:5fa06ab9587aec5cd597be59e82b4778053b40907bc3f2608d769d04acacf8a3 rs=rag-api-7b9fcb8c9d
+$ GIT_SOURCE=worktree bash scripts/kind-up.sh
+[07:38:21Z] kind v0.33.0, context kind-llm, git source worktree
+[07:38:24Z] building and pushing the rag image
+[07:38:29Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+[07:38:30Z] git://kind-git/industrial-llm-platform main = 822a8091c59ab80498677c9b3a3a03e2ce3d04ef
+[07:38:32Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[07:38:42Z] installing ArgoCD v3.5.4
+[07:39:08Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[07:39:08Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=OutOfSync/Progressing
+[07:39:24Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Progressing root=Synced/Progressing
+[07:39:40Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing
+[07:49:20Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS   AGE
+rag-api-664cc6b865-gsc4b      1/1     Running     0          9m56s
+rag-ingest-d8jhw              0/1     Completed   0          9m56s
+[07:49:20Z] done in 10m59s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+# after 2026-10-09T07:49:20Z: image=localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e rs=rag-api-664cc6b865
+NAME         STATUS     COMPLETIONS   DURATION   AGE
+rag-ingest   Complete   1/1           9m43s      9m57s
+
+Re-run with nothing changed does not roll (same ReplicaSet, same ingest pod):
+# before 2026-10-09T07:49:38Z: rs=rag-api-664cc6b865  ingest-pod=pod/rag-ingest-d8jhw
+$ GIT_SOURCE=worktree bash scripts/kind-up.sh
+[07:49:39Z] kind v0.33.0, context kind-llm, git source worktree
+[07:49:40Z] building and pushing the rag image
+[07:49:45Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+[07:49:46Z] git://kind-git/industrial-llm-platform main = 9b546819a0bef3c8967e30c1a59bb3674a957748
+[07:49:47Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[07:49:56Z] installing ArgoCD v3.5.4
+[07:50:16Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[07:50:16Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+rag-api         Synced        Healthy
+rag-api-664cc6b865-gsc4b      1/1     Running     0          10m
+rag-ingest-d8jhw              0/1     Completed   0          10m
+[07:50:17Z] done in 0m38s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+# after 2026-10-09T07:50:17Z: rs=rag-api-664cc6b865  ingest-pod=pod/rag-ingest-d8jhw
+
+Chat after the rollout:
+# 2026-10-09T07:51:25Z
+$ curl -sN http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}' | grep -A1 '^event: done'
+event: done
+data: {"answer": "NIST uses a coverage factor of k = 2 to calculate expanded uncertainty. [1]", "citations": [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf"}], "usage": {"completion_tokens": 20, "prompt_tokens": 1273, "total_tokens": 1293, "completion_tokens_details": null, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 1272, "image_tokens": null, "text_tokens": null}}}
+
+== 8b. Digest present on the first root sync (re-review blocker)
+Bug seen in the third clean run: kind-up.sh applied deploy/argocd/root.yaml and only then patched
+valuesObject.ragImage, so root sync 0 created rag-api without the image parameter. rag-api sync 0 deployed the tag
+rag:0.1.0 (ReplicaSet 547c49cdfb), ran the migrate hook and started an ingest Job; root sync 1 added the parameter,
+rag-api rolled to @sha256:c07aa644 (ReplicaSet 664cc6b865) and the ingest Job was deleted and recreated seconds
+after it started.
+Fix: kind-up.sh renders the root with ragImage already set and applies that one object
+(kubectl patch --local -f deploy/argocd/root.yaml ... -o yaml | kubectl apply -f -); the separate patch is gone.
+Not re-proven on a clean cluster here (a clean run takes 34 to 47 minutes); checked statically and with an unchanged
+re-run on the existing cluster:
+
+# 2026-10-09T08:45:47Z static check: the object kind-up.sh applies for the root Application
+$ kubectl --context kind-llm patch --local -f deploy/argocd/root.yaml --type merge -o yaml -p '{"spec":{"source":{"helm":{"valuesObject":{"ragImage":"localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e"}}}}}'
+  source:
+    helm:
+      valuesObject:
+        env: kind
+        ragImage: localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+        repoURL: git://kind-git/industrial-llm-platform
+        targetRevision: main
+    path: deploy/argocd/apps
+    repoURL: git://kind-git/industrial-llm-platform
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+$ helm template root deploy/argocd/apps --set repoURL=git://kind-git/industrial-llm-platform --set targetRevision=main --set env=kind --set ragImage=localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e | grep -B6 -A2 parameters
+  source:
+    repoURL: git://kind-git/industrial-llm-platform
+    targetRevision: main
+    path: deploy/helm/rag-api
+    helm:
+      valueFiles: [values.yaml, values-kind.yaml]
+      parameters:
+        - {name: image, value: "localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e"}
+  destination:
+
+$ kubeconform -strict -summary -schema-location <CRD catalog> <the patched root above>
+Summary: 1 resource found in 1 file - Valid: 1, Invalid: 0, Errors: 0, Skipped: 0
+
+Unchanged re-run with the new kind-up.sh (same ReplicaSet, same ingest Job uid, the applied root carries ragImage):
+# before 2026-10-09T08:46:27Z: rs=rag-api-664cc6b865  ingest-job-uid=49419427-4d67-46a9-9be5-fe024679bfff image=localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e root-ragImage=localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+$ GIT_SOURCE=worktree bash scripts/kind-up.sh
+[08:46:28Z] kind v0.33.0, context kind-llm, git source worktree
+[08:46:29Z] building and pushing the rag image
+[08:46:34Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+[08:46:35Z] git://kind-git/industrial-llm-platform main = 34924d10938a9d8d7782ccf8a5ca737081e39e0c
+[08:46:36Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[08:46:44Z] installing ArgoCD v3.5.4
+[08:47:03Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[08:47:03Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+[08:47:04Z] done in 0m36s
+# after 2026-10-09T08:47:04Z: rs=rag-api-664cc6b865  ingest-job-uid=49419427-4d67-46a9-9be5-fe024679bfff image=localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e root-ragImage=localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+$ kubectl --context kind-llm -n argocd get application root -o jsonpath='{.metadata.annotations.kubectl\.kubernetes\.io/last-applied-configuration}' | jq -r .spec.source.helm.valuesObject.ragImage
+localhost:5001/industrial-llm-platform/rag@sha256:c07aa6448ed7ce52e78d60f307f5962763de5e0be92419f2f98f15fc8ec74f9e
+
+helm-check.sh now also renders deploy/argocd/apps with a ragImage digest and validates the parameters branch:
+$ bash scripts/helm-check.sh   # 2026-10-09T08:46:06Z
+== deploy/helm/llamacpp (kind)
+==> Linting deploy/helm/llamacpp
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/llamacpp (openshift)
+==> Linting deploy/helm/llamacpp
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/platform-deps (kind)
+==> Linting deploy/helm/platform-deps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/platform-deps (openshift)
+==> Linting deploy/helm/platform-deps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/rag-api (kind)
+==> Linting deploy/helm/rag-api
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/rag-api (openshift)
+==> Linting deploy/helm/rag-api
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (kind)
+==> Linting deploy/argocd/apps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (openshift)
+==> Linting deploy/argocd/apps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (kind, ragImage digest set as kind-up.sh does)
+rag-api image parameters rendered: 1
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/root.yaml
+Summary: 1 resource found in 1 file - Valid: 1, Invalid: 0, Errors: 0, Skipped: 0
+all charts pass helm lint and kubeconform
+exit=0
+
+Checklist for the post-commit clean run (`bash scripts/kind-down.sh && GIT_SOURCE=head bash scripts/kind-up.sh`),
+which the orchestrator will record as final evidence. It must show:
+- every Application's sync revision equal to the committed HEAD (`git rev-parse HEAD`), not a worktree snapshot;
+- rag-api sync 0 already uses the digest: the first rag-api ReplicaSet's image is
+  localhost:5001/industrial-llm-platform/rag@sha256:..., and only one rag-api ReplicaSet exists after the run;
+- exactly one rag-migrate hook run in the rag-api sync history and exactly one rag-ingest Job uid for the whole run;
+- no Application ever Degraded in the kind-up.sh status lines;
+- all four Applications Synced/Healthy and a chat returning a cited answer.
+
+== 8c. Post-commit proof run on bea3e53 (GIT_SOURCE=head, run by the reviewer)
+Logs: docs/evidence/phase5a-review/final-run-run.log (first attempt), final-run-run2.log (second attempt),
+final-run-watch2.log, final-run-job-events.txt, final-run-apps-final.txt, final-run-chat.txt.
+
+The one-command run did NOT pass on its first attempt:
+- 08:50:12Z kind-down.sh, then kind-up.sh from a clean state (git source head, rag image @sha256:c07aa644...,
+  published main = bea3e53e4870db62c18c1c028475f562d2d65544).
+- 08:57:16Z "installing ArgoCD v3.5.4"; 09:02:20Z kind-up.sh exited 1 after 716 s with "error: timed out waiting
+  for the condition". Cause: the ArgoCD `kubectl rollout status ... --timeout 5m` waits expired while the argocd,
+  dex and redis images were still being pulled (slow pulls on this run). No Application and no llm namespace
+  existed yet when it stopped.
+- 09:02:49Z kind-up.sh re-run on the same fresh cluster; 09:45:11Z done, 42m21s, exit 0. End to end including the
+  failed attempt: 08:50:12Z to 09:45:11Z, about 55 minutes.
+
+Section 8b checklist, all passed on the second attempt:
+- all four Applications Synced/Healthy at revision bea3e53e4870db62c18c1c028475f562d2d65544 (the committed HEAD);
+  the published tree 6291aa20 equals the HEAD tree (reviewer report; not in the copied logs);
+- the only rag-api ReplicaSet is rag-api-664cc6b865, image localhost:5001/industrial-llm-platform/rag@sha256:c07aa644...;
+  root and rag-api sync history have 1 entry each (reviewer report; not in the copied logs);
+- one rag-migrate Job (uid 8106a80a, 09:34:55Z to 09:35:34Z) and one rag-ingest Job (uid 8f503179, 09:35:35Z to
+  09:45:02Z, 3129 chunks in 522 s);
+- no Application Degraded at any point; platform-deps Healthy 09:17:52Z, llamacpp 09:35:04Z, rag-api 09:45:10Z;
+- chat answered "NIST uses a coverage factor of 2 to calculate expanded uncertainty. [1]" citing NIST TN 1297 p.17.
+
+Pending: raising the ArgoCD (and related) rollout timeouts to 15m, being done in the kind-up refactor for Phase 5b
+CI, and then one more one-command clean run that passes on the first attempt. Both are scheduled after the CI
+refactor and not done here.
+
+== 9. Not done or not tested
+- OpenShift: manifests provided (values-openshift.yaml: Routes, no fixed UID, RWX model PVC), schema-validated, not
+  tested on OpenShift.
+- CI (Jenkins, GitHub Actions, Bitbucket): Phase 5b.
+- Sections 1 to 8b used GIT_SOURCE=worktree snapshots (Phase 5a was not committed yet). The post-commit
+  GIT_SOURCE=head clean run (section 8c) passed the 8b checklist but needed a second kind-up.sh attempt; the timeout
+  fix and a first-attempt one-command clean run are pending, after the CI refactor.
+- In-cluster observability is only the Prometheus that KEDA needs; Grafana, Tempo, OTel and the SLO rules stay in
+  compose, so the in-cluster trace_id is all zeros.
+- Compose: rebuilt on python:3.12.15-slim-trixie by the orchestrator (smoke and chat re-checked 2026-10-09); Phase 3
+  and 4 evidence was recorded on 3.12.13.

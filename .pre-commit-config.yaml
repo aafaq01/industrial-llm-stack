@@ -1,0 +1,40 @@
+# Run: uvx --python 3.12 pre-commit@4.6.2 run --all-files
+# hadolint runs from its pinned image (local hook at the end).
+# Raw Kaggle output, raw CI logs and raw OKD logs are committed byte-exact as evidence: no fixer or size hooks on them.
+exclude: ^(benchmark/results/raw/kaggle-|docs/evidence/phase5b-ci/|docs/evidence/v3-openshift-okd/|graphify-out/)
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: &helm-templates ^deploy/(helm/[^/]+|argocd/apps)/templates/  # Go templates, not YAML
+      - id: check-json
+      - id: check-added-large-files
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.10
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        exclude: *helm-templates
+  # Upstream gitleaks hook needs a Go bootstrap that fails on Windows, and its gitleaks-docker hook
+  # uses an unpinned image. This runs the same command from the pinned image.
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks v8.30.1
+        language: docker_image
+        entry: zricethezav/gitleaks:v8.30.1 git --pre-commit --redact --staged --verbose
+        pass_filenames: false
+        always_run: true  # still scan when only excluded raw files are staged
+      - id: hadolint
+        name: hadolint v2.15.1
+        language: docker_image
+        entry: hadolint/hadolint:v2.15.1 hadolint
+        files: (^|/)Dockerfile$

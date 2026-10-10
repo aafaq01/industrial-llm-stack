@@ -1,0 +1,348 @@
+# Phase 2 CPU rerun (session cpu-20261009): llama.cpp, Qwen2.5-1.5B-Instruct GGUF Q4_K_M, 3 cold + 3 warm per level
+date: 2026-10-09 UTC. Run 2026-10-09T09:55:26Z to 12:17:57Z (2 h 22 min 31 s).
+host: Windows 11 Pro 10.0.26200, AMD Ryzen 7 7730U (8C/16T laptop CPU), Docker Desktop WSL2, Git Bash
+git describe --always --dirty before the run: b8dacd5 (clean). All 21 raw files record git_commit
+  b8dacd5adf40d17a47410f4d84adbbc4c60709c1 without "-dirty": raw output was written outside the repo during the run
+  (session scratchpad) and copied to benchmark/results/raw/cpu-20261009/ afterwards, and no repo file was edited
+  until the run ended. prompts_sha256 72fb01ab9477... in every file.
+server: compose service llamacpp, ghcr.io/ggml-org/llama.cpp:server-b11459, flags unchanged:
+  --host 0.0.0.0 --port 8080 --metrics -m /models/qwen2.5-1.5b-instruct-q4_k_m.gguf --ctx-size 4096 --parallel 2 --threads 4
+loadgen: same arguments as the 2026-10-08 session (max_tokens 128, ignore_eos, temperature 0, seed 1234, 64 measured
+  requests, warmup max(2, concurrency), same prompts), label llamacpp-cpu-1.5b-q4km, session directory cpu-20261009.
+
+## Quieting the machine (exact commands, output)
+## before stopping 2026-10-09T09:51:42Z
+kind-git	Up About an hour
+llm-control-plane	Up About an hour
+kind-registry	Up About an hour
+industrial-llm-platform-rag-api-1	Up 3 hours (healthy)
+industrial-llm-platform-otel-collector-1	Up 15 hours
+industrial-llm-platform-tempo-1	Up 15 hours
+industrial-llm-platform-prometheus-1	Up 2 hours (healthy)
+industrial-llm-platform-grafana-1	Up 2 hours (healthy)
+industrial-llm-platform-llamacpp-1	Up 14 hours (healthy)
+industrial-llm-platform-postgres-1	Up 46 hours (healthy)
+industrial-llm-platform-elasticsearch-1	Up 46 hours (healthy)
+buildx_buildkit_default	Up 2 days
+## docker stop llm-control-plane kind-registry kind-git
+llm-control-plane
+kind-registry
+kind-git
+## docker compose stop (all except llamacpp)
+ Container industrial-llm-platform-rag-api-1 Stopping
+ Container industrial-llm-platform-grafana-1 Stopping
+ Container industrial-llm-platform-prometheus-1 Stopping
+ Container industrial-llm-platform-prometheus-1 Stopped
+ Container industrial-llm-platform-grafana-1 Stopped
+ Container industrial-llm-platform-rag-api-1 Stopped
+ Container industrial-llm-platform-otel-collector-1 Stopping
+ Container industrial-llm-platform-postgres-1 Stopping
+ Container industrial-llm-platform-elasticsearch-1 Stopping
+ Container industrial-llm-platform-postgres-1 Stopped
+ Container industrial-llm-platform-otel-collector-1 Stopped
+ Container industrial-llm-platform-tempo-1 Stopping
+ Container industrial-llm-platform-elasticsearch-1 Stopped
+ Container industrial-llm-platform-tempo-1 Stopped
+## after 2026-10-09T09:52:14Z
+industrial-llm-platform-llamacpp-1	Up 14 hours (healthy)
+buildx_buildkit_default	Up 2 days
+No other agents were running (coordinator's statement). Nothing else was closed: desktop apps stayed open (list below).
+
+## Idle state after stopping
+## idle after stopping services 2026-10-09T09:54:31Z
+NAME                                 CPU %     MEM USAGE / LIMIT
+industrial-llm-platform-llamacpp-1   0.01%     1.705GiB / 31.02GiB
+buildx_buildkit_default              0.01%     26.24MiB / 31.02GiB
+## host % Processor Time, 15 samples 2 s apart
+5.1  5.3  6.6  4.8  4.0  13.0  8.7  5.5  3.7  6.0  8.9  2.8  12.1  12.2  11.9
+## top 12 processes by CPU (3 s sample, % of host)
+godot_v4.7.2-stable_win64              1.3%
+system                                 0.4%
+msmpeng                                0.3%
+wmiprvse                               0.2%
+vmmemwsl                               0.2%
+com.docker.backend                     0.2%
+claude                                 0.2%
+svchost                                0.2%
+unity                                  0.1%
+svchost                                0.1%
+svchost                                0.1%
+chrome                                 0.1%
+## interactive apps with a window
+ApplicationFrameHost  chrome  claude  Cursor  Notepad  Slack  SystemSettings  TextInputHost
+
+## Design
+For each concurrency 1, 4, 8:
+- COLD x3: docker restart llamacpp, wait for healthy (counters back to 0), then one run.py call with --repeats 1. Each
+  cold repeat starts with an empty prompt cache. Because they are separate run.py calls, all three raw files carry
+  "repeat": 1; report.py orders them by start time and shows them as #1, #2, #3.
+- Warming pass: restart, then one full run.py call with --smoke into warming/ (discarded: report.py skips smoke runs;
+  the files are kept for traceability).
+- WARM x3: one run.py call with --repeats 3, no restart (repeats r1, r2, r3).
+Host sampler (scratchpad hostsampler.ps1, PowerShell Get-Counter) every ~10 s for the whole run:
+  \Processor(_Total)\% Processor Time, \Processor Information(_Total)\% Processor Performance (effective clock as % of
+  the 2.0 GHz base), Processor Frequency, \Thermal Zone Information(*)\Temperature (ACPI zone, K converted to C),
+  % Passive Limit; top 5 processes every ~60 s.
+  -> benchmark/results/raw/cpu-20261009/host-samples.csv and host-top-processes.txt (CRLF converted to LF).
+Driver script (scratchpad rerun.sh, run in the background), full text:
+#!/usr/bin/env bash
+# Phase 2 CPU rerun: per concurrency, 3 COLD repeats (llamacpp restarted before each) then a discarded warming pass
+# and 3 WARM repeats without restarts. Raw output goes outside the repo during the run (keeps git_commit clean) and
+# is copied to benchmark/results/raw/<session>/ afterwards.
+set -euo pipefail
+cd /c/Users/<user>/Desktop/work/industrial-llm-platform
+S=$1 OUT=$2
+C=industrial-llm-platform-llamacpp-1
+W=$(cygpath -w "$S")
+rm -f "$S/stop"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$W\hostsampler.ps1" -Out "$W\host-samples.csv" \
+  -TopOut "$W\host-top-processes.txt" -Stop "$W\stop" &
+SAMPLER=$!
+ts() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+restart() {
+  echo "restart llamacpp at $(ts)"
+  docker restart "$C" >/dev/null
+  for _ in $(seq 1 120); do
+    [ "$(docker inspect -f '{{.State.Health.Status}}' $C)" = healthy ] && break; sleep 2
+  done
+  echo "healthy at $(ts); $(curl -fs http://127.0.0.1:8080/metrics | grep -E '^llamacpp:prompt_tokens(_cached)?_total' | tr '\n' ' ')"
+}
+run() {  # conc repeats out-dir notes [extra]
+  benchmark/.venv/Scripts/python benchmark/loadgen/run.py --base-url http://127.0.0.1:8080/v1 \
+    --model qwen2.5-1.5b-instruct-q4_k_m \
+    --model-revision sha256:6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e \
+    --engine llama.cpp --engine-version b11459 --precision gguf-q4_k_m --label llamacpp-cpu-1.5b-q4km \
+    --hardware "Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2" \
+    --concurrency "$1" --repeats "$2" --metrics-url http://127.0.0.1:8080/metrics \
+    --server-args "llama-server --host 0.0.0.0 --port 8080 --metrics -m /models/qwen2.5-1.5b-instruct-q4_k_m.gguf --ctx-size 4096 --parallel 2 --threads 4" \
+    --notes "$4" --out-dir "$3" "${@:5}"
+}
+echo "rerun start $(ts)"
+for conc in 1 4 8; do
+  for i in 1 2 3; do
+    echo "== c$conc COLD $i/3"
+    restart
+    run "$conc" 1 "$OUT" "Phase 2 CPU rerun, COLD $i/3: llamacpp restarted right before this run (empty prompt cache)."
+  done
+  echo "== c$conc warming pass (discarded, marked smoke)"
+  restart
+  run "$conc" 1 "$OUT/warming" "Phase 2 CPU rerun: discarded warming pass before the WARM repeats." --smoke
+  echo "== c$conc WARM x3 (no restarts)"
+  run "$conc" 3 "$OUT" "Phase 2 CPU rerun, WARM: after a discarded full warming pass, no restart; prompt cache warm."
+done
+echo "rerun end $(ts)"
+touch "$S/stop"; wait $SAMPLER || true
+echo "sampler stopped $(ts)"
+
+## Run log
+rerun start 2026-10-09T09:55:26Z
+== c1 COLD 1/3
+restart llamacpp at 2026-10-09T09:55:26Z
+healthy at 2026-10-09T09:55:44Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T095544Z.json: ok 64/64 out_tok/s 17.20184492810616 ttft_p50 0.2556824999999776 e2e_p95 14.689591799999999
+== c1 COLD 2/3
+restart llamacpp at 2026-10-09T10:03:51Z
+healthy at 2026-10-09T10:03:59Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T100400Z.json: ok 64/64 out_tok/s 17.384179026638638 ttft_p50 0.23130449999999314 e2e_p95 14.679500500000005
+== c1 COLD 3/3
+restart llamacpp at 2026-10-09T10:12:02Z
+healthy at 2026-10-09T10:12:10Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T101210Z.json: ok 64/64 out_tok/s 17.101320925901923 ttft_p50 0.2361284999999782 e2e_p95 14.927927850000001
+== c1 warming pass (discarded, marked smoke)
+restart llamacpp at 2026-10-09T10:20:20Z
+healthy at 2026-10-09T10:20:28Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T102029Z.json: ok 64/64 out_tok/s 15.828287166732562 ttft_p50 0.2701305000000076 e2e_p95 15.963322999999992
+== c1 WARM x3 (no restarts)
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T102917Z.json: ok 64/64 out_tok/s 23.748170848016947 ttft_p50 0.21676849999999348 e2e_p95 6.0898822000000035
+llamacpp-cpu-1.5b-q4km-c1-r2-20261009T103513Z.json: ok 64/64 out_tok/s 24.573119882911005 ttft_p50 0.21066350000001144 e2e_p95 5.576082699999999
+llamacpp-cpu-1.5b-q4km-c1-r3-20261009T104057Z.json: ok 64/64 out_tok/s 24.278496907231567 ttft_p50 0.20144600000000423 e2e_p95 5.680250750000022
+== c4 COLD 1/3
+restart llamacpp at 2026-10-09T10:46:44Z
+healthy at 2026-10-09T10:46:53Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T104653Z.json: ok 64/64 out_tok/s 19.979543941983874 ttft_p50 18.031638999999995 e2e_p95 37.509307099999994
+== c4 COLD 2/3
+restart llamacpp at 2026-10-09T10:54:10Z
+healthy at 2026-10-09T10:54:18Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T105419Z.json: ok 64/64 out_tok/s 19.7620071990879 ttft_p50 18.222087499999986 e2e_p95 37.746344650000005
+== c4 COLD 3/3
+restart llamacpp at 2026-10-09T11:01:43Z
+healthy at 2026-10-09T11:01:51Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T110151Z.json: ok 64/64 out_tok/s 20.018148533611363 ttft_p50 17.780782000000016 e2e_p95 37.14563019999999
+== c4 warming pass (discarded, marked smoke)
+restart llamacpp at 2026-10-09T11:09:07Z
+healthy at 2026-10-09T11:09:15Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T110916Z.json: ok 64/64 out_tok/s 20.247324529362288 ttft_p50 17.41046300000002 e2e_p95 36.863862000000005
+== c4 WARM x3 (no restarts)
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T111628Z.json: ok 64/64 out_tok/s 30.949127922560862 ttft_p50 8.612282499999992 e2e_p95 17.432092349999987
+llamacpp-cpu-1.5b-q4km-c4-r2-20261009T112109Z.json: ok 64/64 out_tok/s 30.80857998192809 ttft_p50 8.657986500000007 e2e_p95 17.41872250000001
+llamacpp-cpu-1.5b-q4km-c4-r3-20261009T112552Z.json: ok 64/64 out_tok/s 31.09959256914262 ttft_p50 8.482932999999996 e2e_p95 17.31889885
+== c8 COLD 1/3
+restart llamacpp at 2026-10-09T11:30:31Z
+healthy at 2026-10-09T11:30:39Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T113040Z.json: ok 64/64 out_tok/s 20.139409110179226 ttft_p50 39.061533 e2e_p95 72.49680615000003
+== c8 COLD 2/3
+restart llamacpp at 2026-10-09T11:38:30Z
+healthy at 2026-10-09T11:38:38Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T113838Z.json: ok 64/64 out_tok/s 19.968002202720243 ttft_p50 37.646501 e2e_p95 76.42529520000001
+== c8 COLD 3/3
+restart llamacpp at 2026-10-09T11:46:34Z
+healthy at 2026-10-09T11:46:42Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T114642Z.json: ok 64/64 out_tok/s 20.06721704438867 ttft_p50 37.79082700000001 e2e_p95 74.36646125
+== c8 warming pass (discarded, marked smoke)
+restart llamacpp at 2026-10-09T11:54:35Z
+healthy at 2026-10-09T11:54:43Z; llamacpp:prompt_tokens_total 0 llamacpp:prompt_tokens_cached_total 0
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T115444Z.json: ok 64/64 out_tok/s 20.56770439372162 ttft_p50 36.13416050000001 e2e_p95 72.20722320000003
+== c8 WARM x3 (no restarts)
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T120228Z.json: ok 64/64 out_tok/s 29.594748651731056 ttft_p50 25.883855999999994 e2e_p95 35.93650779999999
+llamacpp-cpu-1.5b-q4km-c8-r2-20261009T120740Z.json: ok 64/64 out_tok/s 29.975625081889127 ttft_p50 25.542109999999987 e2e_p95 35.555982350000015
+llamacpp-cpu-1.5b-q4km-c8-r3-20261009T121248Z.json: ok 64/64 out_tok/s 29.880088164205645 ttft_p50 25.922937500000003 e2e_p95 35.232528750000014
+rerun end 2026-10-09T12:17:57Z
+sampler stopped 2026-10-09T12:18:06Z
+
+## Restore (exact commands, output)
+docker start kind-registry kind-git; docker start llm-control-plane; docker compose up -d --wait; bash scripts/smoke.sh
+## restore 2026-10-09T12:18:16Z
+kind-registry
+kind-git
+llm-control-plane
+ Container industrial-llm-platform-grafana-1 Waiting
+ Container industrial-llm-platform-rag-migrate-1 Waiting
+ Container industrial-llm-platform-model-init-1 Waiting
+ Container industrial-llm-platform-rag-api-1 Waiting
+ Container industrial-llm-platform-otel-collector-1 Waiting
+ Container industrial-llm-platform-prometheus-1 Healthy
+ Container industrial-llm-platform-otel-collector-1 Healthy
+ Container industrial-llm-platform-llamacpp-1 Healthy
+ Container industrial-llm-platform-tempo-1 Healthy
+ Container industrial-llm-platform-elasticsearch-1 Healthy
+ Container industrial-llm-platform-postgres-1 Healthy
+ Container industrial-llm-platform-rag-migrate-1 Exited
+ Container industrial-llm-platform-model-init-1 Exited
+ Container industrial-llm-platform-grafana-1 Healthy
+ Container industrial-llm-platform-rag-api-1 Healthy
+## smoke 2026-10-09T12:19:39Z
+  reply: "message":{"role":"assistant","content":"Hello, world!"
+PASS llamacpp chat completion
+PASS postgres SELECT 1
+PASS elasticsearch health green/yellow
+PASS grafana /api/health
+PASS prometheus scrapes llamacpp
+PASS tempo /ready
+PASS otel-collector metrics :8888
+PASS prometheus scrapes otel-collector
+all checks passed
+smoke exit 0
+industrial-llm-platform-rag-api-1	Up 30 seconds (healthy)
+kind-git	Up About a minute
+llm-control-plane	Up About a minute
+kind-registry	Up About a minute
+industrial-llm-platform-otel-collector-1	Up About a minute
+industrial-llm-platform-tempo-1	Up About a minute
+industrial-llm-platform-prometheus-1	Up About a minute (healthy)
+industrial-llm-platform-grafana-1	Up About a minute (healthy)
+industrial-llm-platform-llamacpp-1	Up 25 minutes (healthy)
+industrial-llm-platform-postgres-1	Up About a minute (healthy)
+industrial-llm-platform-elasticsearch-1	Up About a minute (healthy)
+buildx_buildkit_default	Up 2 days
+kind-llm
+NAME                STATUS   ROLES           AGE     VERSION
+llm-control-plane   Ready    control-plane   3h29m   v1.36.4
+      1 Completed
+     25 Running
+
+## Cache shares and host samples per run (scratchpad perrun.py over the raw files)
+cache = d(prompt_tokens_cached_total) / (d(prompt_tokens_total) + d(prompt_tokens_cached_total)) over the measured
+window. Host columns are the host-samples.csv rows inside each run's started..finished window.
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T095544Z.json                        09:55:44-10:03:51 cache 0.103 tok/s 17.20 ITL50 38.2 | host n=53 cpu mean 36 max 58 perf 132 temp 73-76 passive min 100
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T100400Z.json                        10:04:00-10:12:01 cache 0.103 tok/s 17.38 ITL50 37.9 | host n=52 cpu mean 37 max 55 perf 132 temp 73-77 passive min 100
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T101210Z.json                        10:12:10-10:20:20 cache 0.103 tok/s 17.10 ITL50 38.4 | host n=53 cpu mean 36 max 53 perf 131 temp 74-76 passive min 100
+llamacpp-cpu-1.5b-q4km-c1-r1-20261009T102917Z.json                        10:29:17-10:35:13 cache 0.958 tok/s 23.75 ITL50 39.6 | host n=39 cpu mean 42 max 71 perf 125 temp 74-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c1-r2-20261009T103513Z.json                        10:35:13-10:40:57 cache 0.958 tok/s 24.57 ITL50 38.8 | host n=37 cpu mean 40 max 61 perf 128 temp 74-74 passive min 100
+llamacpp-cpu-1.5b-q4km-c1-r3-20261009T104057Z.json                        10:40:57-10:46:44 cache 0.958 tok/s 24.28 ITL50 39.1 | host n=38 cpu mean 41 max 66 perf 128 temp 74-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T104653Z.json                        10:46:53-10:54:10 cache 0.157 tok/s 19.98 ITL50 61.0 | host n=47 cpu mean 39 max 74 perf 129 temp 75-77 passive min 100
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T105419Z.json                        10:54:19-11:01:43 cache 0.158 tok/s 19.76 ITL50 61.4 | host n=48 cpu mean 40 max 68 perf 130 temp 75-78 passive min 100
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T110151Z.json                        11:01:51-11:09:07 cache 0.159 tok/s 20.02 ITL50 61.1 | host n=47 cpu mean 40 max 79 perf 130 temp 75-78 passive min 100
+llamacpp-cpu-1.5b-q4km-c4-r1-20261009T111628Z.json                        11:16:28-11:21:09 cache 0.958 tok/s 30.95 ITL50 60.9 | host n=30 cpu mean 39 max 55 perf 129 temp 75-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c4-r2-20261009T112109Z.json                        11:21:09-11:25:52 cache 0.959 tok/s 30.81 ITL50 61.2 | host n=31 cpu mean 39 max 62 perf 129 temp 75-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c4-r3-20261009T112552Z.json                        11:25:52-11:30:31 cache 0.959 tok/s 31.10 ITL50 60.5 | host n=30 cpu mean 39 max 55 perf 129 temp 75-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T113040Z.json                        11:30:40-11:38:29 cache 0.264 tok/s 20.14 ITL50 63.7 | host n=51 cpu mean 41 max 63 perf 128 temp 73-77 passive min 100
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T113838Z.json                        11:38:38-11:46:33 cache 0.264 tok/s 19.97 ITL50 64.5 | host n=51 cpu mean 43 max 80 perf 127 temp 74-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T114642Z.json                        11:46:42-11:54:35 cache 0.264 tok/s 20.07 ITL50 63.5 | host n=52 cpu mean 42 max 66 perf 127 temp 74-76 passive min 100
+llamacpp-cpu-1.5b-q4km-c8-r1-20261009T120228Z.json                        12:02:28-12:07:40 cache 0.958 tok/s 29.59 ITL50 63.7 | host n=34 cpu mean 41 max 56 perf 127 temp 75-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c8-r2-20261009T120740Z.json                        12:07:40-12:12:48 cache 0.958 tok/s 29.98 ITL50 63.4 | host n=33 cpu mean 41 max 60 perf 128 temp 75-75 passive min 100
+llamacpp-cpu-1.5b-q4km-c8-r3-20261009T121248Z.json                        12:12:48-12:17:57 cache 0.958 tok/s 29.88 ITL50 62.7 | host n=33 cpu mean 41 max 52 perf 129 temp 75-75 passive min 100
+warming/llamacpp-cpu-1.5b-q4km-c1-r1-20261009T102029Z.json warming(smoke) 10:20:29-10:29:16 cache 0.103 tok/s 15.83 ITL50 40.0 | host n=57 cpu mean 43 max 83 perf 127 temp 75-76 passive min 100
+warming/llamacpp-cpu-1.5b-q4km-c4-r1-20261009T110916Z.json warming(smoke) 11:09:16-11:16:28 cache 0.158 tok/s 20.25 ITL50 60.7 | host n=47 cpu mean 38 max 79 perf 130 temp 75-77 passive min 100
+warming/llamacpp-cpu-1.5b-q4km-c8-r1-20261009T115444Z.json warming(smoke) 11:54:44-12:02:28 cache 0.265 tok/s 20.57 ITL50 63.2 | host n=51 cpu mean 40 max 68 perf 128 temp 75-76 passive min 100
+All 18 reported runs: 64/64 ok, 0 errors. Every cold run 10% (c1), 16% (c4), 26% (c8) cached; every warm run 96%.
+The cold share is not 0 because every prompt shares the chat-template prefix and the warmup requests (last 2, 4 or
+8 prompts) are measured again in the same run.
+Whole session: 927 samples, CPU mean 39.5%, passive limit <100% in 0 samples. ACPI thermal zone 73 to 78 C in measured windows;
+passive limit stayed at 100% (no ACPI passive throttling). Host CPU includes llama.cpp itself: vmmemwsl (the WSL2 VM
+running the container) was ~25% of the host in every top-process sample taken under load (4 of 16 logical CPUs);
+in samples taken at server restarts it was 3.8 to 6.5% (09:55:27, 10:20:22, 11:30:33) or not in the top 5 (1 sample).
+
+## Report
+benchmark/.venv/Scripts/python -m pytest benchmark/tests -q -> 8 passed in 0.05s
+benchmark/.venv/Scripts/python benchmark/report.py -> wrote C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\RESULTS.md: 51 runs, 2 accuracy rows
+report.py changes: session cpu-20261009 is the CPU headline; the 2026-10-08 cell (top-level files, label
+llamacpp-cpu-1.5b-q4km) is listed under "Earlier session, superseded" (SUPERSEDED map), out of the charts and
+headline, raw files untouched; repeats ordered by start time (#k labels when raw repeat numbers collide); per-repeat
+table gains host CPU %; host line summarises host-samples.csv over the measured windows; the "rerun pending"
+sentence is gone (only printed for non-superseded regime cells with n < 3; there are none).
+
+New CPU tables as generated:
+### CPU (llama.cpp)
+
+| cell | hardware | engine | precision | conc | repeats | out tok/s | req/s | TTFT p50 s | TTFT p95 s | ITL p50 ms | TPOT p50 ms | E2E p50 s | E2E p95 s | E2E p99 s | tok/s per req p50 | err rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| cpu-20261009/llamacpp-cpu-1.5b-q4km [warm cache] | Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2 | llama.cpp b11459 | gguf-q4_k_m | 1 | 3 | 24.2 ± 0.4 | 0.189 ± 0.003 | 0.210 ± 0.008 | 0.307 ± 0.018 | 39.2 ± 0.4 | 39.0 ± 0.6 | 5.181 ± 0.078 | 5.782 ± 0.272 | 6.163 ± 0.417 | 24.7 ± 0.4 | 0.000 ± 0.000 |
+| cpu-20261009/llamacpp-cpu-1.5b-q4km [warm cache] | Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2 | llama.cpp b11459 | gguf-q4_k_m | 4 | 3 | 31.0 ± 0.1 | 0.242 ± 0.001 | 8.584 ± 0.091 | 9.181 ± 0.019 | 60.9 ± 0.4 | 62.1 ± 1.0 | 16.5 ± 0.1 | 17.4 ± 0.1 | 17.5 ± 0.1 | 7.770 ± 0.045 | 0.000 ± 0.000 |
+| cpu-20261009/llamacpp-cpu-1.5b-q4km [warm cache] | Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2 | llama.cpp b11459 | gguf-q4_k_m | 8 | 3 | 29.8 ± 0.2 | 0.233 ± 0.002 | 25.8 ± 0.2 | 27.1 ± 0.5 | 63.3 ± 0.5 | 65.3 ± 0.6 | 34.1 ± 0.3 | 35.6 ± 0.4 | 36.0 ± 0.5 | 3.753 ± 0.028 | 0.000 ± 0.000 |
+
+Cold prompt cache (llama.cpp repeats with cache share below 50%, e.g. the first repeat after a server restart):
+
+| cell | hardware | engine | precision | conc | repeats | out tok/s | req/s | TTFT p50 s | TTFT p95 s | ITL p50 ms | TPOT p50 ms | E2E p50 s | E2E p95 s | E2E p99 s | tok/s per req p50 | err rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| cpu-20261009/llamacpp-cpu-1.5b-q4km [cold cache] | Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2 | llama.cpp b11459 | gguf-q4_k_m | 1 | 3 | 17.2 ± 0.1 | 0.135 ± 0.001 | 0.241 ± 0.013 | 9.333 ± 0.056 | 38.2 ± 0.3 | 38.0 ± 0.4 | 5.069 ± 0.062 | 14.8 ± 0.1 | 15.0 ± 0.1 | 25.3 ± 0.3 | 0.000 ± 0.000 |
+| cpu-20261009/llamacpp-cpu-1.5b-q4km [cold cache] | Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2 | llama.cpp b11459 | gguf-q4_k_m | 4 | 3 | 19.9 ± 0.1 | 0.156 ± 0.001 | 18.0 ± 0.2 | 29.3 ± 0.3 | 61.2 ± 0.2 | 62.8 ± 0.5 | 26.0 ± 0.2 | 37.5 ± 0.3 | 46.5 ± 0.7 | 4.914 ± 0.037 | 0.000 ± 0.000 |
+| cpu-20261009/llamacpp-cpu-1.5b-q4km [cold cache] | Windows 11 host, Docker Desktop WSL2, llama.cpp --threads 4 --parallel 2 | llama.cpp b11459 | gguf-q4_k_m | 8 | 3 | 20.1 ± 0.1 | 0.157 ± 0.001 | 38.2 ± 0.8 | 66.3 ± 1.7 | 63.9 ± 0.5 | 66.2 ± 0.6 | 46.7 ± 0.9 | 74.4 ± 2.0 | 84.5 ± 2.6 | 2.739 ± 0.054 | 0.000 ± 0.000 |
+
+## Flags
+None on any cpu-20261009 cell. CV across the 3 repeats: out tok/s at most 0.017 (spread 0.9 to 3.4% of the mean),
+TTFT p50 at most 0.054 (cold c1: 0.256, 0.231, 0.236 s), E2E p95 at most 0.047 (warm c1), all under the 0.10 limit; no
+errors, no first-repeat slowdown, no config disagreement. The c8 slowdown of 2026-10-08 r3 did not recur.
+Noted but not flagged:
+- Host CPU peaks: 127 of 927 samples above 50% host CPU, max 83%. The largest burst (10:23 to 10:25, up to 83%)
+  fell in the discarded c1 warming pass. Top-process samples then (10:23:08 to 10:25:55): msmpeng (Defender) up to
+  16.8%, svchost 5.9%, python 3.0 to 5.3% (10:24:59, 10:25:55), uv 1.3% (10:24:59), tasklist 2.4 to 2.8%. The python
+  process may be the loadgen itself (not proven), but uv is unexplained: nothing in this run invokes uv, and no other agent was
+  meant to be running. The burst is not attributable to Defender alone; its cause is not established. Within reported runs the per-run max is 52 to 80% and the
+  per-run mean 36 to 43%; out tok/s across the repeats of a cell stays within 0.9 to 3.4%.
+- The c1 warming pass ran at 15.8 tok/s vs 17.1 to 17.4 for the cold c1 repeats at the same cache share (0.10); it
+  overlaps that burst. It is discarded by design and does not enter any table.
+
+## Comparison with the 2026-10-08 session (superseded)
+Same image, flags, model, prompts and loadgen settings; different host conditions (2026-10-08: compose stack and
+desktop apps up, 7 to 43% host CPU before the run, not sampled during runs) and repeat design (1 cold + 2 warm per
+level, restart only before each level). Mean out tok/s, 2026-10-09 vs 2026-10-08:
+  warm  c1 24.2 vs 22.3 (+9%), c4 31.0 vs 27.6 (+12%), c8 29.8 vs 20.5 (+46%; ITL p50 63.3 vs 84.4 ms)
+  cold  c1 17.2 vs 15.5 (+11%), c4 19.9 vs 16.7 (+19%), c8 20.1 vs 18.9 (+6%) (old cold n=1)
+Every cell is faster on the quieter host, by 6 to 19% except warm c8 (+46%), which on 2026-10-08 included the
+unexplained r3 slowdown (18.6 tok/s) and an r2 at 22.3. The old warm c8 cell also showed TTFT p50 38.4 s vs 25.8 s
+now. The 2026-10-08 numbers are not wrong measurements, but they measured a busier machine and have too few
+comparable repeats, so they are kept only as an earlier session.
+Scaling on the quiet host: warm throughput rises from c1 to c4 (24.2 to 31.0 tok/s) and is flat at c8 (29.8), with
+--parallel 2 serving 2 requests at a time; beyond that, concurrency only adds queueing (TTFT p50 0.21, 8.6, 25.8 s).
+
+## Files (no commit)
+benchmark/results/raw/cpu-20261009/ (18 reported raw JSON, warming/ with 3 smoke JSON, host-samples.csv,
+host-top-processes.txt), benchmark/report.py, benchmark/tests/test_metrics.py, benchmark/RESULTS.md,
+benchmark/charts/latency_throughput_cpu.png, README.md (Phase 2 section wording), docs/evidence/phase2-cpu-rerun.txt.
+
+# Review round 1 (labelling; no rerun)
+- report.py: every SUPERSEDED cell is printed as "<cell> (<first run date>, superseded) [<regime>]", e.g.
+  "llamacpp-cpu-1.5b-q4km (2026-10-08, superseded) [warm cache]", in the superseded table, the Raw files and flags
+  list, the Per repeat table and the host line ("Host for llamacpp-cpu-1.5b-q4km (2026-10-08, superseded)").
+  Driven by the SUPERSEDED map (cell_label, first_days); unit test test_superseded_cells_are_tagged_wherever_named.
+- Evidence wording: vmmemwsl ~25% only under load; the 10:23 to 10:25 burst includes unexplained uv and python.

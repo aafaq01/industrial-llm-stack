@@ -1,0 +1,30 @@
+2026-10-07:17:37:34 WARNING  [config.evaluate_config:337] --limit SHOULD ONLY BE USED FOR TESTING. REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2026-10-07:17:38:11 INFO     [_cli.run:391] Including path: C:/Users/<user>/Desktop/work/industrial-llm-platform/benchmark/accuracy/tasks
+2026-10-07:17:38:11 INFO     [_cli.run:392] Selected Tasks: ['gsm8k_pinned']
+2026-10-07:17:38:11 INFO     [evaluator:214] Setting random seed to 0 | Setting numpy seed to 1234 | Setting torch manual seed to 1234 | Setting fewshot manual seed to 1234
+2026-10-07:17:38:11 INFO     [evaluator:239] Initializing local-chat-completions model, with arguments: {'model': 'qwen2.5-1.5b-instruct-q4_k_m', 'base_url': 'http://127.0.0.1:8080/v1/chat/completions', 'num_concurrent': 2, 'max_retries': 3, 'timeout': 600, 'tokenizer_backend': None}
+2026-10-07:17:38:12 INFO     [models.api_models:176] Using max length 2048 - 1
+2026-10-07:17:38:12 INFO     [models.api_models:197] Using tokenizer None
+C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\.venv\Lib\site-packages\huggingface_hub\file_download.py:149: UserWarning: `huggingface_hub` cache-system uses symlinks by default to efficiently store duplicated files but your machine does not support them in C:\Users\<user>\.cache\huggingface\hub\datasets--openai--gsm8k. Caching files will still work but in a degraded version that might require more space on your disk. This warning can be disabled by setting the `HF_HUB_DISABLE_SYMLINKS_WARNING` environment variable. For more details, see https://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.
+To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+  warnings.warn(message)
+C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\.venv\Lib\site-packages\huggingface_hub\file_download.py:149: UserWarning: `huggingface_hub` cache-system uses symlinks by default to efficiently store duplicated files but your machine does not support them in C:\Users\<user>\.cache\huggingface\hub. Caching files will still work but in a degraded version that might require more space on your disk. This warning can be disabled by setting the `HF_HUB_DISABLE_SYMLINKS_WARNING` environment variable. For more details, see https://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.
+To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+  warnings.warn(message)
+Generating train split:   0%|          | 0/7473 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 7473/7473 [00:00<00:00, 218475.56 examples/s]
+Generating test split:   0%|          | 0/1319 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1319/1319 [00:00<00:00, 82734.45 examples/s]
+2026-10-07:17:38:32 INFO     [evaluator_utils:472] Selected tasks:
+2026-10-07:17:38:32 INFO     [evaluator_utils:506] Task: gsm8k_pinned (C:\Users\<user>\Desktop\work\industrial-llm-platform\benchmark\accuracy\tasks\gsm8k_pinned.yaml)
+2026-10-07:17:38:32 INFO     [evaluator:314] gsm8k_pinned: Using gen_kwargs: {'until': ['Question:', '</s>', '<|im_end|>'], 'do_sample': False, 'temperature': 0.0}
+2026-10-07:17:38:32 INFO     [api.task:312] Building contexts for gsm8k_pinned on rank 0...
+  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 177.86it/s]
+2026-10-07:17:38:32 INFO     [evaluator:589] Running generate_until requests
+2026-10-07:17:38:32 INFO     [models.api_models:752] Tokenized requests are disabled. Context + generation length is not checked.
+Requesting API:   0%|          | 0/5 [00:00<?, ?it/s]Requesting API:  20%|██        | 1/5 [00:35<02:23, 35.91s/it]Requesting API:  40%|████      | 2/5 [00:57<01:22, 27.60s/it]Requesting API:  60%|██████    | 3/5 [01:18<00:48, 24.32s/it]Requesting API:  80%|████████  | 4/5 [01:43<00:24, 24.72s/it]Requesting API: 100%|██████████| 5/5 [01:52<00:00, 19.14s/it]Requesting API: 100%|██████████| 5/5 [01:52<00:00, 22.53s/it]
+2026-10-07:17:40:24 INFO     [loggers.evaluation_tracker:247] Saving results aggregated
+2026-10-07:17:40:24 INFO     [loggers.evaluation_tracker:119] Saving per-task samples to benchmark\results\raw\smoke\accuracy-llamacpp-q4km\qwen2.5-1.5b-instruct-q4_k_m/*.jsonl
+local-chat-completions ({'model': 'qwen2.5-1.5b-instruct-q4_k_m', 'base_url': 'http://127.0.0.1:8080/v1/chat/completions', 'num_concurrent': 2, 'max_retries': 3, 'timeout': 600, 'tokenizer_backend': None}), gen_kwargs: ({}), limit: 5.0, num_fewshot: None, batch_size: 1
+|   Tasks    |Version|     Filter     |n-shot|  Metric   |   |Value|   |Stderr|
+|------------|------:|----------------|-----:|-----------|---|----:|---|-----:|
+|gsm8k_pinned|      3|flexible-extract|     5|exact_match|↑  |  0.6|±  |0.2449|
+|            |       |strict-match    |     5|exact_match|↑  |  0.4|±  |0.2449|

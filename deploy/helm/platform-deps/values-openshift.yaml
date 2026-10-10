@@ -1,0 +1,3 @@
+# OpenShift restricted-v2 SCC assigns the UID and fsGroup; set none here. Nothing is exposed outside the
+# cluster, so no Routes. Tested on OKD 4.22 via OpenShift Local (scripts/okd-up.sh).
+{}

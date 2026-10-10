@@ -1,0 +1,1 @@
+trtllm-t4-1.5b-fp16-gsm8k: GPU memory.used MiB after stop [0, 0] (0s)

@@ -1,0 +1,636 @@
+# promtool unit tests for the SLO rules. Run from the repo root:
+#   docker run --rm -v "$PWD/observability/prometheus:/etc/prometheus:ro" --entrypoint promtool \
+#     prom/prometheus:v3.15.0 test rules /etc/prometheus/tests/slo_test.yml /etc/prometheus/tests/slo_windows_test.yml
+# Series use 1m samples, so "0+8x120" is a counter growing by 8 per minute for 2 hours.
+rule_files:
+  - ../rules/recording.yml
+  - ../rules/alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+  # 20% of /chat requests return 500. 4xx traffic is excluded: if it counted, the ratio would be
+  # 2/60 = 3.3% and the page would not fire.
+  - name: availability 5xx at 20% pages and tickets, 4xx ignored
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "0+8x120"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "0+2x120"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="4xx"}'
+        values: "0+50x120"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "0x120"
+    promql_expr_test:
+      - expr: slo:sli_error:ratio_rate5m{slo="rag-availability"}
+        eval_time: 60m
+        exp_samples:
+          - labels: 'slo:sli_error:ratio_rate5m{slo="rag-availability"}'
+            value: 0.2
+      - expr: round(slo:sli_error:ratio_rate1h{slo="rag-availability"}, 0.0001)
+        eval_time: 120m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.2
+      - expr: round(slo:sli_error:ratio_rate6h{slo="rag-availability"}, 0.0001)
+        eval_time: 120m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.2
+      - expr: round(slo:sli_error:ratio_rate1d{slo="rag-availability"}, 0.0001)
+        eval_time: 120m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.2
+    alert_rule_test:
+      - eval_time: 60m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-availability }
+            exp_annotations: &avail_fast
+              summary: "rag-availability SLO: error budget burning fast"
+              description: "Error ratio is above 14.4x (1h/5m) or 6x (6h/30m) the budget rate. At this rate the 30d budget is gone in under 5 days."
+              runbook: observability/SLOs.md
+      - eval_time: 60m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-availability }
+            exp_annotations: &avail_slow
+              summary: "rag-availability SLO: error budget burning"
+              description: "Error ratio is above 3x (1d/2h) or 1x (3d/6h) the budget rate. The 30d budget will run out before the window ends."
+              runbook: observability/SLOs.md
+
+  # SSE streams return 200 before generation, so in-stream failures only show in rag_chat_errors_total.
+  # No 5xx series exists at all (the "or vector(0)" path).
+  - name: availability in-stream errors at 20% page
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "0+10x120"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "0+2x120"
+    alert_rule_test:
+      - eval_time: 60m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-availability }
+            exp_annotations: *avail_fast
+
+  # Errors stop at 60m. The 1h/5m pair clears at once, the 6h/30m pair 30m later:
+  # at 70m the 5m ratio is 0 so 1h/5m is off, but 6h/30m (30m ratio 40/280 = 14%) still pages.
+  - name: availability page clears after errors stop
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "0+8x120"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "0+2x60 120x60"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "0x120"
+    promql_expr_test:
+      - expr: (slo:sli_error:ratio_rate1h{slo="rag-availability"} > bool 0.144) * (slo:sli_error:ratio_rate5m{slo="rag-availability"} > bool 0.144)
+        eval_time: 70m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0
+      - expr: (slo:sli_error:ratio_rate6h{slo="rag-availability"} > bool 0.06) * (slo:sli_error:ratio_rate30m{slo="rag-availability"} > bool 0.06)
+        eval_time: 70m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 1
+      - expr: (slo:sli_error:ratio_rate6h{slo="rag-availability"} > bool 0.06) * (slo:sli_error:ratio_rate30m{slo="rag-availability"} > bool 0.06)
+        eval_time: 100m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0
+    alert_rule_test:
+      - eval_time: 60m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-availability }
+            exp_annotations: *avail_fast
+      - eval_time: 70m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-availability }
+            exp_annotations: *avail_fast
+      - eval_time: 100m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  # 4% errors for a day: 3x burn (3%) is exceeded, 6x (6%) is not. Ticket, no page.
+  - name: availability 4% for a day tickets but does not page
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "0+96x1500"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "0+4x1500"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "0x1500"
+    promql_expr_test:
+      - expr: (slo:sli_error:ratio_rate1h{slo="rag-availability"} > bool 0.144) * (slo:sli_error:ratio_rate5m{slo="rag-availability"} > bool 0.144)
+        eval_time: 1450m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0
+      - expr: (slo:sli_error:ratio_rate6h{slo="rag-availability"} > bool 0.06) * (slo:sli_error:ratio_rate30m{slo="rag-availability"} > bool 0.06)
+        eval_time: 1450m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0
+      - expr: (slo:sli_error:ratio_rate1d{slo="rag-availability"} > bool 0.03) * (slo:sli_error:ratio_rate2h{slo="rag-availability"} > bool 0.03)
+        eval_time: 1450m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 1
+      - expr: (slo:sli_error:ratio_rate3d{slo="rag-availability"} > bool 0.01) * (slo:sli_error:ratio_rate6h{slo="rag-availability"} > bool 0.01)
+        eval_time: 1450m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 1
+    alert_rule_test:
+      - eval_time: 1450m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 1450m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-availability }
+            exp_annotations: *avail_slow
+
+  # 0.5% errors for a day (the 3d window sees all of it) stays inside the 1% budget: nothing fires.
+  - name: availability 0.5% for a day does not alert
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "0+995x1500"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "0+5x1500"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "0x1500"
+    alert_rule_test:
+      - eval_time: 1500m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 1500m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  # A 2-minute total outage after 6 healthy hours: the 5m window is far above 14.4x but the long
+  # windows are not, so the multi-window rule does not page on a blip.
+  - name: availability 2-minute blip does not alert
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "0+10x360 3600x1 3610+10x60"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "0x360 10 20 20x60"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "0x423"
+    promql_expr_test:
+      - expr: slo:sli_error:ratio_rate5m{slo="rag-availability"} > bool 0.144
+        eval_time: 364m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 1
+    alert_rule_test:
+      - eval_time: 364m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 364m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  # Half the requests have TTFT > 60 s: 50% > 6x budget (30%), < 14.4x (72%). Pages via 6h/30m.
+  - name: ttft 50% slow pages
+    input_series:
+      - series: 'rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}'
+        values: "0+10x120"
+      - series: 'rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le="60.0"}'
+        values: "0+5x120"
+    promql_expr_test:
+      - expr: slo:sli_error:ratio_rate1h{slo="rag-ttft"}
+        eval_time: 60m
+        exp_samples:
+          - labels: 'slo:sli_error:ratio_rate1h{slo="rag-ttft"}'
+            value: 0.5
+    alert_rule_test:
+      - eval_time: 60m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-ttft }
+            exp_annotations: &ttft_fast
+              summary: "rag-ttft SLO: error budget burning fast"
+              description: "Error ratio is above 14.4x (1h/5m) or 6x (6h/30m) the budget rate. At this rate the 30d budget is gone in under 5 days."
+              runbook: observability/SLOs.md
+
+  # 10% slow for a day: above 1x (5%) on 3d/6h, below 3x (15%). Ticket only.
+  # Uses le="60", the normalised form, to prove the matcher takes both spellings.
+  - name: ttft 10% slow tickets but does not page
+    input_series:
+      - series: 'rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}'
+        values: "0+10x1500"
+      - series: 'rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le="60"}'
+        values: "0+9x1500"
+    alert_rule_test:
+      - eval_time: 1450m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 1450m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-ttft }
+            exp_annotations: &ttft_slow
+              summary: "rag-ttft SLO: error budget burning"
+              description: "Error ratio is above 3x (1d/2h) or 1x (3d/6h) the budget rate. The 30d budget will run out before the window ends."
+              runbook: observability/SLOs.md
+
+  # 3% slow for a day is inside the 5% budget: nothing fires. Budget remaining = 1 - 0.03/0.05.
+  - name: ttft 3% slow does not alert
+    input_series:
+      - series: 'rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}'
+        values: "0+100x1500"
+      - series: 'rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le="60.0"}'
+        values: "0+97x1500"
+    promql_expr_test:
+      - expr: round(slo:error_budget:remaining{slo="rag-ttft"}, 0.001)
+        eval_time: 1500m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.4
+    alert_rule_test:
+      - eval_time: 1500m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 1500m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-api down for 2m pages
+    input_series:
+      - series: 'up{job="rag-api",instance="rag-api:8000"}'
+        values: "1 1 0x5"
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: RagApiDown
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagApiDown
+        exp_alerts:
+          - exp_labels: { severity: page, job: rag-api, instance: "rag-api:8000" }
+            exp_annotations:
+              summary: "rag-api scrape target is down"
+              description: "Prometheus cannot scrape rag-api:8000/metrics for 2m. The availability SLI is blind while this fires."
+              runbook: observability/SLOs.md
+
+  # Alert logic, one window pair at a time. These feed the slo:sli_error:ratio_rate* series directly
+  # (no raw counters, so the recording rules produce nothing and do not collide). For each pair:
+  # only this pair over its threshold fires; long window just below or short window just below does not.
+  # This pins every threshold and every window name in alerts.yml.
+  - name: rag-availability 1h/5m at 14.4x (0.144), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1h{slo="rag-availability"}'
+        values: "0.1584x10"
+      - series: 'slo:sli_error:ratio_rate5m{slo="rag-availability"}'
+        values: "0.1584x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-availability }
+            exp_annotations: *avail_fast
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-availability 1h/5m at 14.4x (0.144), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1h{slo="rag-availability"}'
+        values: "0.1368x10"
+      - series: 'slo:sli_error:ratio_rate5m{slo="rag-availability"}'
+        values: "0.1584x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-availability 1h/5m at 14.4x (0.144), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1h{slo="rag-availability"}'
+        values: "0.1584x10"
+      - series: 'slo:sli_error:ratio_rate5m{slo="rag-availability"}'
+        values: "0.1368x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-availability 6h/30m at 6x (0.06), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-availability"}'
+        values: "0.066x10"
+      - series: 'slo:sli_error:ratio_rate30m{slo="rag-availability"}'
+        values: "0.066x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-availability }
+            exp_annotations: *avail_fast
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-availability 6h/30m at 6x (0.06), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-availability"}'
+        values: "0.057x10"
+      - series: 'slo:sli_error:ratio_rate30m{slo="rag-availability"}'
+        values: "0.066x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-availability 6h/30m at 6x (0.06), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-availability"}'
+        values: "0.066x10"
+      - series: 'slo:sli_error:ratio_rate30m{slo="rag-availability"}'
+        values: "0.057x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-availability 1d/2h at 3x (0.03), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1d{slo="rag-availability"}'
+        values: "0.033x10"
+      - series: 'slo:sli_error:ratio_rate2h{slo="rag-availability"}'
+        values: "0.033x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-availability }
+            exp_annotations: *avail_slow
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-availability 1d/2h at 3x (0.03), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1d{slo="rag-availability"}'
+        values: "0.0285x10"
+      - series: 'slo:sli_error:ratio_rate2h{slo="rag-availability"}'
+        values: "0.033x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-availability 1d/2h at 3x (0.03), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1d{slo="rag-availability"}'
+        values: "0.033x10"
+      - series: 'slo:sli_error:ratio_rate2h{slo="rag-availability"}'
+        values: "0.0285x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-availability 3d/6h at 1x (0.01), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate3d{slo="rag-availability"}'
+        values: "0.011x10"
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-availability"}'
+        values: "0.011x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-availability }
+            exp_annotations: *avail_slow
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-availability 3d/6h at 1x (0.01), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate3d{slo="rag-availability"}'
+        values: "0.0095x10"
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-availability"}'
+        values: "0.011x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-availability 3d/6h at 1x (0.01), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate3d{slo="rag-availability"}'
+        values: "0.011x10"
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-availability"}'
+        values: "0.0095x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagAvailabilityErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-ttft 1h/5m at 14.4x (0.72), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1h{slo="rag-ttft"}'
+        values: "0.792x10"
+      - series: 'slo:sli_error:ratio_rate5m{slo="rag-ttft"}'
+        values: "0.792x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-ttft }
+            exp_annotations: *ttft_fast
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-ttft 1h/5m at 14.4x (0.72), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1h{slo="rag-ttft"}'
+        values: "0.684x10"
+      - series: 'slo:sli_error:ratio_rate5m{slo="rag-ttft"}'
+        values: "0.792x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-ttft 1h/5m at 14.4x (0.72), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1h{slo="rag-ttft"}'
+        values: "0.792x10"
+      - series: 'slo:sli_error:ratio_rate5m{slo="rag-ttft"}'
+        values: "0.684x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-ttft 6h/30m at 6x (0.3), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-ttft"}'
+        values: "0.33x10"
+      - series: 'slo:sli_error:ratio_rate30m{slo="rag-ttft"}'
+        values: "0.33x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts:
+          - exp_labels: { severity: page, slo: rag-ttft }
+            exp_annotations: *ttft_fast
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-ttft 6h/30m at 6x (0.3), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-ttft"}'
+        values: "0.285x10"
+      - series: 'slo:sli_error:ratio_rate30m{slo="rag-ttft"}'
+        values: "0.33x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-ttft 6h/30m at 6x (0.3), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-ttft"}'
+        values: "0.33x10"
+      - series: 'slo:sli_error:ratio_rate30m{slo="rag-ttft"}'
+        values: "0.285x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+
+  - name: rag-ttft 1d/2h at 3x (0.15), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1d{slo="rag-ttft"}'
+        values: "0.165x10"
+      - series: 'slo:sli_error:ratio_rate2h{slo="rag-ttft"}'
+        values: "0.165x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-ttft }
+            exp_annotations: *ttft_slow
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-ttft 1d/2h at 3x (0.15), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1d{slo="rag-ttft"}'
+        values: "0.1425x10"
+      - series: 'slo:sli_error:ratio_rate2h{slo="rag-ttft"}'
+        values: "0.165x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-ttft 1d/2h at 3x (0.15), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate1d{slo="rag-ttft"}'
+        values: "0.165x10"
+      - series: 'slo:sli_error:ratio_rate2h{slo="rag-ttft"}'
+        values: "0.1425x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-ttft 3d/6h at 1x (0.05), only this pair over
+    input_series:
+      - series: 'slo:sli_error:ratio_rate3d{slo="rag-ttft"}'
+        values: "0.055x10"
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-ttft"}'
+        values: "0.055x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts:
+          - exp_labels: { severity: ticket, slo: rag-ttft }
+            exp_annotations: *ttft_slow
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-ttft 3d/6h at 1x (0.05), long window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate3d{slo="rag-ttft"}'
+        values: "0.0475x10"
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-ttft"}'
+        values: "0.055x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []
+
+  - name: rag-ttft 3d/6h at 1x (0.05), short window just below
+    input_series:
+      - series: 'slo:sli_error:ratio_rate3d{slo="rag-ttft"}'
+        values: "0.055x10"
+      - series: 'slo:sli_error:ratio_rate6h{slo="rag-ttft"}'
+        values: "0.0475x10"
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnSlow
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: RagTTFTErrorBudgetBurnFast
+        exp_alerts: []

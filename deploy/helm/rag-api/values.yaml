@@ -1,0 +1,38 @@
+# Built from rag/Dockerfile. Defaults are SCC-safe (no fixed UID).
+image: industrial-llm-platform/rag:0.1.0
+
+# Secret with POSTGRES_PASSWORD and ELASTIC_PASSWORD, created out of band (scripts/kind-up.sh on kind).
+existingSecret: llm-secrets
+
+env:
+  ES_URL: http://elasticsearch:9200
+  LLM_BASE_URL: http://llamacpp:8080/v1
+  POSTGRES_HOST: postgres
+  OMP_NUM_THREADS: "4"
+
+resources:
+  requests: {cpu: 500m, memory: 1Gi}
+  limits: {cpu: "4", memory: 3Gi}
+
+ingest:
+  enabled: true
+  ompThreads: "8"
+  resources:
+    requests: {cpu: "1", memory: 1Gi}
+    limits: {cpu: "8", memory: 4Gi}
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile: {type: RuntimeDefault}
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities: {drop: [ALL]}
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+route:
+  enabled: false
+  host: ""

@@ -1,0 +1,13 @@
+{
+ "git_commit": "80905ea4ba9bec81a9221825f376e87735f98cf3",
+ "gpu_count": 2,
+ "tensorrt_llm": "0.14.0",
+ "tensorrt": "10.4.0",
+ "torch": "2.4.0+cu124",
+ "python": "3.10.20",
+ "openmpi": "4.1.6-7ubuntu2",
+ "vllm_version": "0.31.0",
+ "started_utc": "2026-10-10T09:30:19Z",
+ "kaggle_docker_image": "gcr.io/kaggle-gpu-images/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f",
+ "kaggle_kernel_run_type": "Batch"
+}

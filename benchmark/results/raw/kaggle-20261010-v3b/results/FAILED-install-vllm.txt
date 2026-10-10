@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_24/2592251504.py", line 28, in step
+    res = fn(*args, **kw)
+  File "/tmp/ipykernel_24/2592251504.py", line 56, in install_vllm
+    log = sh(
+        f"uv venv -q --python {PYTHON_VERSION} {VENVS}/vllm && uv pip install -q --python {VENVS}/vllm/bin/python "
+    ...<3 lines>...
+        timeout=2400,
+    )
+  File "/tmp/ipykernel_24/1223397648.py", line 27, in sh
+    raise RuntimeError(f"exit {r.returncode}{why}: {cmd[:300]}\n{text[-3000:]}")
+RuntimeError: exit 2: timeout -k 60 2400 bash -c 'uv venv -q --python 3.12.13 /tmp/venvs/vllm && uv pip install -q --python /tmp/venvs/vllm/bin/python --torch-backend cu129 -r /kaggle/working/bench/notebooks/vllm-requirements.txt'
+error: File not found: `bench/notebooks/vllm-requirements.txt`
+

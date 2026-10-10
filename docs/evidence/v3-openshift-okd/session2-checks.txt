@@ -1,0 +1,87 @@
+# 2026-10-10T08:46:57Z chat through the rag-api Route (TLS verified with the router CA)
+$ curl -sS -N --cacert .tools/okd/ingress-ca.crt https://rag-api-llm.apps-crc.testing/chat ... | grep -A1 '^event: done'
+event: done
+data: {"answer": "NIST uses a coverage factor of 2 to calculate expanded uncertainty. [1]", "citations": [{"n": 1, "source_id": "nist-tn-1297", "title": "NIST TN 1297 (1994) Guidelines for Evaluating and Expressing the Uncertainty of NIST Measurement Results", "page": 17, "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1297.pdf"}], "usage": {"completion_tokens": 18, "prompt_tokens": 1273, "total_tokens": 1291, "completion_tokens_details": null, "prompt_tokens_details": {"audio_tokens": null, "cache_write_tokens": null, "cached_tokens": 0, "image_tokens": null, "text_tokens": null}}}
+--
+HTTP 200 total 24.027375s
+
+# 2026-10-10T08:47:22Z host loopback ports seen from the rag-api pod as host.crc.testing (crc host-network-access=true)
+$ oc -n llm exec deploy/rag-api -- python -c <tcp connect to host.crc.testing:PORT, 3 s timeout>
+9418 open
+5432 open
+9200 open
+3000 open
+8080 open
+9090 open
+3100 open
+6379 ConnectionRefusedError
+22 ConnectionRefusedError
+$ docker ps --format "{{.Names}} {{.Ports}}" (host side of those ports)
+okd-git 127.0.0.1:9418->9418/tcp
+industrial-llm-platform-rag-api-1 127.0.0.1:8000->8000/tcp
+industrial-llm-platform-otel-collector-1 127.0.0.1:4317-4318->4317-4318/tcp, 127.0.0.1:8888->8888/tcp
+industrial-llm-platform-alloy-1 127.0.0.1:12345->12345/tcp
+industrial-llm-platform-loki-1 127.0.0.1:3100->3100/tcp
+industrial-llm-platform-tempo-1 127.0.0.1:3200->3200/tcp
+industrial-llm-platform-prometheus-1 127.0.0.1:9090->9090/tcp
+industrial-llm-platform-grafana-1 127.0.0.1:3000->3000/tcp
+industrial-llm-platform-llamacpp-1 127.0.0.1:8080->8080/tcp
+industrial-llm-platform-postgres-1 127.0.0.1:5432->5432/tcp
+industrial-llm-platform-elasticsearch-1 127.0.0.1:9200->9200/tcp
+
+# 2026-10-10T08:47:29Z okd-up.sh guard: host-network-access off while the crc daemon runs
+$ crc config set host-network-access false
+Please run 'crc cleanup' followed by 'crc setup' for this configuration to take effect.
+$ bash scripts/okd-up.sh
+ERROR: Invalid argument/option - '//FI'.
+Type "TASKLIST /?" for usage.
+level=info msg="Using bundle path .tools\\downloads\\crc\\crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle"
+level=info msg="Checking minimum RAM requirements"
+level=info msg="Checking if running in a shell with administrator rights"
+level=info msg="Checking Windows release"
+level=info msg="Checking Windows edition"
+level=info msg="Checking if Hyper-V is installed and operational"
+level=info msg="Checking if Hyper-V service is enabled"
+level=info msg="Checking if crc-users group exists"
+level=info msg="Checking if current user is in crc-users and Hyper-V admins group"
+level=info msg="Checking if vsock is correctly configured"
+level=info msg="Checking if CRC bundle is extracted in '$HOME/.crc'"
+level=info msg="Checking if .tools\\downloads\\crc\\crc_okd_hyperv_4.22.0-okd-scos.10_amd64.crcbundle exists"
+level=info msg="Checking if the win32 background launcher is installed"
+level=info msg="Checking if the daemon task is installed"
+level=info msg="Checking if the daemon task is running"
+level=info msg="Checking admin helper service is running"
+level=info msg="Checking SSH port availability"
+Your system is correctly setup for using CRC. Use 'crc start' to start the instance
+[08:47:45Z] Client Version: 4.22.0-okd-scos.10 Kustomize Version: v5.7.1 Server Version: 4.22.0-okd-scos.10 Kubernetes Version: v1.35.6 
+[08:49:12Z] rag image image-registry.openshift-image-registry.svc:5000/llm/rag@sha256:c23f152bfe2afc3c4063fc7e75007872278f0e9f6f70a41e7f477363469cf48e
+[08:49:21Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy at a224d5db2b814c84e4a5c65976d35823ff984f74
+[08:49:21Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+NAME                              READY   STATUS      RESTARTS   AGE
+pod/elasticsearch-0               1/1     Running     2          86m
+pod/llamacpp-5b84d6996b-59bsb     1/1     Running     2          85m
+pod/postgres-0                    1/1     Running     2          86m
+pod/prometheus-5d68576949-hqc6j   1/1     Running     2          86m
+pod/rag-api-f96cc9996-h6bmn       1/1     Running     2          65m
+pod/rag-ingest-7748n              0/1     Completed   0          65m
+
+NAME                                HOST/PORT                       PATH   SERVICES   PORT   TERMINATION     WILDCARD
+route.route.openshift.io/llamacpp   llamacpp-llm.apps-crc.testing          llamacpp   http   edge/Redirect   None
+route.route.openshift.io/rag-api    rag-api-llm.apps-crc.testing           rag-api    http   edge/Redirect   None
+[08:49:21Z] done in 1m51s
+chat:     curl -N --cacert .tools/okd/ingress-ca.crt https://rag-api-llm.apps-crc.testing/chat \
+            -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: https://llamacpp-llm.apps-crc.testing/v1  (OpenAI API; KEDA scales it 1..3)
+# exit 0
+$ crc config get host-network-access
+host-network-access : true
+
+# 2026-10-10T08:49:31Z the run above shows the guard did not fire: with MSYS_NO_PATHCONV=1 (set in the script) '//FI' reached tasklist as is. Fixed to '/FI'; same test again:
+$ crc config set host-network-access false
+Please run 'crc cleanup' followed by 'crc setup' for this configuration to take effect.
+$ bash scripts/okd-up.sh
+[08:49:34Z] host-network-access was off and the crc daemon is running: it must restart to apply it. Run:
+[08:49:34Z]   crc stop; powershell -c 'Stop-Process -Name crc'; bash scripts/okd-up.sh
+# exit 1
+$ crc config get host-network-access
+host-network-access : true

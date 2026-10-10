@@ -1,0 +1,1 @@
+/tmp/venvs/vision/bin/python /kaggle/working/bench/inference/vision/triton_serve.py /kaggle/working/results/models/yolov8n-fp16-b1.engine /kaggle/working/results/models/yolov8n-fp16-b8.engine /kaggle/working/results/models/yolov8n-fp16-b32.engine --log-file /kaggle/working/results/logs/tritonserver.log

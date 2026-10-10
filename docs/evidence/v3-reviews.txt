@@ -1,0 +1,20 @@
+v3 items 10 to 12: review record. This is the orchestrator's summary of the reviewer agents' reports (2026-10-10); the
+reports themselves were delivered in the working session and are not committed, so treat this file as a summary, not
+as the reviewer's own words.
+Raw run folders keep their original "Subject to review" wording because raw output is kept byte-exact; this file records the verdicts.
+
+Item 10, DCGM on Kaggle
+  Evidence: benchmark/results/raw/kaggle-20261010-v3a/ (basic fields work; every profiling field fails with
+  DCGMError_RequiresRoot). Settled by the run itself; no numbers are reported from it beyond that outcome.
+
+Item 11, vision (YOLOv8n)
+  Round 1 (commits 6efc2fb, 02df031, ac641ea, ec9f14e, a195fd9): FAIL on presentation only. Every speed and mAP number
+  recomputed exactly from the raw JSON; defects were a stale RESULTS.md, "cause not recorded" where clocks_event_reasons
+  showed the SW power cap, missing session server-arg notes, and model provenance not shown in RESULTS.md.
+  Round 2 (commit 53f87cd): PASS. Regeneration byte-identical from git archive HEAD; clock-reason decoding checked
+  against NVML bit definitions; ONNX exports re-compared (benchmark/vision/compare_onnx.py): identical graphs and weights.
+
+Item 12, TensorRT-LLM FP16 vs same-session vLLM (run v3i)
+  Review of commits 944586c and 782b343: PASS. Comparison and GSM8K numbers recomputed from per-request records and
+  lm-eval samples; all requests 128 tokens, 0 truncated streams, same prompts and settings; engines built as sized in
+  inference/trtllm/build_engine.py; non-blocking items N21 to N23 fixed in 53ccd0a. Details: docs/evidence/v3-trtllm.txt.

@@ -1,0 +1,59 @@
+$ dcgmi discovery -l
+2 GPUs found (Active).
++--------+----------------------------------------------------------------------+
+| GPU ID | Device Information                                                   |
++--------+----------------------------------------------------------------------+
+| 0      | Name: Tesla T4                                                       |
+|        | PCI Bus ID: 00000000:00:04.0                                         |
+|        | Device UUID: GPU-59db8528-e293-ee69-386f-3f2eff8ecce1                |
++--------+----------------------------------------------------------------------+
+| 1      | Name: Tesla T4                                                       |
+|        | PCI Bus ID: 00000000:00:05.0                                         |
+|        | Device UUID: GPU-4f59b403-0d31-7357-9d0b-7086b95a88da                |
++--------+----------------------------------------------------------------------+
+Error: Cannot get NvSwitch list from remote node. Return: This request is serviced by a module of DCGM that is not currently loaded
+exit=223
+
+$ dcgmi profile -l
++----------------+----------+------------------------------------------------------+
+| Group.Subgroup | Field ID | Field Tag                                            |
++----------------+----------+------------------------------------------------------+
+| A.1            | 1002     | sm_active                                            |
+| A.1            | 1003     | sm_occupancy                                         |
+| A.1            | 1004     | tensor_active                                        |
+| A.1            | 1007     | fp32_active                                          |
+| A.2            | 1006     | fp64_active                                          |
+| A.3            | 1008     | fp16_active                                          |
+| B.0            | 1005     | dram_active                                          |
+| C.0            | 1009     | pcie_tx_bytes                                        |
+| C.0            | 1010     | pcie_rx_bytes                                        |
+| D.0            | 1001     | gr_engine_active                                     |
+| E.0            | 1011     | nvlink_tx_bytes                                      |
+| E.0            | 1012     | nvlink_rx_bytes                                      |
++----------------+----------+------------------------------------------------------+
+exit=0
+
+$ dcgmi dmon -e 100,101,112,150,155,203,204,252 -c 6 -d 500
+#Entity         SMCLK        MMCLK        DVCCTR                      TMPTR        POWER             GPUTL             MCUTL             FBUSD             
+ID                                                                     C            W                                                                      
+GPU 0           300          405          1                           50           13.573            0                 0                 0                 
+GPU 1           300          405          1                           52           10.616            0                 0                 0                 
+GPU 0           300          405          1                           50           10.616            0                 0                 0                 
+GPU 1           300          405          1                           52           10.616            0                 0                 0                 
+GPU 0           300          405          1                           50           10.715            0                 0                 0                 
+GPU 1           300          405          1                           52           15.053            0                 0                 0                 
+GPU 0           300          405          1                           50           10.324            0                 0                 0                 
+GPU 1           300          405          1                           52           10.913            0                 0                 0                 
+GPU 0           300          405          1                           50           10.320            0                 0                 0                 
+GPU 1           300          405          1                           52           10.818            0                 0                 0                 
+GPU 0           300          405          1                           50           10.225            0                 0                 0                 
+GPU 1           300          405          1                           52           10.719            0                 0                 0                 
+exit=0
+
+$ dcgmi dmon -e 1001,1002,1003,1004,1005,1008 -c 6 -d 500
+#Entity         GRACT        SMACT        SMOCC        TENSO        DRAMA        FP16A        
+ID                                                                                            
+exit=227
+Error setting watches. Result: -29: Unable to watch one or more of the requested fields because doing so requires the host engine to be running as root.
+
+

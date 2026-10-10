@@ -1,0 +1,79 @@
+untied checkpoint in 17s
+[TensorRT-LLM] TensorRT-LLM version: 0.14.0
+
+0it [00:00, ?it/s]
+4it [00:00, 13.37it/s]
+18it [00:00, 51.27it/s]
+27it [00:00, 60.33it/s]
+40it [00:00, 80.35it/s]
+50it [00:00, 82.41it/s]
+65it [00:00, 97.13it/s]
+76it [00:00, 98.26it/s]
+90it [00:01, 104.98it/s]
+105it [00:01, 112.83it/s]
+117it [00:01, 112.73it/s]
+130it [00:01, 112.03it/s]
+145it [00:01, 116.41it/s]
+157it [00:01, 115.07it/s]
+170it [00:01, 113.79it/s]
+185it [00:01, 118.91it/s]
+197it [00:01, 118.12it/s]
+210it [00:02, 118.61it/s]
+225it [00:02, 123.91it/s]
+230it [00:02, 90.09it/s] 
+Traceback (most recent call last):
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 96, in <module>
+    main()
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 76, in main
+    QWenForCausalLM.from_hugging_face(str(untied), dtype="float16").save_checkpoint(
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/models/modeling_utils.py", line 669, in save_checkpoint
+    safetensors.torch.save_file(
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/safetensors/torch.py", line 323, in save_file
+    serialize_file(
+safetensors._safetensors_rust.SafetensorError: Error while serializing: I/O error: No such file or directory (os error 2) at path "/tmp/trtllm/ckpt-fp16/.tmp5tdTel"
+Exception ignored in: <function PretrainedModel.__del__ at 0x7d2a0e308790>
+Traceback (most recent call last):
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/models/modeling_utils.py", line 589, in __del__
+    self.release()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/models/modeling_utils.py", line 586, in release
+    release_gc()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/_utils.py", line 471, in release_gc
+    torch.cuda.ipc_collect()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 904, in ipc_collect
+    _lazy_init()
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 333, in _lazy_init
+    raise DeferredCudaCallError(msg) from e
+torch.cuda.DeferredCudaCallError: CUDA call failed lazily at initialization with error: 'NoneType' object is not iterable
+
+CUDA call was originally invoked at:
+
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 96, in <module>
+    main()
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 70, in main
+    untie(hf, untied)
+  File "/kaggle/working/bench/inference/trtllm/build_engine.py", line 41, in untie
+    from safetensors.torch import load_file, save_file
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/safetensors/torch.py", line 6, in <module>
+    import torch
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/__init__.py", line 1694, in <module>
+    _C._initExtension(_manager_path())
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 1470, in <module>
+    _lazy_call(_register_triton_kernels)
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py", line 256, in _lazy_call
+    _queued_calls.append((callable, traceback.format_stack()))
+

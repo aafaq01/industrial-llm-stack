@@ -1,0 +1,385 @@
+{
+  "uid": "gpu",
+  "title": "GPU replay: Kaggle T4 run 2026-10-09 (nvidia-smi, not live)",
+  "tags": [
+    "gpu",
+    "replay",
+    "phase2"
+  ],
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "refresh": "",
+  "time": {
+    "from": "2026-10-09T05:55:00.000Z",
+    "to": "2026-10-09T06:40:00.000Z"
+  },
+  "timepicker": {
+    "refresh_intervals": []
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "cell",
+        "label": "cell",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": {
+          "query": "label_values(gpu_replay_power_watts, cell)",
+          "refId": "cell"
+        },
+        "definition": "label_values(gpu_replay_power_watts, cell)",
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "allValue": ".*"
+      },
+      {
+        "name": "gpu",
+        "label": "gpu",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": {
+          "query": "label_values(gpu_replay_power_watts, gpu)",
+          "refId": "gpu"
+        },
+        "definition": "label_values(gpu_replay_power_watts, gpu)",
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "allValue": ".*"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "What this is",
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Replay of captured data, not live.** Source: nvidia-smi (not DCGM; DCGM is not available on Kaggle), sampled every 500 ms during each measured benchmark window of the Phase 2 Kaggle run v2.\n\n- Run: `kaggle-20261009`, started 2026-10-09 05:54:36Z, finished 06:33:53Z, 2x Tesla T4 (driver 580.178.04), vLLM 0.31.0.\n- Raw files: `benchmark/results/raw/kaggle-20261009/results/raw/vllm-*/*.json` (`gpu_samples`), committed in c0ad34e; benchmark code at git commit 8c01b3262760b69a0ede5fb0c3ff9bf47e838443 (`env/run.json`).\n- Loaded with `observability/gpu-replay/backfill.sh` (convert.py to OpenMetrics, `promtool tsdb create-blocks-from openmetrics`).\n- Gaps between runs are real: samples exist only inside measured windows (warmup and model loads are not sampled).\n- Power limit 70 W per GPU (`env/nvidia-smi-q.txt`). Memory is MiB from nvidia-smi shown in IEC units.\n\nThe time range is fixed to the run window; widening it shows nothing more.\n\nOther panels show the last sample per display interval. Prometheus keeps 31 days, so this data ages out around 2026-11-09; rerun `observability/gpu-replay/backfill.sh` on a fresh volume or after it expires."
+      }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "GPU utilization",
+      "description": "nvidia-smi utilization.gpu: share of time a kernel was running, not SM occupancy.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "interval": "1s",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "spanNulls": false,
+            "showPoints": "never"
+          },
+          "min": 0,
+          "max": 100
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "last_over_time(gpu_replay_utilization_percent{cell=~\"$cell\",gpu=~\"$gpu\"}[$__interval])",
+          "legendFormat": "{{cell}} c{{concurrency}} r{{repeat}} gpu{{gpu}}"
+        }
+      ],
+      "maxDataPoints": 6000
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "GPU memory used",
+      "description": "nvidia-smi memory.used. vLLM preallocates (--gpu-memory-utilization 0.9), so this is flat per cell. T4 total 15360 MiB.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "interval": "1s",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "spanNulls": false,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "last_over_time(gpu_replay_memory_used_bytes{cell=~\"$cell\",gpu=~\"$gpu\"}[$__interval])",
+          "legendFormat": "{{cell}} c{{concurrency}} r{{repeat}} gpu{{gpu}}"
+        }
+      ],
+      "maxDataPoints": 6000
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Power vs 70 W limit",
+      "description": "nvidia-smi power.draw, highest sample per display interval so short peaks stay visible. Red line: 70 W power limit (env/nvidia-smi-q.txt). Samples above it do occur in the raw data: 100 of 2265 above 70 W, max 81.82 W (7B AWQ, GPU 0, 06:29:18Z). power.draw on a T4 is an instantaneous reading, while the 70 W board limit is enforced on averaged power, so short spikes above it are expected and do not mean the limit was broken.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "interval": "1s",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "custom": {
+            "spanNulls": false,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "min": 0,
+          "max": 90,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 70
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max_over_time(gpu_replay_power_watts{cell=~\"$cell\",gpu=~\"$gpu\"}[$__interval])",
+          "legendFormat": "{{cell}} c{{concurrency}} r{{repeat}} gpu{{gpu}}"
+        }
+      ],
+      "maxDataPoints": 6000
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "SM clock",
+      "description": "nvidia-smi clocks.sm. T4 max 1590 MHz.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "interval": "1s",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "hertz",
+          "custom": {
+            "spanNulls": false,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "last_over_time(gpu_replay_sm_clock_hertz{cell=~\"$cell\",gpu=~\"$gpu\"}[$__interval])",
+          "legendFormat": "{{cell}} c{{concurrency}} r{{repeat}} gpu{{gpu}}"
+        }
+      ],
+      "maxDataPoints": 6000
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Temperature",
+      "description": "nvidia-smi temperature.gpu.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "interval": "1s",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": false,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "last_over_time(gpu_replay_temperature_celsius{cell=~\"$cell\",gpu=~\"$gpu\"}[$__interval])",
+          "legendFormat": "{{cell}} c{{concurrency}} r{{repeat}} gpu{{gpu}}"
+        }
+      ],
+      "maxDataPoints": 6000
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Per run: medians over the measured window",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Instant queries at the end of the dashboard range (06:40Z) over [50m], so each run's whole window is included.",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "targets": [
+        {
+          "refId": "SM",
+          "expr": "quantile_over_time(0.5, gpu_replay_sm_clock_hertz{cell=~\"$cell\",gpu=~\"$gpu\"}[50m]) / 1e6",
+          "instant": true,
+          "format": "table"
+        },
+        {
+          "refId": "UTIL",
+          "expr": "quantile_over_time(0.5, gpu_replay_utilization_percent{cell=~\"$cell\",gpu=~\"$gpu\"}[50m])",
+          "instant": true,
+          "format": "table"
+        },
+        {
+          "refId": "PWR",
+          "expr": "quantile_over_time(0.5, gpu_replay_power_watts{cell=~\"$cell\",gpu=~\"$gpu\"}[50m])",
+          "instant": true,
+          "format": "table"
+        },
+        {
+          "refId": "MEM",
+          "expr": "max_over_time(gpu_replay_memory_used_bytes{cell=~\"$cell\",gpu=~\"$gpu\"}[50m]) / 1048576",
+          "instant": true,
+          "format": "table"
+        },
+        {
+          "refId": "TEMP",
+          "expr": "max_over_time(gpu_replay_temperature_celsius{cell=~\"$cell\",gpu=~\"$gpu\"}[50m])",
+          "instant": true,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "source": true
+            },
+            "renameByName": {
+              "Value #SM": "SM clock p50 (MHz)",
+              "Value #UTIL": "util p50 (%)",
+              "Value #PWR": "power p50 (W)",
+              "Value #MEM": "memory max (MiB)",
+              "Value #TEMP": "temp max (C)"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

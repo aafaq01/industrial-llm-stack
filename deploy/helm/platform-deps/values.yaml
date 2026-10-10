@@ -1,0 +1,40 @@
+# Same images as docker-compose.yml. Single replica each, no HA, no backups: a dev stack.
+# Secret with POSTGRES_PASSWORD and ELASTIC_PASSWORD, created out of band (scripts/kind-up.sh on kind).
+existingSecret: llm-secrets
+
+postgres:
+  image: postgres:18.6-alpine3.24
+  storage: 2Gi
+  resources:
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {cpu: "1", memory: 1Gi}
+
+elasticsearch:
+  image: elasticsearch:9.5.5
+  javaOpts: -Xms1g -Xmx1g
+  storage: 4Gi
+  resources:
+    requests: {cpu: 500m, memory: 2Gi}
+    limits: {cpu: "2", memory: 2560Mi}
+  # ES writes its keystore under config/ at start, so the root filesystem stays writable.
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities: {drop: [ALL]}
+
+prometheus:
+  image: prom/prometheus:v3.15.0
+  retention: 2d
+  resources:
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {cpu: "1", memory: 1Gi}
+
+storageClassName: ""
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile: {type: RuntimeDefault}
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities: {drop: [ALL]}

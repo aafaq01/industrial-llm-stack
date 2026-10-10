@@ -1,0 +1,20 @@
+Ultralytics 8.4.174 🚀 Python-3.12.13 torch-2.13.0+cu129 CUDA:0 (Tesla T4, 14912MiB)
+YOLOv8n summary (fused): 72 layers, 3,151,904 parameters, 0 gradients, 8.7 GFLOPs
+Traceback (most recent call last):
+  File "/kaggle/working/bench/benchmark/vision/eval_map.py", line 104, in <module>
+    main()
+  File "/kaggle/working/bench/benchmark/vision/eval_map.py", line 64, in main
+    r = YOLO(args.model, task="detect").val(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/engine/model.py", line 642, in val
+    validator(model=self.model)
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/engine/validator.py", line 223, in __call__
+    self.data = check_det_dataset(self.args.data, split=self.args.split)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/venvs/vision/lib/python3.12/site-packages/ultralytics/data/utils.py", line 737, in check_det_dataset
+    raise SyntaxError(
+SyntaxError: /tmp/tmpcp9j79p4/coco-subset.yaml 'train:' key missing ❌.
+'train' and 'val' are required in all data YAMLs.

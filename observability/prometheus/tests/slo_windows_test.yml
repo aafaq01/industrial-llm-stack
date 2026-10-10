@@ -1,0 +1,230 @@
+# End-to-end recording-rule tests: raw counters in, exact slo:sli_error:ratio_rate<W> values out, for all
+# 8 windows of both SLOs, plus slo:error_budget:remaining. The error rate is a step pattern, so every window
+# sees a different ratio and a rule computed over the wrong range or missing a term gives a wrong number.
+# Generated once by a throwaway script; the arithmetic is in the comments.
+#
+# Series: 2m samples for 4400m (2200 increments), counters start at 1000000. Evaluated at T = 4400m.
+# Error increments per 2m step, newest last:
+#   steps    1-41  : 10   (oldest 82m, only inside the 30d window)
+#   steps   42-1481: 0
+#   steps 1482-2021: 1
+#   steps 2022-2141: 2
+#   steps 2142-2171: 5
+#   steps 2172-2186: 10
+#   steps 2187-2198: 20
+#   steps 2199-2200: 50
+# Prometheus 3 range selectors are left-open, so window W holds the samples after T-W: on a 2m grid rate()
+# sees n = (W-2m)/2m increments (5m: 2, since T-4 and T-2 and T are inside). n per window and errors E(n):
+#   5m n=2 E=100 | 30m n=14 E=100+12*20=340 | 1h n=29 E=340+15*10=490 | 2h n=59 E=490+30*5=640
+#   6h n=179 E=640+120*2=880 | 1d n=719 E=880+540*1=1420 | 3d n=2159 E=1420+1440*0=1420
+#   30d n=2200 (all data) E=1420+41*10=1830
+# rate() extrapolates all series in a window by the same factor, so ratio of rates = ratio of increases.
+# The 1000000 base keeps the "counter would reach zero" extrapolation limit from applying.
+rule_files:
+  - ../rules/recording.yml
+  - ../rules/alerts.yml
+
+# 10m evaluation keeps 3 days of 30d-range rules fast; T=4400m is on the grid.
+evaluation_interval: 10m
+
+tests:
+
+  # 5xx errors on top of 100 2xx per step; 4xx (30 per step) must not count. ratio = E / (100n + E).
+  - name: availability windows, 5xx errors, 4xx ignored
+    interval: 2m
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "1000000+100x2200"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "1000000+10x41 1000410+0x1439 1000411+1x539 1000952+2x119 1001195+5x29 1001350+10x14 1001510+20x11 1001780+50x1"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="4xx"}'
+        values: "1000000+30x2200"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "1000000+0x2200"
+    promql_expr_test:
+      # 5m: 100/(100*2+100) = 0.333333
+      - expr: round(slo:sli_error:ratio_rate5m{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.3333
+      # 30m: 340/(100*14+340) = 0.195402
+      - expr: round(slo:sli_error:ratio_rate30m{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.1954
+      # 1h: 490/(100*29+490) = 0.144543
+      - expr: round(slo:sli_error:ratio_rate1h{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.1445
+      # 2h: 640/(100*59+640) = 0.097859
+      - expr: round(slo:sli_error:ratio_rate2h{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0979
+      # 6h: 880/(100*179+880) = 0.046858
+      - expr: round(slo:sli_error:ratio_rate6h{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0469
+      # 1d: 1420/(100*719+1420) = 0.019367
+      - expr: round(slo:sli_error:ratio_rate1d{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0194
+      # 3d: 1420/(100*2159+1420) = 0.006534
+      - expr: round(slo:sli_error:ratio_rate3d{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0065
+      # 30d: 1830/(100*2200+1830) = 0.008250
+      - expr: round(slo:sli_error:ratio_rate30d{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0082
+      # budget: 1 - 0.008250 / 0.01 = 0.175044
+      - expr: round(slo:error_budget:remaining{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.175
+
+  # In-stream errors: HTTP 2xx (100 per step, errors included) plus rag_chat_errors_total; 5xx stays 0. ratio = E / 100n.
+  - name: availability windows, in-stream errors only
+    interval: 2m
+    input_series:
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="2xx"}'
+        values: "1000000+100x2200"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="5xx"}'
+        values: "1000000+0x2200"
+      - series: 'rag_http_requests_total{job="rag-api",method="POST",path="/chat",status="4xx"}'
+        values: "1000000+0x2200"
+      - series: 'rag_chat_errors_total{job="rag-api"}'
+        values: "1000000+10x41 1000410+0x1439 1000411+1x539 1000952+2x119 1001195+5x29 1001350+10x14 1001510+20x11 1001780+50x1"
+    promql_expr_test:
+      # 5m: 100/(100*2) = 0.500000
+      - expr: round(slo:sli_error:ratio_rate5m{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.5
+      # 30m: 340/(100*14) = 0.242857
+      - expr: round(slo:sli_error:ratio_rate30m{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.2429
+      # 1h: 490/(100*29) = 0.168966
+      - expr: round(slo:sli_error:ratio_rate1h{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.169
+      # 2h: 640/(100*59) = 0.108475
+      - expr: round(slo:sli_error:ratio_rate2h{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.1085
+      # 6h: 880/(100*179) = 0.049162
+      - expr: round(slo:sli_error:ratio_rate6h{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0492
+      # 1d: 1420/(100*719) = 0.019750
+      - expr: round(slo:sli_error:ratio_rate1d{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0197
+      # 3d: 1420/(100*2159) = 0.006577
+      - expr: round(slo:sli_error:ratio_rate3d{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0066
+      # 30d: 1830/(100*2200) = 0.008318
+      - expr: round(slo:sli_error:ratio_rate30d{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.0083
+      # budget: 1 - 0.008318 / 0.01 = 0.168182
+      - expr: round(slo:error_budget:remaining{slo="rag-availability"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-availability"}'
+            value: 0.1682
+
+  # 100 chats per step; E of them slower than 60 s, so the le=60 bucket grows by 100 - e. ratio = E / 100n.
+  - name: ttft windows
+    interval: 2m
+    input_series:
+      - series: 'rag_stage_duration_seconds_count{job="rag-api",stage="ttft"}'
+        values: "1000000+100x2200"
+      - series: 'rag_stage_duration_seconds_bucket{job="rag-api",stage="ttft",le="60.0"}'
+        values: "1000000+90x41 1003790+100x1439 1147789+99x539 1201248+98x119 1213005+95x29 1215850+90x14 1217190+80x11 1218120+50x1"
+    promql_expr_test:
+      # 5m: 100/(100*2) = 0.500000
+      - expr: round(slo:sli_error:ratio_rate5m{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.5
+      # 30m: 340/(100*14) = 0.242857
+      - expr: round(slo:sli_error:ratio_rate30m{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.2429
+      # 1h: 490/(100*29) = 0.168966
+      - expr: round(slo:sli_error:ratio_rate1h{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.169
+      # 2h: 640/(100*59) = 0.108475
+      - expr: round(slo:sli_error:ratio_rate2h{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.1085
+      # 6h: 880/(100*179) = 0.049162
+      - expr: round(slo:sli_error:ratio_rate6h{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.0492
+      # 1d: 1420/(100*719) = 0.019750
+      - expr: round(slo:sli_error:ratio_rate1d{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.0197
+      # 3d: 1420/(100*2159) = 0.006577
+      - expr: round(slo:sli_error:ratio_rate3d{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.0066
+      # 30d: 1830/(100*2200) = 0.008318
+      - expr: round(slo:sli_error:ratio_rate30d{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.0083
+      # budget: 1 - 0.008318 / 0.05 = 0.833636
+      - expr: round(slo:error_budget:remaining{slo="rag-ttft"}, 0.0001)
+        eval_time: 4400m
+        exp_samples:
+          - labels: '{slo="rag-ttft"}'
+            value: 0.8336

@@ -1,0 +1,13 @@
+{
+ "git_commit": "80905ea4ba9bec81a9221825f376e87735f98cf3",
+ "gpu_count": 2,
+ "vllm_version": "0.31.0",
+ "ultralytics": "8.4.174",
+ "tensorrt": "10.16.1.11",
+ "onnxruntime_gpu": "1.26.0",
+ "nvidia_pytriton": "0.7.0",
+ "onnx_opset": 17,
+ "started_utc": "2026-10-10T09:30:14Z",
+ "kaggle_docker_image": "gcr.io/kaggle-gpu-images/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f",
+ "kaggle_kernel_run_type": "Batch"
+}

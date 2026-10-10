@@ -1,0 +1,31 @@
+2026-10-09T14:18:50Z
+[14:18:50Z] kind v0.33.0, context kind-llm, git source head
+Creating cluster "llm" ...
+ • Ensuring node image (kindest/node:v1.36.4) 🖼️  ...
+ ✓ Ensuring node image (kindest/node:v1.36.4) 🖼️
+ • Preparing nodes 📦   ...
+ ✓ Preparing nodes 📦 
+ • Writing configuration 📜  ...
+ ✓ Writing configuration 📜
+ • Starting control-plane 🕹️  ...
+ ✓ Starting control-plane 🕹️
+ • Installing CNI 🔌  ...
+ ✓ Installing CNI 🔌
+ • Installing StorageClass 💾  ...
+ ✓ Installing StorageClass 💾
+ • Waiting ≤ 2m0s for control-plane = Ready ⏳  ...
+ ✓ Waiting ≤ 2m0s for control-plane = Ready ⏳
+ • Ready after 15s 💚
+Set kubectl context to "kind-llm"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-llm
+
+Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
+[14:19:32Z] pre-pulling images on the host and loading them into the node
+[14:23:36Z] building and pushing the rag image
+[14:28:48Z] rag image localhost:5001/industrial-llm-platform/rag@sha256:214fcc7f224ef7b3ed1d1597529609c305e6a150380fd0c19102c0a99c26b1b1
+[14:28:54Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+Error: looks like "https://traefik.github.io/charts" is not a valid chart repository or cannot be reached: read tcp 192.168.x.x:54026->185.199.111.153:443: wsarecv: An existing connection was forcibly closed by the remote host.
+rc=1 wall=693s
+2026-10-09T14:30:23Z

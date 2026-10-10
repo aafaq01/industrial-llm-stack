@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api
+  labels: {app: rag-api}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: rag-api}
+  template:
+    metadata:
+      labels: {app: rag-api}
+    spec:
+      {{- include "rag.podSpec" . | nindent 6 }}
+      containers:
+        - name: rag-api
+          image: {{ .Values.image }}
+          env:
+            {{- include "rag.env" . | nindent 12 }}
+            - {name: OMP_NUM_THREADS, value: {{ .Values.env.OMP_NUM_THREADS | quote }}}
+          ports:
+            - {name: http, containerPort: 8000}
+          startupProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- include "rag.mounts" . | nindent 10 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-api
+  labels: {app: rag-api}
+spec:
+  selector: {app: rag-api}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+# Alembic migrations before every install/upgrade (ArgoCD runs Helm pre-install hooks as PreSync).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rag-migrate
+  labels: {app: rag-migrate}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels: {app: rag-migrate}
+    spec:
+      restartPolicy: OnFailure
+      {{- include "rag.podSpec" . | nindent 6 }}
+      containers:
+        - name: migrate
+          image: {{ .Values.image }}
+          command: ["alembic", "upgrade", "head"]
+          env:
+            {{- include "rag.env" . | nindent 12 }}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          {{- include "rag.mounts" . | nindent 10 }}
+{{- if .Values.ingest.enabled }}
+---
+# One-shot corpus download (sha256-checked) + index build. Runs to completion once per spec; ArgoCD deletes and
+# recreates it (Force, Replace: a Job template is immutable) only when its spec changes, e.g. a new image digest,
+# which rebuilds the index. restartPolicy Never: each failed attempt stays as its own pod with its logs (3 retries);
+# each retry is a new pod with a new emptyDir, so it downloads the corpus again.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rag-ingest
+  labels: {app: rag-ingest}
+  annotations:
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels: {app: rag-ingest}
+    spec:
+      restartPolicy: Never
+      {{- include "rag.podSpec" . | nindent 6 }}
+      containers:
+        - name: ingest
+          image: {{ .Values.image }}
+          command: ["python", "-m", "app.ingest"]
+          env:
+            {{- include "rag.env" . | nindent 12 }}
+            - {name: OMP_NUM_THREADS, value: {{ .Values.ingest.ompThreads | quote }}}
+          resources: {{- toYaml .Values.ingest.resources | nindent 12 }}
+          {{- include "rag.mounts" . | nindent 10 }}
+{{- end }}

@@ -1,0 +1,193 @@
+untied checkpoint in 21s
+[TensorRT-LLM] TensorRT-LLM version: 0.14.0
+converted checkpoint in 22s: ['config.json', 'rank0.safetensors']
+[TensorRT-LLM] TensorRT-LLM version: 0.14.0
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set bert_attention_plugin to auto.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set gpt_attention_plugin to float16.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set gemm_plugin to float16.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set gemm_swiglu_plugin to None.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set fp8_rowwise_gemm_plugin to None.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set nccl_plugin to auto.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set lookup_plugin to None.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set lora_plugin to None.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set moe_plugin to auto.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set mamba_conv1d_plugin to auto.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set low_latency_gemm_plugin to None.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set context_fmha to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set bert_context_fmha_fp32_acc to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set remove_input_padding to True.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set reduce_fusion to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set enable_xqa to True.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set tokens_per_block to 64.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set use_paged_context_fmha to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set use_fp8_context_fmha to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set multiple_profiles to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set paged_state to True.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set streamingllm to False.
+[10/10/2026-16:15:01] [TRT-LLM] [I] Set use_fused_mlp to True.
+[10/10/2026-16:15:01] [TRT-LLM] [W] Implicitly setting QWenConfig.qwen_type = qwen2
+[10/10/2026-16:15:01] [TRT-LLM] [W] Implicitly setting QWenConfig.moe_intermediate_size = 0
+[10/10/2026-16:15:01] [TRT-LLM] [W] Implicitly setting QWenConfig.moe_shared_expert_intermediate_size = 0
+[10/10/2026-16:15:01] [TRT-LLM] [I] Compute capability: (7, 5)
+[10/10/2026-16:15:01] [TRT-LLM] [I] SM count: 40
+[10/10/2026-16:15:01] [TRT-LLM] [I] SM clock: 1590 MHz
+[10/10/2026-16:15:01] [TRT-LLM] [I] int4 TFLOPS: 260
+[10/10/2026-16:15:01] [TRT-LLM] [I] int8 TFLOPS: 130
+[10/10/2026-16:15:01] [TRT-LLM] [I] fp8 TFLOPS: 0
+[10/10/2026-16:15:01] [TRT-LLM] [I] float16 TFLOPS: 65
+[10/10/2026-16:15:01] [TRT-LLM] [I] bfloat16 TFLOPS: 0
+[10/10/2026-16:15:01] [TRT-LLM] [I] float32 TFLOPS: 8
+[10/10/2026-16:15:01] [TRT-LLM] [I] Total Memory: 15 GiB
+[10/10/2026-16:15:01] [TRT-LLM] [I] Memory clock: 5001 MHz
+[10/10/2026-16:15:01] [TRT-LLM] [I] Memory bus width: 256
+[10/10/2026-16:15:01] [TRT-LLM] [I] Memory bandwidth: 320 GB/s
+[10/10/2026-16:15:01] [TRT-LLM] [I] PCIe speed: 2500 Mbps
+[10/10/2026-16:15:01] [TRT-LLM] [I] PCIe link width: 16
+[10/10/2026-16:15:01] [TRT-LLM] [I] PCIe bandwidth: 5 GB/s
+[10/10/2026-16:15:02] [TRT-LLM] [I] Set dtype to float16.
+[10/10/2026-16:15:02] [TRT-LLM] [I] Set paged_kv_cache to True.
+[10/10/2026-16:15:02] [TRT-LLM] [W] Overriding paged_state to False
+[10/10/2026-16:15:02] [TRT-LLM] [I] Set paged_state to False.
+[10/10/2026-16:15:02] [TRT-LLM] [W] remove_input_padding is enabled, while opt_num_tokens is not set, setting to max_batch_size*max_beam_width. 
+
+[10/10/2026-16:15:04] [TRT] [I] [MemUsageChange] Init CUDA: CPU +17, GPU +0, now: CPU 1628, GPU 104 (MiB)
+[10/10/2026-16:15:12] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +956, GPU +190, now: CPU 2740, GPU 294 (MiB)
+[10/10/2026-16:15:12] [TRT-LLM] [I] Set nccl_plugin to None.
+[10/10/2026-16:15:12] [TRT-LLM] [I] Total time of constructing network from module object 10.529370069503784 seconds
+[10/10/2026-16:15:12] [TRT-LLM] [I] Total optimization profiles added: 1
+[10/10/2026-16:15:12] [TRT-LLM] [I] Total time to initialize the weights in network Unnamed Network 0: 00:00:00
+[10/10/2026-16:15:12] [TRT-LLM] [I] Build TensorRT engine Unnamed Network 0
+[10/10/2026-16:15:12] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-16:15:12] [TRT] [W] Unused Input: position_ids
+[10/10/2026-16:15:12] [TRT] [W] [RemoveDeadLayers] Input Tensor position_ids is unused or used only at compile-time, but is not being removed.
+[10/10/2026-16:15:12] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-16:15:12] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[10/10/2026-16:15:12] [TRT] [I] Compiler backend is used during engine build.
+[10/10/2026-16:15:16] [TRT] [I] [GraphReduction] The approximate region cut reduction algorithm is called.
+[10/10/2026-16:15:16] [TRT] [I] Detected 16 inputs and 1 output network tensors.
+[10/10/2026-16:15:19] [TRT] [I] Total Host Persistent Memory: 81856 bytes
+[10/10/2026-16:15:19] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[10/10/2026-16:15:19] [TRT] [I] Max Scratch Memory: 2550211328 bytes
+[10/10/2026-16:15:19] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 465 steps to complete.
+[10/10/2026-16:15:19] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 33.4843ms to assign 19 blocks to 465 nodes requiring 2797682176 bytes.
+[10/10/2026-16:15:19] [TRT] [I] Total Activation Memory: 2797680640 bytes
+[10/10/2026-16:15:19] [TRT] [I] Total Weights Memory: 3570953856 bytes
+[10/10/2026-16:15:19] [TRT] [I] Compiler backend is used during engine execution.
+[10/10/2026-16:15:19] [TRT] [I] Engine generation completed in 7.06191 seconds.
+[10/10/2026-16:15:19] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 16 MiB, GPU 3406 MiB
+[10/10/2026-16:15:23] [TRT] [I] [MemUsageStats] Peak memory usage during Engine building and serialization: CPU: 10990 MiB
+[10/10/2026-16:15:23] [TRT-LLM] [I] Total time of building Unnamed Network 0: 00:00:10
+[10/10/2026-16:15:23] [TRT] [I] Serialized 27 bytes of code generator cache.
+[10/10/2026-16:15:23] [TRT] [I] Serialized 152767 bytes of compilation cache.
+[10/10/2026-16:15:23] [TRT] [I] Serialized 12 timing cache entries
+[10/10/2026-16:15:23] [TRT-LLM] [I] Timing cache serialized to model.cache
+[10/10/2026-16:15:23] [TRT-LLM] [I] Build phase peak memory: 10993.64 MB, children: 9.61 MB
+[10/10/2026-16:15:23] [TRT-LLM] [I] Serializing engine to /tmp/trtllm/engine-fp16-bench/rank0.engine...
+[10/10/2026-16:15:26] [TRT-LLM] [I] Engine serialized. Total time: 00:00:02
+[10/10/2026-16:15:26] [TRT-LLM] [I] Total time of building all engines: 00:00:24
+built bench engine in 55s
+[TensorRT-LLM] TensorRT-LLM version: 0.14.0
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set bert_attention_plugin to auto.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set gpt_attention_plugin to float16.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set gemm_plugin to float16.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set gemm_swiglu_plugin to None.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set fp8_rowwise_gemm_plugin to None.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set nccl_plugin to auto.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set lookup_plugin to None.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set lora_plugin to None.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set moe_plugin to auto.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set mamba_conv1d_plugin to auto.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set low_latency_gemm_plugin to None.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set context_fmha to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set bert_context_fmha_fp32_acc to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set remove_input_padding to True.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set reduce_fusion to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set enable_xqa to True.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set tokens_per_block to 64.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set use_paged_context_fmha to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set use_fp8_context_fmha to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set multiple_profiles to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set paged_state to True.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set streamingllm to False.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set use_fused_mlp to True.
+[10/10/2026-16:15:45] [TRT-LLM] [W] Implicitly setting QWenConfig.qwen_type = qwen2
+[10/10/2026-16:15:45] [TRT-LLM] [W] Implicitly setting QWenConfig.moe_intermediate_size = 0
+[10/10/2026-16:15:45] [TRT-LLM] [W] Implicitly setting QWenConfig.moe_shared_expert_intermediate_size = 0
+[10/10/2026-16:15:45] [TRT-LLM] [I] Compute capability: (7, 5)
+[10/10/2026-16:15:45] [TRT-LLM] [I] SM count: 40
+[10/10/2026-16:15:45] [TRT-LLM] [I] SM clock: 1590 MHz
+[10/10/2026-16:15:45] [TRT-LLM] [I] int4 TFLOPS: 260
+[10/10/2026-16:15:45] [TRT-LLM] [I] int8 TFLOPS: 130
+[10/10/2026-16:15:45] [TRT-LLM] [I] fp8 TFLOPS: 0
+[10/10/2026-16:15:45] [TRT-LLM] [I] float16 TFLOPS: 65
+[10/10/2026-16:15:45] [TRT-LLM] [I] bfloat16 TFLOPS: 0
+[10/10/2026-16:15:45] [TRT-LLM] [I] float32 TFLOPS: 8
+[10/10/2026-16:15:45] [TRT-LLM] [I] Total Memory: 15 GiB
+[10/10/2026-16:15:45] [TRT-LLM] [I] Memory clock: 5001 MHz
+[10/10/2026-16:15:45] [TRT-LLM] [I] Memory bus width: 256
+[10/10/2026-16:15:45] [TRT-LLM] [I] Memory bandwidth: 320 GB/s
+[10/10/2026-16:15:45] [TRT-LLM] [I] PCIe speed: 2500 Mbps
+[10/10/2026-16:15:45] [TRT-LLM] [I] PCIe link width: 16
+[10/10/2026-16:15:45] [TRT-LLM] [I] PCIe bandwidth: 5 GB/s
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set dtype to float16.
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set paged_kv_cache to True.
+[10/10/2026-16:15:45] [TRT-LLM] [W] Overriding paged_state to False
+[10/10/2026-16:15:45] [TRT-LLM] [I] Set paged_state to False.
+[10/10/2026-16:15:45] [TRT-LLM] [W] remove_input_padding is enabled, while opt_num_tokens is not set, setting to max_batch_size*max_beam_width. 
+
+[10/10/2026-16:15:46] [TRT] [I] [MemUsageChange] Init CUDA: CPU +17, GPU +0, now: CPU 1628, GPU 104 (MiB)
+[10/10/2026-16:15:48] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +956, GPU +190, now: CPU 2740, GPU 294 (MiB)
+[10/10/2026-16:15:48] [TRT-LLM] [I] Set nccl_plugin to None.
+[10/10/2026-16:15:49] [TRT-LLM] [I] Total time of constructing network from module object 3.3834638595581055 seconds
+[10/10/2026-16:15:49] [TRT-LLM] [I] Total optimization profiles added: 1
+[10/10/2026-16:15:49] [TRT-LLM] [I] Total time to initialize the weights in network Unnamed Network 0: 00:00:00
+[10/10/2026-16:15:49] [TRT-LLM] [I] Build TensorRT engine Unnamed Network 0
+[10/10/2026-16:15:49] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-16:15:49] [TRT] [W] Unused Input: position_ids
+[10/10/2026-16:15:49] [TRT] [W] [RemoveDeadLayers] Input Tensor position_ids is unused or used only at compile-time, but is not being removed.
+[10/10/2026-16:15:49] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.
+[10/10/2026-16:15:49] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[10/10/2026-16:15:49] [TRT] [I] Compiler backend is used during engine build.
+[10/10/2026-16:15:52] [TRT] [I] [GraphReduction] The approximate region cut reduction algorithm is called.
+[10/10/2026-16:15:52] [TRT] [I] Detected 16 inputs and 1 output network tensors.
+[10/10/2026-16:15:55] [TRT] [I] Total Host Persistent Memory: 81888 bytes
+[10/10/2026-16:15:55] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[10/10/2026-16:15:55] [TRT] [I] Max Scratch Memory: 2550204800 bytes
+[10/10/2026-16:15:55] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 465 steps to complete.
+[10/10/2026-16:15:55] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 33.5865ms to assign 19 blocks to 465 nodes requiring 2797675520 bytes.
+[10/10/2026-16:15:55] [TRT] [I] Total Activation Memory: 2797673984 bytes
+[10/10/2026-16:15:55] [TRT] [I] Total Weights Memory: 3570953856 bytes
+[10/10/2026-16:15:55] [TRT] [I] Compiler backend is used during engine execution.
+[10/10/2026-16:15:55] [TRT] [I] Engine generation completed in 6.43373 seconds.
+[10/10/2026-16:15:55] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 16 MiB, GPU 3406 MiB
+[10/10/2026-16:15:58] [TRT] [I] [MemUsageStats] Peak memory usage during Engine building and serialization: CPU: 10983 MiB
+[10/10/2026-16:15:59] [TRT-LLM] [I] Total time of building Unnamed Network 0: 00:00:09
+[10/10/2026-16:15:59] [TRT] [I] Serialized 27 bytes of code generator cache.
+[10/10/2026-16:15:59] [TRT] [I] Serialized 152894 bytes of compilation cache.
+[10/10/2026-16:15:59] [TRT] [I] Serialized 12 timing cache entries
+[10/10/2026-16:15:59] [TRT-LLM] [I] Timing cache serialized to model.cache
+[10/10/2026-16:15:59] [TRT-LLM] [I] Build phase peak memory: 10986.39 MB, children: 9.48 MB
+[10/10/2026-16:15:59] [TRT-LLM] [I] Serializing engine to /tmp/trtllm/engine-fp16-gsm8k/rank0.engine...
+[10/10/2026-16:16:04] [TRT-LLM] [I] Engine serialized. Total time: 00:00:04
+[10/10/2026-16:16:04] [TRT-LLM] [I] Total time of building all engines: 00:00:18
+built gsm8k engine in 32s
+
+0it [00:00, ?it/s]
+4it [00:00, 13.32it/s]
+18it [00:00, 53.41it/s]
+33it [00:00, 81.78it/s]
+46it [00:00, 94.59it/s]
+59it [00:00, 99.85it/s]
+73it [00:00, 108.66it/s]
+85it [00:00, 111.58it/s]
+98it [00:01, 114.32it/s]
+113it [00:01, 122.07it/s]
+126it [00:01, 121.75it/s]
+139it [00:01, 116.98it/s]
+154it [00:01, 122.79it/s]
+169it [00:01, 126.34it/s]
+182it [00:01, 123.86it/s]
+195it [00:01, 117.43it/s]
+210it [00:01, 122.69it/s]
+225it [00:02, 127.31it/s]
+230it [00:02, 95.26it/s] 

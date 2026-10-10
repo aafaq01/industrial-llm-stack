@@ -1,0 +1,809 @@
+Started from command line by admin
+Checking out git file:///repo into /var/jenkins_home/workspace/industrial-llm-platform@script/0529a6648df4ecf368f551600233c6a0b7a3e57474ca58f75eda7369752b938f to read ci/Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository file:///repo
+ > git init /var/jenkins_home/workspace/industrial-llm-platform@script/0529a6648df4ecf368f551600233c6a0b7a3e57474ca58f75eda7369752b938f # timeout=10
+Fetching upstream changes from file:///repo
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- file:///repo +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url file:///repo # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision dc6c21e68268b59e135165a84eb834bf6d61d7e9 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f dc6c21e68268b59e135165a84eb834bf6d61d7e9 # timeout=10
+Commit message: "Phase 2: CPU rerun with 3 cold and 3 warm repeats per concurrency"
+First time build. Skipping changelog.
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/industrial-llm-platform
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository file:///repo
+ > git init /var/jenkins_home/workspace/industrial-llm-platform # timeout=10
+Fetching upstream changes from file:///repo
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- file:///repo +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url file:///repo # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision dc6c21e68268b59e135165a84eb834bf6d61d7e9 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f dc6c21e68268b59e135165a84eb834bf6d61d7e9 # timeout=10
+Commit message: "Phase 2: CPU rerun with 3 cold and 3 warm repeats per concurrency"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 2 hr 0 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (lint)
+[Pipeline] sh
++ bash ci/run.sh lint
+Downloading virtualenv (5.2MiB)
+ Downloaded virtualenv
+Installed 11 packages in 41ms
+[INFO] Initializing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Initializing environment for https://github.com/astral-sh/ruff-pre-commit.
+[INFO] Initializing environment for https://github.com/adrienverge/yamllint.
+[INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/adrienverge/yamllint.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+fix end of files.........................................................Passed
+trim trailing whitespace.................................................Passed
+check yaml...............................................................Passed
+check json...............................................................Passed
+check for added large files..............................................Passed
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+yamllint.................................................................Passed
+gitleaks v8.30.1........................................................Skipped
+hadolint v2.15.1........................................................Skipped
+
+    ○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+[90m12:40PM[0m [32mINF[0m [1mUnknown SCM platform. Use --platform to include links in findings.[0m [36mhost=[0m
+[90m12:41PM[0m [32mINF[0m [1m21 commits scanned.[0m
+[90m12:41PM[0m [32mINF[0m [1mscanned ~17497389 bytes (17.50 MB) in 9.86s[0m
+[90m12:41PM[0m [32mINF[0m [1mno leaks found[0m
+hadolint ci/jenkins/Dockerfile
+hadolint infra/git-server/Dockerfile
+hadolint rag/Dockerfile
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (charts)
+[Pipeline] sh
++ bash ci/run.sh charts
+== deploy/helm/llamacpp (kind)
+==> Linting deploy/helm/llamacpp
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/llamacpp (openshift)
+==> Linting deploy/helm/llamacpp
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/platform-deps (kind)
+==> Linting deploy/helm/platform-deps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/platform-deps (openshift)
+==> Linting deploy/helm/platform-deps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 10 resources found parsing stdin - Valid: 10, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/rag-api (kind)
+==> Linting deploy/helm/rag-api
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/helm/rag-api (openshift)
+==> Linting deploy/helm/rag-api
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 5 resources found parsing stdin - Valid: 5, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (kind)
+==> Linting deploy/argocd/apps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (openshift)
+==> Linting deploy/argocd/apps
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/apps (kind, ragImage digest set as kind-up.sh does)
+rag-api image parameters rendered: 1
+Summary: 3 resources found parsing stdin - Valid: 3, Invalid: 0, Errors: 0, Skipped: 0
+== deploy/argocd/root.yaml
+Summary: 1 resource found in 1 file - Valid: 1, Invalid: 0, Errors: 0, Skipped: 0
+all charts pass helm lint and kubeconform
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (test)
+[Pipeline] sh
++ bash ci/run.sh test
+Downloading fonttools (5.1MiB)
+Downloading pygments (1.2MiB)
+Downloading pillow (6.6MiB)
+Downloading kiwisolver (1.4MiB)
+Downloading aiohttp (1.8MiB)
+Downloading hf-xet (4.0MiB)
+Downloading lxml (5.0MiB)
+Downloading tiktoken (1.1MiB)
+Downloading lm-eval (8.7MiB)
+Downloading numpy (15.9MiB)
+Downloading pandas (10.3MiB)
+Downloading scipy (33.7MiB)
+Downloading pyarrow (47.8MiB)
+Downloading scikit-learn (8.7MiB)
+Downloading matplotlib (9.4MiB)
+Downloading nltk (1.7MiB)
+   Building sqlitedict==2.1.0
+   Building rouge-score==0.1.2
+   Building word2number==1.1
+      Built rouge-score==0.1.2
+      Built word2number==1.1
+      Built sqlitedict==2.1.0
+ Downloaded tiktoken
+ Downloaded pygments
+ Downloaded kiwisolver
+ Downloaded nltk
+ Downloaded aiohttp
+ Downloaded hf-xet
+ Downloaded lxml
+ Downloaded fonttools
+ Downloaded pillow
+ Downloaded lm-eval
+ Downloaded scikit-learn
+ Downloaded matplotlib
+ Downloaded pandas
+ Downloaded numpy
+ Downloaded scipy
+ Downloaded pyarrow
+Installed 84 packages in 1.11s
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /var/jenkins_home/workspace/industrial-llm-platform
+plugins: anyio-4.15.1
+collected 9 items
+
+benchmark/tests/test_metrics.py .........                                [100%]
+
+============================== 9 passed in 0.09s ===============================
+127.0.0.1:5432 - accepting connections
+Using CPython 3.12.13 interpreter at: /usr/local/bin/python3.12
+Creating virtual environment at: .venv
+Downloading sympy (6.0MiB)
+Downloading sqlalchemy (4.5MiB)
+Downloading transformers (11.7MiB)
+Downloading psycopg-binary (5.0MiB)
+Downloading tokenizers (3.2MiB)
+Downloading openai (2.1MiB)
+Downloading pydantic-core (2.0MiB)
+Downloading networkx (2.0MiB)
+Downloading grpcio (6.8MiB)
+Downloading torch (187.2MiB)
+ Downloaded torch
+ Downloaded pydantic-core
+ Downloaded openai
+ Downloaded networkx
+ Downloaded tokenizers
+ Downloaded sqlalchemy
+ Downloaded psycopg-binary
+ Downloaded sympy
+ Downloaded grpcio
+ Downloaded transformers
+Installed 104 packages in 1.13s
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /var/jenkins_home/workspace/industrial-llm-platform/rag
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1
+collected 7 items
+
+tests/test_api.py .....                                                  [ 71%]
+tests/test_chunking.py ..                                                [100%]
+
+============================== 7 passed in 30.01s ==============================
+Checking observability/prometheus/prometheus.yml
+  SUCCESS: 2 rule files found
+ SUCCESS: observability/prometheus/prometheus.yml is valid prometheus config file syntax
+
+Checking observability/prometheus/rules/alerts.yml
+  SUCCESS: 5 rules found
+
+Checking observability/prometheus/rules/recording.yml
+  SUCCESS: 18 rules found
+
+  SUCCESS
+
+  SUCCESS
+
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (build)
+[Pipeline] sh
++ bash ci/run.sh build
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.74kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12.15-slim-trixie
+#2 DONE 0.4s
+
+#3 [internal] load metadata for ghcr.io/astral-sh/uv:0.11.32
+#3 DONE 1.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 86B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 233.26kB 0.0s done
+#5 DONE 0.1s
+
+#6 [build 1/5] FROM docker.io/library/python:3.12.15-slim-trixie@sha256:05cda9777409a9c3ffddd94a4c476b79f0769a0b4857f0c7ed9226b6800b0d6f
+#6 resolve docker.io/library/python:3.12.15-slim-trixie@sha256:05cda9777409a9c3ffddd94a4c476b79f0769a0b4857f0c7ed9226b6800b0d6f 0.0s done
+#6 DONE 0.1s
+
+#7 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.11.32@sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c
+#7 resolve ghcr.io/astral-sh/uv:0.11.32@sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c 0.0s done
+#7 DONE 0.1s
+
+#8 [build 2/5] COPY --from=uv /uv /usr/local/bin/uv
+#8 CACHED
+
+#9 [build 3/5] WORKDIR /app
+#9 CACHED
+
+#10 [build 4/5] COPY pyproject.toml uv.lock ./
+#10 DONE 0.1s
+
+#11 [build 5/5] RUN uv sync --frozen --no-default-groups --no-cache     && .venv/bin/python -c "from huggingface_hub import snapshot_download as d; d('BAAI/bge-small-en-v1.5', revision='5c38ec7c405ec4b44b94cc5a9bb96e735b38267a', local_dir='/opt/models/bge-small-en-v1.5', allow_patterns=['*.json', '*.txt', 'model.safetensors', '1_Pooling/*']); d('cross-encoder/ms-marco-MiniLM-L6-v2', revision='233902d25c440f23af6f7d6e94d2946bac0bee0a', local_dir='/opt/models/ms-marco-MiniLM-L6-v2', allow_patterns=['*.json', '*.txt', 'model.safetensors'])"
+#11 0.744 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#11 0.744 Creating virtual environment at: .venv
+#11 1.142 Downloading torch (187.2MiB)
+#11 1.640 Downloading hf-xet (4.0MiB)
+#11 1.648 Downloading openai (2.1MiB)
+#11 1.650 Downloading transformers (11.7MiB)
+#11 1.655 Downloading pygments (1.2MiB)
+#11 1.657 Downloading grpcio (6.8MiB)
+#11 1.681 Downloading scikit-learn (8.7MiB)
+#11 1.689 Downloading scipy (33.7MiB)
+#11 1.690 Downloading aiohttp (1.8MiB)
+#11 1.691 Downloading tokenizers (3.2MiB)
+#11 1.693 Downloading psycopg-binary (5.0MiB)
+#11 1.694 Downloading pydantic-core (2.0MiB)
+#11 1.701 Downloading sympy (6.0MiB)
+#11 1.701 Downloading sqlalchemy (4.5MiB)
+#11 1.704 Downloading networkx (2.0MiB)
+#11 1.705 Downloading numpy (15.9MiB)
+#11 131.2  Downloaded torch
+#11 144.3 Downloading pydantic-core (2.0MiB)
+#11 146.7 Downloading openai (2.1MiB)
+#11 146.9 Downloading grpcio (6.8MiB)
+#11 151.7  Downloaded pydantic-core
+#11 153.9  Downloaded openai
+#11 161.1  Downloaded grpcio
+#11 167.2  Downloaded pygments
+#11 171.1  Downloaded aiohttp
+#11 173.1  Downloaded networkx
+#11 184.1  Downloaded tokenizers
+#11 188.2  Downloaded hf-xet
+#11 190.3  Downloaded sqlalchemy
+#11 192.0  Downloaded psycopg-binary
+#11 196.1  Downloaded sympy
+#11 201.8  Downloaded scikit-learn
+#11 216.1  Downloaded transformers
+#11 222.9  Downloaded numpy
+#11 235.9  Downloaded scipy
+#11 235.9 Prepared 101 packages in 3m 55s
+#11 257.4 Installed 101 packages in 21.46s
+#11 268.6 Bytecode compiled 15405 files in 11.26s
+#11 268.6  + aiohappyeyeballs==2.7.1
+#11 268.6  + aiohttp==3.14.4
+#11 268.6  + aiosignal==1.4.0
+#11 268.6  + alembic==1.20.0
+#11 268.6  + annotated-doc==0.0.5
+#11 268.6  + annotated-types==0.8.0
+#11 268.6  + anyio==4.15.1
+#11 268.6  + attrs==26.1.0
+#11 268.6  + backoff==2.2.1
+#11 268.6  + certifi==2026.7.22
+#11 268.6  + charset-normalizer==3.5.2
+#11 268.6  + click==8.3.3
+#11 268.6  + cloudpickle==3.1.2
+#11 268.6  + distro==1.9.0
+#11 268.6  + docstring-parser==0.18.0
+#11 268.6  + elastic-transport==8.19.0
+#11 268.6  + elasticsearch==8.19.3
+#11 268.6  + elasticsearch-haystack==6.4.1
+#11 268.6  + fastapi==0.142.2
+#11 268.6  + filelock==4.0.12
+#11 268.6  + filetype==1.2.0
+#11 268.6  + frozenlist==1.8.0
+#11 268.6  + fsspec==2026.9.0
+#11 268.6  + googleapis-common-protos==1.75.5
+#11 268.7  + grpcio==1.84.0
+#11 268.7  + h11==0.16.0
+#11 268.7  + haystack-ai==2.31.0
+#11 268.7  + haystack-experimental==0.19.0.post1
+#11 268.7  + hf-xet==1.7.0
+#11 268.7  + httpcore==1.0.9
+#11 268.7  + httpcore2==2.13.1
+#11 268.7  + httpx==0.28.1
+#11 268.7  + httpx2==2.13.1
+#11 268.7  + huggingface-hub==1.16.1
+#11 268.7  + idna==3.20
+#11 268.7  + jinja2==3.1.6
+#11 268.7  + jiter==0.17.0
+#11 268.7  + joblib==1.6.0
+#11 268.7  + jsonschema==4.26.0
+#11 268.7  + jsonschema-specifications==2025.9.1
+#11 268.7  + lazy-imports==1.2.0
+#11 268.7  + mako==1.4.3
+#11 268.7  + markdown-it-py==4.2.0
+#11 268.7  + markupsafe==3.0.4
+#11 268.7  + mdurl==0.1.2
+#11 268.7  + more-itertools==11.1.0
+#11 268.7  + mpmath==1.3.0
+#11 268.7  + multidict==6.9.1
+#11 268.7  + narwhals==2.26.0
+#11 268.7  + networkx==3.7
+#11 268.7  + numpy==2.5.3
+#11 268.7  + openai==3.26.0
+#11 268.7  + opentelemetry-api==1.45.1
+#11 268.7  + opentelemetry-exporter-otlp-common==0.66b1
+#11 268.7  + opentelemetry-exporter-otlp-proto-common==1.45.1
+#11 268.7  + opentelemetry-exporter-otlp-proto-grpc==1.45.1
+#11 268.7  + opentelemetry-proto==1.45.1
+#11 268.7  + opentelemetry-sdk==1.45.1
+#11 268.7  + opentelemetry-semantic-conventions==0.66b1
+#11 268.7  + packaging==26.3
+#11 268.7  + posthog==7.64.1
+#11 268.7  + prometheus-client==0.26.0
+#11 268.7  + propcache==0.5.4
+#11 268.7  + protobuf==7.36.2
+#11 268.7  + psycopg==3.3.6
+#11 268.7  + psycopg-binary==3.3.6
+#11 268.7  + pydantic==2.13.5
+#11 268.7  + pydantic-core==2.46.5
+#11 268.7  + pygments==2.21.0
+#11 268.7  + pypdf==6.19.0
+#11 268.7  + python-dateutil==2.9.0.post0
+#11 268.7  + pyyaml==6.0.3
+#11 268.7  + referencing==0.37.0
+#11 268.7  + regex==2026.9.29
+#11 268.7  + requests==2.34.2
+#11 268.7  + rich==14.3.4
+#11 268.7  + rpds-py==2026.9.1
+#11 268.7  + safetensors==0.8.0
+#11 268.7  + scikit-learn==1.9.1
+#11 268.7  + scipy==1.18.1
+#11 268.7  + sentence-transformers==5.6.1
+#11 268.7  + setuptools==84.0.0
+#11 268.7  + shellingham==1.5.4
+#11 268.7  + six==1.17.0
+#11 268.7  + sniffio==1.3.1
+#11 268.7  + sqlalchemy==2.1.3
+#11 268.7  + starlette==1.7.0
+#11 268.7  + sympy==1.14.0
+#11 268.7  + tenacity==9.2.1
+#11 268.7  + threadpoolctl==3.7.0
+#11 268.7  + tokenizers==0.23.2
+#11 268.7  + torch==2.14.1+cpu
+#11 268.7  + tqdm==4.70.1
+#11 268.7  + transformers==5.17.0
+#11 268.7  + truststore==0.10.4
+#11 268.7  + typer==0.27.3
+#11 268.7  + typing-extensions==4.16.0
+#11 268.7  + typing-inspection==0.4.4
+#11 268.7  + urllib3==2.8.0
+#11 268.7  + uvicorn==0.54.0
+#11 268.7  + yarl==1.25.1
+#11 271.7 Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+#11 272.4 Fetching 10 files:  80%|████████  | 8/10 [00:00<00:00, 11.21it/s]Fetching 10 files:  90%|█████████ | 9/10 [00:19<00:02,  2.22s/it]Fetching 10 files: 100%|██████████| 10/10 [01:37<00:00,  9.74s/it]Fetching 10 files: 100%|██████████| 10/10 [01:37<00:00,  9.74s/it]
+#11 369.5 Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files:  17%|█▋        | 1/6 [00:00<00:01,  2.61it/s]Fetching 6 files:  33%|███▎      | 2/6 [00:00<00:00,  4.07it/s]Fetching 6 files:  50%|█████     | 3/6 [00:00<00:00,  5.05it/s]Fetching 6 files: 100%|██████████| 6/6 [01:38<00:00, 16.36s/it]Fetching 6 files: 100%|██████████| 6/6 [01:38<00:00, 16.36s/it]
+#11 DONE 468.2s
+
+#12 [stage-2 2/9] RUN useradd --uid 1001 --gid 0 --no-create-home --home-dir /tmp app     && mkdir -p /data/corpus && chown 1001:0 /data/corpus && chmod 2775 /data/corpus
+#12 CACHED
+
+#13 [stage-2 3/9] WORKDIR /app
+#13 CACHED
+
+#14 [stage-2 4/9] COPY --from=build /app/.venv /app/.venv
+#14 DONE 24.0s
+
+#15 [stage-2 5/9] COPY --from=build /opt/models /opt/models
+#15 DONE 2.5s
+
+#16 [stage-2 6/9] COPY alembic.ini ./
+#16 DONE 0.1s
+
+#17 [stage-2 7/9] COPY migrations ./migrations
+#17 DONE 0.1s
+
+#18 [stage-2 8/9] COPY data/sources.json ./data/sources.json
+#18 DONE 0.1s
+
+#19 [stage-2 9/9] COPY app ./app
+#19 DONE 0.1s
+
+#20 exporting to image
+#20 exporting layers
+#20 exporting layers 60.6s done
+#20 exporting manifest sha256:156f889fc3dfda4502b63966f05ee11d479da574e6fdc0041f48c877c1c3999e 0.0s done
+#20 exporting config sha256:c44cd59127f26c765fd4ce86c00440eedf69c34f3481b8f8805973fc797966f4 0.0s done
+#20 naming to localhost:5001/industrial-llm-platform/rag:ci-1 done
+#20 unpacking to localhost:5001/industrial-llm-platform/rag:ci-1
+#20 unpacking to localhost:5001/industrial-llm-platform/rag:ci-1 28.6s done
+#20 DONE 89.3s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (scan)
+[Pipeline] sh
++ bash ci/run.sh scan
+2026-10-09T12:59:03Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-10-09T12:59:49Z	INFO	[python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+2026-10-09T12:59:49Z	INFO	Detected OS	family="debian" version="13.7"
+2026-10-09T12:59:49Z	INFO	[debian] Detecting vulnerabilities...	os_version="13" pkg_num=87
+2026-10-09T12:59:49Z	INFO	Number of language-specific files	num=1
+2026-10-09T12:59:49Z	INFO	[python-pkg] Detecting vulnerabilities...
+2026-10-09T12:59:49Z	WARN	Using severities from other vendors for some vulnerabilities. Read https://trivy.dev/docs/v0.75/guide/scanner/vulnerability#severity-selection for details.
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┐
+│                                      Target                                      │    Type    │ Vulnerabilities │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ localhost:5001/industrial-llm-platform/rag:ci-1 (debian 13.7)                    │   debian   │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/aiohappyeyeballs-2.7.1.dist-info/METADATA │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/aiohttp-3.14.4.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/aiosignal-1.4.0.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/alembic-1.20.0.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/annotated_doc-0.0.5.dist-info/METADATA    │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/annotated_types-0.8.0.dist-info/METADATA  │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/anyio-4.15.1.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/attrs-26.1.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/backoff-2.2.1.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/certifi-2026.7.22.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/charset_normalizer-3.5.2.dist-info/METAD- │ python-pkg │        0        │
+│ ATA                                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/click-8.3.3.dist-info/METADATA            │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/cloudpickle-3.1.2.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/distro-1.9.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/docstring_parser-0.18.0.dist-info/METADA- │ python-pkg │        0        │
+│ TA                                                                               │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/elastic_transport-8.19.0.dist-info/METAD- │ python-pkg │        0        │
+│ ATA                                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/elasticsearch-8.19.3.dist-info/METADATA   │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/elasticsearch_haystack-6.4.1.dist-info/M- │ python-pkg │        0        │
+│ ETADATA                                                                          │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/fastapi-0.142.2.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/filelock-4.0.12.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/filetype-1.2.0.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/frozenlist-1.8.0.dist-info/METADATA       │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/fsspec-2026.9.0.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/googleapis_common_protos-1.75.5.dist-inf- │ python-pkg │        0        │
+│ o/METADATA                                                                       │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/grpcio-1.84.0.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/h11-0.16.0.dist-info/METADATA             │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/haystack_ai-2.31.0.dist-info/METADATA     │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/haystack_experimental-0.19.0.post1.dist-- │ python-pkg │        0        │
+│ info/METADATA                                                                    │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/hf_xet-1.7.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/httpcore-1.0.9.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/httpcore2-2.13.1.dist-info/METADATA       │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/httpx-0.28.1.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/httpx2-2.13.1.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/huggingface_hub-1.16.1.dist-info/METADATA │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA              │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/jinja2-3.1.6.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/jiter-0.17.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/joblib-1.6.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/jsonschema-4.26.0.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/jsonschema_specifications-2025.9.1.dist-- │ python-pkg │        0        │
+│ info/METADATA                                                                    │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/lazy_imports-1.2.0.dist-info/METADATA     │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/mako-1.4.3.dist-info/METADATA             │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/markdown_it_py-4.2.0.dist-info/METADATA   │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/markupsafe-3.0.4.dist-info/METADATA       │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/mdurl-0.1.2.dist-info/METADATA            │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/more_itertools-11.1.0.dist-info/METADATA  │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/mpmath-1.3.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/multidict-6.9.1.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/narwhals-2.26.0.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/networkx-3.7.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/numpy-2.5.3.dist-info/METADATA            │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/openai-3.26.0.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_api-1.45.1.dist-info/METAD- │ python-pkg │        0        │
+│ ATA                                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_exporter_otlp_common-0.66b- │ python-pkg │        0        │
+│ 1.dist-info/METADATA                                                             │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_exporter_otlp_proto_common- │ python-pkg │        0        │
+│ -1.45.1.dist-info/METADATA                                                       │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_exporter_otlp_proto_grpc-1- │ python-pkg │        0        │
+│ .45.1.dist-info/METADATA                                                         │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_proto-1.45.1.dist-info/MET- │ python-pkg │        0        │
+│ ADATA                                                                            │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_sdk-1.45.1.dist-info/METAD- │ python-pkg │        0        │
+│ ATA                                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/opentelemetry_semantic_conventions-0.66b- │ python-pkg │        0        │
+│ 1.dist-info/METADATA                                                             │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/packaging-26.3.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/posthog-7.64.1.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METAD- │ python-pkg │        0        │
+│ ATA                                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/propcache-0.5.4.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/protobuf-7.36.2.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/psycopg-3.3.6.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/psycopg_binary-3.3.6.dist-info/METADATA   │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/pydantic-2.13.5.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/pydantic_core-2.46.5.dist-info/METADATA   │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/pygments-2.21.0.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/pypdf-6.19.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/python_dateutil-2.9.0.post0.dist-info/ME- │ python-pkg │        0        │
+│ TADATA                                                                           │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/pyyaml-6.0.3.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/referencing-0.37.0.dist-info/METADATA     │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/regex-2026.9.29.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/requests-2.34.2.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/rich-14.3.4.dist-info/METADATA            │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/rpds_py-2026.9.1.dist-info/METADATA       │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/safetensors-0.8.0.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/scikit_learn-1.9.1.dist-info/METADATA     │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/scipy-1.18.1.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/sentence_transformers-5.6.1.dist-info/ME- │ python-pkg │        0        │
+│ TADATA                                                                           │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools-84.0.0.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/autocommand-2.2.2.dis- │ python-pkg │        0        │
+│ t-info/METADATA                                                                  │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/backports.tarfile-1.2- │ python-pkg │        0        │
+│ .0.dist-info/METADATA                                                            │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/importlib_metadata-8.- │ python-pkg │        0        │
+│ 7.1.dist-info/METADATA                                                           │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/jaraco.text-4.0.0.dis- │ python-pkg │        0        │
+│ t-info/METADATA                                                                  │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/jaraco_context-6.1.0.- │ python-pkg │        0        │
+│ dist-info/METADATA                                                               │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/jaraco_functools-4.4.- │ python-pkg │        0        │
+│ 0.dist-info/METADATA                                                             │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/more_itertools-10.8.0- │ python-pkg │        0        │
+│ .dist-info/METADATA                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/packaging-26.0.dist-i- │ python-pkg │        0        │
+│ nfo/METADATA                                                                     │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/platformdirs-4.4.0.di- │ python-pkg │        0        │
+│ st-info/METADATA                                                                 │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/tomli-2.4.0.dist-info- │ python-pkg │        0        │
+│ /METADATA                                                                        │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/wheel-0.46.3.dist-inf- │ python-pkg │        0        │
+│ o/METADATA                                                                       │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/setuptools/_vendor/zipp-3.23.0.dist-info- │ python-pkg │        0        │
+│ /METADATA                                                                        │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/shellingham-1.5.4.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/six-1.17.0.dist-info/METADATA             │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/sniffio-1.3.1.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/sqlalchemy-2.1.3.dist-info/METADATA       │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/starlette-1.7.0.dist-info/METADATA        │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/sympy-1.14.0.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/tenacity-9.2.1.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/threadpoolctl-3.7.0.dist-info/METADATA    │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/tokenizers-0.23.2.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/torch-2.14.1+cpu.dist-info/METADATA       │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/tqdm-4.70.1.dist-info/METADATA            │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/transformers-5.17.0.dist-info/METADATA    │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/truststore-0.10.4.dist-info/METADATA      │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/typer-0.27.3.dist-info/METADATA           │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METAD- │ python-pkg │        0        │
+│ ATA                                                                              │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/typing_inspection-0.4.4.dist-info/METADA- │ python-pkg │        0        │
+│ TA                                                                               │            │                 │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/urllib3-2.8.0.dist-info/METADATA          │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/uvicorn-0.54.0.dist-info/METADATA         │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ app/.venv/lib/python3.12/site-packages/yarl-1.25.1.dist-info/METADATA            │ python-pkg │        0        │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+│ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │
+└──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (push)
+[Pipeline] sh
++ bash ci/run.sh push
+localhost:5001/industrial-llm-platform/rag:ci-1
+localhost:5001/industrial-llm-platform/rag@sha256:156f889fc3dfda4502b63966f05ee11d479da574e6fdc0041f48c877c1c3999e
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (bump chart)
+[Pipeline] sh
++ bash ci/run.sh bump
+3f8c68a12a6077fd77a5bdea675dca809960eca3 ci: rag-api chart 0.1.0+ci.1, image sha256:156f889fc3dfda4502b63966f05ee11d479da574e6fdc0041f48c877c1c3999e
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (argocd sync)
+[Pipeline] sh
++ bash ci/run.sh deploy
+[12:59:57Z] git://kind-git/industrial-llm-platform main = 3f8c68a12a6077fd77a5bdea675dca809960eca3
+[12:59:59Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy at 3f8c68a12a6077fd77a5bdea675dca809960eca3
+[12:59:59Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+[13:00:15Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Healthy root=Synced/Healthy 
+[13:01:02Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing 
+[13:20:26Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
++ bash ci/run.sh clean
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

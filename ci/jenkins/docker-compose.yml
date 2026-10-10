@@ -1,0 +1,37 @@
+# Local Jenkins for ci/Jenkinsfile. Start: docker compose -f ci/jenkins/docker-compose.yml up -d --build --wait
+# UI: http://127.0.0.1:8088 (user admin, password JENKINS_ADMIN_PASSWORD from ci/jenkins/.env). See README.md here.
+name: ci-jenkins
+services:
+  jenkins:
+    build: .
+    image: industrial-llm-platform/jenkins:2.580.1
+    container_name: jenkins
+    environment:
+      # Setup wizard off (JCasC configures everything); the git plugin refuses file:// checkouts unless allowed.
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false -Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true
+      CASC_JENKINS_CONFIG: /casc/casc.yaml
+    # The admin password reaches JCasC as a file (/run/secrets/jenkins_admin_password), not as an environment
+    # variable, so builds do not inherit it in their environment.
+    secrets: [jenkins_admin_password]
+    # The Docker Desktop socket is root:root 0660 inside containers. Socket access is root on the Docker VM.
+    group_add: ["0"]
+    ports:
+      - 127.0.0.1:8088:8080
+    volumes:
+      - jenkins-home:/var/jenkins_home  # name is fixed: ci/Jenkinsfile mounts it into the tool containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../..:/repo:ro  # the job clones file:///repo (committed main only)
+      - ../../.tools:/repo/.tools  # .tools/git is what kind-git serves; the deploy stage pushes there
+      - ./casc.yaml:/casc/casc.yaml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:8080/login"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+secrets:
+  jenkins_admin_password:
+    environment: JENKINS_ADMIN_PASSWORD  # from ci/jenkins/.env via --env-file
+volumes:
+  jenkins-home:
+    name: jenkins-home

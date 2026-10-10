@@ -1,0 +1,125 @@
+v3 item 9: Loki logs (Alloy shipper) and self-hosted Langfuse (profile langfuse)
+Run 2026-10-09, Windows 11, Docker Desktop (engine 29.6.2), compose project industrial-llm-platform.
+Images: grafana/loki:3.7.8, grafana/alloy:v1.20.1, langfuse/langfuse:4.56.0, langfuse/langfuse-worker:4.56.0,
+clickhouse/clickhouse-server:25.12.11.4, redis:7.4.11-alpine, postgres:18.6-alpine3.24,
+cgr.dev/chainguard/minio@sha256:6476f81b9739912fa9f50ceae2bb049a30336527cccd24beccfbeb4145f8f696 (minio RELEASE.2026-09-22T19-25-18Z).
+
+== 1. Default profile: docker compose up -d --wait (after adding loki + alloy)
+ Container industrial-llm-platform-alloy-1 Healthy
+ Container industrial-llm-platform-rag-api-1 Healthy
+alloy Up 25 seconds (healthy)
+elasticsearch Up 6 hours (healthy)
+grafana Up 6 hours (healthy)
+llamacpp Up 6 hours (healthy)
+loki Up 26 seconds
+otel-collector Up 26 seconds
+postgres Up 6 hours (healthy)
+prometheus Up 6 hours (healthy)
+rag-api Up 22 seconds (healthy)
+tempo Up 6 hours
+
+Loki build and effective config (GET 127.0.0.1:3100/loki/api/v1/status/buildinfo, /config):
+{"version":"3.7.8","revision":"09e6ce2f","branch":"release-3.7.x",...}
+  retention_enabled: true
+  retention_period: 1w
+    object_store: filesystem
+
+== 2. Logs per compose service (GET /loki/api/v1/label/service/values, langfuse profile running)
+{"status":"success","data":["alloy","elasticsearch","grafana","langfuse-clickhouse","langfuse-minio","langfuse-postgres","langfuse-redis","langfuse-web","langfuse-worker","llamacpp","loki","otel-collector","postgres","prometheus","rag-api","tempo"]}
+One-shot containers (model-init, rag-migrate) are not in the list: they live for about a second, shorter than Alloy's
+Docker discovery refresh, so they are never tailed (written=0 in its log). Correction after review: they are also
+missing when they start while Alloy is already running (reviewer, 2026-10-09).
+
+Through Grafana (POST /api/ds/query, datasource uid loki, sum by (service) (count_over_time({service=~".+"}[15m]))):
+{'service': 'alloy'} [42]
+{'service': 'grafana'} [1068]
+{'service': 'llamacpp'} [7]
+{'service': 'loki'} [8]
+{'service': 'otel-collector'} [7]
+{'service': 'rag-api'} [40]
+{'service': 'tempo'} [60]
+(elasticsearch, postgres, prometheus logged nothing in that 15 min window; their earlier lines are in Loki, see the label list.)
+
+A rag chat request (POST /chat, trace_id 1957991428582685264bac422701dcec) found in Loki
+({service="rag-api"} |= "POST /chat"):
+{'container': 'industrial-llm-platform-rag-api-1', 'detected_level': 'info', 'service': 'rag-api', 'service_name': 'rag-api'} INFO:     192.168.0.1:40448 - "POST /chat HTTP/1.1" 200 OK
+(Superseded by the follow-up at the end of this file.) rag-api logged no trace id at this point, so the Loki -> Tempo derived field (regex trace_id=([0-9a-f]{32})) has nothing to
+match yet. Provisioned and loaded in Grafana:
+{'derivedFields': [{'datasourceUid': 'tempo', 'matcherRegex': 'trace_id=([0-9a-f]{32})', 'name': 'TraceID', 'url': '${__value.raw}'}]}
+
+== 3. Langfuse profile: docker compose --profile langfuse up -d --wait
+First attempt: langfuse-worker unhealthy after 5m37s. Cause: web and worker bind to $HOSTNAME (the container id
+-> container IP), so the 127.0.0.1 healthcheck failed (wget exit 4). Fix: HOSTNAME=0.0.0.0. Second attempt:
+ Container industrial-llm-platform-langfuse-clickhouse-1 Healthy
+ Container industrial-llm-platform-langfuse-worker-1 Healthy
+ Container industrial-llm-platform-langfuse-web-1 Healthy
+real	0m38.515s
+GET http://127.0.0.1:3001/api/public/health -> {"status":"OK","version":"4.56.0"}
+GET http://127.0.0.1:3001/ -> 200
+GET /api/public/projects (init keys) -> {"data":[{"id":"rag","name":"rag","organization":{"id":"industrial-llm-platform","name":"industrial-llm-platform"},"metadata":{}}]}
+
+Collector switched on with LANGFUSE_OTEL_ENDPOINT=http://langfuse-web:3000/api/public/otel (shell env only):
+      - --config=/etc/otelcol-contrib/config.yaml
+      - --config=/etc/otelcol-contrib/config-langfuse.yaml
+
+Chat 1 (trace 149c59c242f9a8ec2e8b4b9d3823a75a), first request after otel-collector and rag-api were both recreated
+(not reproduced by the reviewer when only rag-api restarted: 18 spans, no export error). The Tempo count for this
+trace was not captured here; the listing below is from Langfuse. rag-api logged
+"Failed to export traces to otel-collector:4317, error code: StatusCode.DEADLINE_EXCEEDED" once, so one span
+batch was lost on the rag-api side before the collector. Tempo and Langfuse both hold the same 5 spans:
+observations: 5
+149c59c242f9a8ec2e8b4b9d3823a75a SPAN POST /chat latency_s=20.949 root
+149c59c242f9a8ec2e8b4b9d3823a75a SPAN rag.chat latency_s=20.945
+149c59c242f9a8ec2e8b4b9d3823a75a SPAN haystack.pipeline.run latency_s=19.742
+149c59c242f9a8ec2e8b4b9d3823a75a SPAN rag.generate latency_s=19.741
+149c59c242f9a8ec2e8b4b9d3823a75a SPAN rag.db_write latency_s=0.015
+
+Chat 2 (trace 8f1d3a6ebfe286b8c224032a5e95c6f5), no export errors. Langfuse GET /api/public/v2/observations?traceId=...
+vs Tempo GET /api/traces/...:
+langfuse 16 ['POST /chat', 'fastapi.dependencies', 'fastapi.endpoint', 'haystack.pipeline.run', 'haystack.pipeline.run', 'rag.bm25_retrieve', 'rag.chat', 'rag.db_write', 'rag.dense_retrieve', 'rag.embed_query', 'rag.generate', 'rag.join', 'rag.prompt_build', 'rag.rerank', 'search', 'search']
+tempo 16 ['POST /chat', 'fastapi.dependencies', 'fastapi.endpoint', 'haystack.pipeline.run', 'haystack.pipeline.run', 'rag.bm25_retrieve', 'rag.chat', 'rag.db_write', 'rag.dense_retrieve', 'rag.embed_query', 'rag.generate', 'rag.join', 'rag.prompt_build', 'rag.rerank', 'search', 'search']
+Note: Langfuse v4 runs in events_only mode. /api/public/traces and /api/public/observations answer
+"This endpoint is not available on deployments running in Langfuse v4 events_only mode"; use /api/public/v2/observations.
+
+== 4. RAM (docker stats --no-stream, idle after the two chats, 3 samples 20 s apart)
+2026-10-09T18:31:10Z
+industrial-llm-platform-langfuse-web-1 907.2MiB / 31.02GiB 1.67%
+industrial-llm-platform-langfuse-worker-1 854.4MiB / 31.02GiB 1.43%
+industrial-llm-platform-langfuse-redis-1 5.98MiB / 31.02GiB 0.82%
+industrial-llm-platform-langfuse-postgres-1 98.6MiB / 31.02GiB 0.11%
+industrial-llm-platform-langfuse-minio-1 153.3MiB / 31.02GiB 0.10%
+industrial-llm-platform-langfuse-clickhouse-1 546.1MiB / 31.02GiB 13.97%
+industrial-llm-platform-alloy-1 406.5MiB / 31.02GiB 0.44%
+industrial-llm-platform-loki-1 198.5MiB / 31.02GiB 1.24%
+2026-10-09T18:31:32Z
+industrial-llm-platform-langfuse-web-1 906.9MiB / 31.02GiB 1.20%
+industrial-llm-platform-langfuse-worker-1 854.8MiB / 31.02GiB 3.67%
+industrial-llm-platform-langfuse-redis-1 6.48MiB / 31.02GiB 3.81%
+industrial-llm-platform-langfuse-postgres-1 98.36MiB / 31.02GiB 0.01%
+industrial-llm-platform-langfuse-minio-1 153.9MiB / 31.02GiB 6.66%
+industrial-llm-platform-langfuse-clickhouse-1 521.2MiB / 31.02GiB 7.91%
+industrial-llm-platform-alloy-1 408.5MiB / 31.02GiB 1.83%
+industrial-llm-platform-loki-1 198.7MiB / 31.02GiB 1.27%
+2026-10-09T18:31:55Z
+industrial-llm-platform-langfuse-web-1 907MiB / 31.02GiB 1.18%
+industrial-llm-platform-langfuse-worker-1 854.6MiB / 31.02GiB 2.91%
+industrial-llm-platform-langfuse-redis-1 5.902MiB / 31.02GiB 1.09%
+industrial-llm-platform-langfuse-postgres-1 98.58MiB / 31.02GiB 0.00%
+industrial-llm-platform-langfuse-minio-1 153.3MiB / 31.02GiB 0.08%
+industrial-llm-platform-langfuse-clickhouse-1 598.7MiB / 31.02GiB 46.76%
+industrial-llm-platform-alloy-1 406.6MiB / 31.02GiB 0.38%
+industrial-llm-platform-loki-1 191MiB / 31.02GiB 3.55%
+Langfuse profile total (6 containers): 2565.6, 2541.6, 2618.1 MiB (about 2.5 GiB). Web and worker are about
+0.9 GiB each, ClickHouse 0.5 to 0.6 GiB and its CPU spikes (14%, 8%, 47% of one core across the samples).
+Default-profile additions: Loki about 0.2 GiB, Alloy about 0.4 GiB.
+
+== 5. Teardown
+docker compose --profile langfuse stop + rm (volumes kept), LANGFUSE_OTEL_ENDPOINT unset, docker compose up -d --wait:
+otel-collector args back to ["--config=/etc/otelcol-contrib/config.yaml","--config=/etc/otelcol-contrib/config.yaml"]
+scripts/smoke.sh on the default stack: all checks passed.
+
+Follow-up 2026-10-09 (orchestrator): rag/app/main.py now logs one line per chat through uvicorn.error:
+  INFO:     chat session_id=65de951d-461a-4917-973d-f7f79ed0d526 trace_id=a32cc4e116ae0cf436f7a926b7e520f1
+The same trace_id was returned in the SSE stream of that chat, Loki returned the line for
+{service="rag-api"} |= "trace_id=" , and Tempo GET /api/traces/a32cc4e116ae0cf436f7a926b7e520f1 returned HTTP 200,
+so the derived field above now resolves to a real trace.

@@ -1,0 +1,30 @@
+{{- range .Values.apps }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .name }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .wave | quote }}
+spec:
+  project: default
+  source:
+    repoURL: {{ $.Values.repoURL }}
+    targetRevision: {{ $.Values.targetRevision }}
+    path: deploy/helm/{{ .name }}
+    helm:
+      valueFiles: [values.yaml, values-{{ $.Values.env }}.yaml]
+      {{- if and (eq .name "rag-api") $.Values.ragImage }}
+      parameters:
+        - {name: image, value: {{ $.Values.ragImage | quote }}}
+      {{- end }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ $.Values.namespace }}
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    retry:
+      limit: 10
+      backoff: {duration: 10s, factor: 2, maxDuration: 3m}
+{{- end }}

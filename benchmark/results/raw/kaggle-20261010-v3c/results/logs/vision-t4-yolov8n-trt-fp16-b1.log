@@ -1,0 +1,4 @@
+[10/10/2026-09:46:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+vision-t4-yolov8n-trt-fp16-b1-r1-20261010T094647Z.json: ok 640/640 images/s 291.3 p50 3.35 ms p99 4.39 ms
+vision-t4-yolov8n-trt-fp16-b1-r2-20261010T094649Z.json: ok 640/640 images/s 296.3 p50 3.33 ms p99 3.77 ms
+vision-t4-yolov8n-trt-fp16-b1-r3-20261010T094652Z.json: ok 640/640 images/s 297.6 p50 3.34 ms p99 3.57 ms

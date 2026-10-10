@@ -1,0 +1,31 @@
+# Phase 1 smoke evidence
+date: 2026-10-07T12:24:20Z
+host: Windows 11, Docker Desktop, Docker Compose version v5.3.1
+
+## docker compose up -d --wait (after docker compose down -v, images already cached)
+exit 0, 773s wall clock (includes ~1.1 GB model download by model-init)
+first run with cold image cache: completed in 3994s (image pulls plus model download)
+
+## docker compose ps
+SERVICE          IMAGE                                          STATUS
+elasticsearch    elasticsearch:9.5.5                            Up 13 minutes (healthy)
+grafana          grafana/grafana:13.2.3                         Up 13 minutes (healthy)
+llamacpp         ghcr.io/ggml-org/llama.cpp:server-b11459       Up 20 seconds (healthy)
+model-init       curlimages/curl:8.22.0                         Exited (0) 20 seconds ago
+otel-collector   otel/opentelemetry-collector-contrib:0.162.0   Up 13 minutes
+postgres         postgres:18.6-alpine3.24                       Up 13 minutes (healthy)
+prometheus       prom/prometheus:v3.15.0                        Up 13 minutes (healthy)
+tempo            grafana/tempo:3.1.0                            Up 13 minutes
+
+## bash scripts/smoke.sh
+  reply: "content":"Hello, world!"
+PASS llamacpp chat completion
+PASS postgres SELECT 1
+PASS elasticsearch health green/yellow
+PASS grafana /api/health
+PASS prometheus scrapes llamacpp
+PASS tempo /ready
+PASS otel-collector metrics :8888
+PASS prometheus scrapes otel-collector
+all checks passed
+exit code: 0

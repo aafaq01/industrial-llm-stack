@@ -1,0 +1,30 @@
+// Local pipeline for the Jenkins in ci/jenkins (setup and how to run it: ci/jenkins/README.md).
+// Runs on the controller, which only has git, bash and the Docker CLI: every tool runs in a pinned container
+// (ci/run.sh). The tool containers mount the jenkins-home volume, so they see this workspace at the same path.
+// push, bump and deploy target the kind cluster, registry (localhost:5001) and git server from scripts/kind-up.sh.
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    timeout(time: 120, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+  }
+  environment {
+    CI_MOUNT = '-v jenkins-home:/var/jenkins_home'
+    CI_HOME = '/var/jenkins_home'
+    KIND_GIT_DIR = '/repo/.tools/git'
+  }
+  stages {
+    stage('lint') { steps { sh 'bash ci/run.sh lint' } }
+    stage('charts') { steps { sh 'bash ci/run.sh charts' } }
+    stage('test') { steps { sh 'bash ci/run.sh test' } }
+    stage('build') { steps { sh 'bash ci/run.sh build' } }
+    stage('scan') { steps { sh 'bash ci/run.sh scan' } }
+    stage('push') { steps { sh 'bash ci/run.sh push' } }
+    stage('bump chart') { steps { sh 'bash ci/run.sh bump' } }
+    stage('argocd sync') { steps { sh 'bash ci/run.sh deploy' } }
+  }
+  post {
+    always { sh 'bash ci/run.sh clean' }
+  }
+}

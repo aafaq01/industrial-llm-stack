@@ -1,0 +1,167 @@
+[{"stream_name":"stderr","time":5.897860459,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":5.897899949,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":5.897915982,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":5.897920366,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":6.445272014,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.445302958,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.445309074,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.445314073,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":7.5456393,"data":"wrote 15 files to /kaggle/working/bench\n"}
+,{"stream_name":"stdout","time":8.48891636,"data":"Sat Oct 10 07:18:55 2026       \n"}
+,{"stream_name":"stdout","time":8.488945748999999,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":8.488951144,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":8.488964142,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":8.488968851,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":8.488973599,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":8.488977668,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":8.488982565,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":8.488986798,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":8.488990816,"data":"| N/A   52C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":8.488994873,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":8.488999059,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":8.489003195,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":8.489007322,"data":"| N/A   54C    P8             14W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":8.489011413,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":8.489015477,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":8.489019591,"data":"\n"}
+,{"stream_name":"stdout","time":8.489023999,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":8.489028186,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":8.489042902,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":8.489047312,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":8.489051879,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":8.489056459,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":8.489061643,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":8.489065866,"data":"\n"}
+,{"stream_name":"stdout","time":10.735587204,"data":"GPU_COUNT = 2\n"}
+,{"stream_name":"stdout","time":14.315715741,"data":"preflight OK: 2 GPU(s), reachable: https://pypi.org/simple/, https://pypi.nvidia.com/tensorrt-cu12/, https://github.com, https://huggingface.co, https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/libdcgm_4.7.0-2_amd64.deb, http://images.cocodataset.org/val2017/000000000139.jpg\n"}
+,{"stream_name":"stdout","time":20.018864305,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.0/27.0 MB 76.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":20.018894311,"data":"uv 0.11.32 (x86_64-unknown-linux-gnu)\n"}
+,{"stream_name":"stdout","time":20.018898678,"data":"\n"}
+,{"stream_name":"stdout","time":30.599285838,"data":"install-base: 16s\n"}
+,{"stream_name":"stdout","time":44.380869974,"data":"uid=0(root) gid=0(root) groups=0(root)\n"}
+,{"stream_name":"stdout","time":44.380905562,"data":"CapInh:\t0000000000000000\n"}
+,{"stream_name":"stdout","time":44.380910324,"data":"CapPrm:\t00000000a80425fb\n"}
+,{"stream_name":"stdout","time":44.380913323,"data":"CapEff:\t00000000a80425fb\n"}
+,{"stream_name":"stdout","time":44.380917192,"data":"CapBnd:\t00000000a80425fb\n"}
+,{"stream_name":"stdout","time":44.380930368,"data":"RmProfilingAdminOnly: 1\n"}
+,{"stream_name":"stdout","time":44.380935498,"data":"Version : 4.7.0\n"}
+,{"stream_name":"stdout","time":44.380940561,"data":"Build ID : 25549\n"}
+,{"stream_name":"stdout","time":44.380945394,"data":"Build Date : 2026-10-06\n"}
+,{"stream_name":"stdout","time":44.380949915,"data":"Build Type : RelWithDebInfo\n"}
+,{"stream_name":"stdout","time":44.380954228,"data":"Commit ID : bc60101a5b114ff9b9e7b6ae0db33c8555ef682b\n"}
+,{"stream_name":"stdout","time":44.38095841,"data":"Branch Name : v4.7.0\n"}
+,{"stream_name":"stdout","time":44.380962363,"data":"CPU Arch : x86_64\n"}
+,{"stream_name":"stdout","time":44.380966522,"data":"Build Platform : Linux 7.0.0-31-generic #31~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Aug 10 09:38:02\n"}
+,{"stream_name":"stdout","time":44.380970865,"data":"UTC 2 x86_64\n"}
+,{"stream_name":"stdout","time":44.38097481,"data":"CRC : 8447e7845bb330960f77559028c742cf\n"}
+,{"stream_name":"stdout","time":44.380978737,"data":"\n"}
+,{"stream_name":"stdout","time":44.380982605,"data":"\n"}
+,{"stream_name":"stdout","time":44.380986423,"data":"dcgmi  version: 4.7.0\n"}
+,{"stream_name":"stdout","time":44.380990459,"data":"\n"}
+,{"stream_name":"stdout","time":44.380997832,"data":"\n"}
+,{"stream_name":"stdout","time":44.381000797,"data":"dcgm-install: 14s\n"}
+,{"stream_name":"stdout","time":48.594887921,"data":"embedded-basic: 96 rows; exit=0\n"}
+,{"stream_name":"stdout","time":50.732171272,"data":"embedded-prof: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":50.732216602,"data":"dcgm-embedded: 6s\n"}
+,{"stream_name":"stdout","time":58.783734534,"data":"---------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":58.783761611,"data":"| Group.Subgroup | Field ID | Field Tag                                            |\n"}
+,{"stream_name":"stdout","time":58.783765072,"data":"+----------------+----------+------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":58.783802106,"data":"| A.1            | 1002     | sm_active                                            |\n"}
+,{"stream_name":"stdout","time":58.783809936,"data":"| A.1            | 1003     | sm_occupancy                                         |\n"}
+,{"stream_name":"stdout","time":58.783813774,"data":"| A.1            | 1004     | tensor_active                                        |\n"}
+,{"stream_name":"stdout","time":58.783817404,"data":"| A.1            | 1007     | fp32_active                                          |\n"}
+,{"stream_name":"stdout","time":58.783821212,"data":"| A.2            | 1006     | fp64_active                                          |\n"}
+,{"stream_name":"stdout","time":58.783826599,"data":"| A.3            | 1008     | fp16_active                                          |\n"}
+,{"stream_name":"stdout","time":58.783833729,"data":"| B.0            | 1005     | dram_active                                          |\n"}
+,{"stream_name":"stdout","time":58.783836143,"data":"| C.0            | 1009     | pcie_tx_bytes                                        |\n"}
+,{"stream_name":"stdout","time":58.783838462,"data":"| C.0            | 1010     | pcie_rx_bytes                                        |\n"}
+,{"stream_name":"stdout","time":58.78384076,"data":"| D.0            | 1001     | gr_engine_active                                     |\n"}
+,{"stream_name":"stdout","time":58.783843138,"data":"| E.0            | 1011     | nvlink_tx_bytes                                      |\n"}
+,{"stream_name":"stdout","time":58.783845446,"data":"| E.0            | 1012     | nvlink_rx_bytes                                      |\n"}
+,{"stream_name":"stdout","time":58.783847739,"data":"+----------------+----------+------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":58.783850102,"data":"exit=0\n"}
+,{"stream_name":"stdout","time":58.783852394,"data":"\n"}
+,{"stream_name":"stdout","time":58.783854614,"data":"$ dcgmi dmon -e 100,101,112,150,155,203,204,252 -c 6 -d 500\n"}
+,{"stream_name":"stdout","time":58.783857089,"data":"#Entity         SMCLK        MMCLK        DVCCTR                      TMPTR        POWER             GPUTL             MCUTL             FBUSD             \n"}
+,{"stream_name":"stdout","time":58.783859561,"data":"ID                                                                     C            W                                                                      \n"}
+,{"stream_name":"stdout","time":58.783862099,"data":"GPU 0           300          405          1                           50           13.573            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783864545,"data":"GPU 1           300          405          1                           52           10.616            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783868712,"data":"GPU 0           300          405          1                           50           10.616            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.78387997,"data":"GPU 1           300          405          1                           52           10.616            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783882575,"data":"GPU 0           300          405          1                           50           10.715            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783885034,"data":"GPU 1           300          405          1                           52           15.053            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.78388752,"data":"GPU 0           300          405          1                           50           10.324            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.78388995,"data":"GPU 1           300          405          1                           52           10.913            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783892572,"data":"GPU 0           300          405          1                           50           10.320            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783895062,"data":"GPU 1           300          405          1                           52           10.818            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.78389761,"data":"GPU 0           300          405          1                           50           10.225            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783900042,"data":"GPU 1           300          405          1                           52           10.719            0                 0                 0                 \n"}
+,{"stream_name":"stdout","time":58.783902497,"data":"exit=0\n"}
+,{"stream_name":"stdout","time":58.783904676,"data":"\n"}
+,{"stream_name":"stdout","time":58.783906945,"data":"$ dcgmi dmon -e 1001,1002,1003,1004,1005,1008 -c 6 -d 500\n"}
+,{"stream_name":"stdout","time":58.783909256,"data":"#Entity         GRACT        SMACT        SMOCC        TENSO        DRAMA        FP16A        \n"}
+,{"stream_name":"stdout","time":58.783911647,"data":"ID                                                                                            \n"}
+,{"stream_name":"stdout","time":58.783914002,"data":"exit=227\n"}
+,{"stream_name":"stdout","time":58.783916355,"data":"Error setting watches. Result: -29: Unable to watch one or more of the requested fields because doing so requires the host engine to be running as root.\n"}
+,{"stream_name":"stdout","time":58.783918856,"data":"\n"}
+,{"stream_name":"stdout","time":58.783921007000004,"data":"\n"}
+,{"stream_name":"stdout","time":58.783923114,"data":"\n"}
+,{"stream_name":"stdout","time":61.65017938,"data":"standalone-basic: 96 rows; exit=0\n"}
+,{"stream_name":"stdout","time":61.923307903,"data":"standalone-prof: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":61.923344882,"data":"dcgm-standalone: 11s\n"}
+,{"stream_name":"stdout","time":62.203102398,"data":"standalone-prof-1001: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":62.481339871,"data":"standalone-prof-1002: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":62.771555172,"data":"standalone-prof-1003: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":63.05460334,"data":"standalone-prof-1004: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":63.327428104,"data":"standalone-prof-1005: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":63.402196911,"data":"standalone-prof-1008: 0 rows; dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":63.402221985,"data":"profiling fields with values: []\n"}
+,{"stream_name":"stdout","time":63.402227107,"data":"dcgm-probe-fields: 2s\n"}
+,{"stream_name":"stdout","time":63.402240382,"data":"{'basic_embedded': 96, 'prof_embedded': 0, 'basic_standalone': 96, 'prof_standalone': 0, 'prof_fields_ok': [], 'prof_ok': False}\n"}
+,{"stream_name":"stdout","time":63.601513153,"data":"vllm-t4-1.5b-fp16-dcgm not run: DCGM profiling fields unavailable; verdict {\"basic_embedded\": 96, \"prof_embedded\": 0, \"basic_standalone\": 96, \"prof_standalone\": 0, \"prof_fields_ok\": [], \"prof_ok\": false}; embedded-prof:     raise DCGMError(ret) / dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root; standalone-prof:     raise DCGMError(ret) / dcgm_structs.DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root\n"}
+,{"stream_name":"stdout","time":65.638380901,"data":"Unable to terminate host engine, it may not be running.\n"}
+,{"stream_name":"stdout","time":65.638413711,"data":"\n"}
+,{"stream_name":"stderr","time":95.683943683,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":95.68452073,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":95.684533403,"data":"    import sys;import papermill as pm;pm.execute_notebook(\"__notebook__.ipynb\",\"__notebook__.ipynb\",progress_bar=False,log_output=True,stdout_file=sys.stdout,stderr_file=sys.stderr,allow_errors=False,timeout=7200)\n"}
+,{"stream_name":"stderr","time":95.684540509,"data":"                                      ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":95.684546058,"data":"  File \"/usr/local/lib/python3.13/dist-packages/papermill/execute.py\", line 131, in execute_notebook\n"}
+,{"stream_name":"stderr","time":95.684550456,"data":"    raise_for_execution_errors(nb, output_path)\n"}
+,{"stream_name":"stderr","time":95.684555316,"data":"    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":95.684560121,"data":"  File \"/usr/local/lib/python3.13/dist-packages/papermill/execute.py\", line 251, in raise_for_execution_errors\n"}
+,{"stream_name":"stderr","time":95.684564686,"data":"    raise error\n"}
+,{"stream_name":"stderr","time":95.684574092,"data":"papermill.exceptions.PapermillExecutionError: \n"}
+,{"stream_name":"stderr","time":95.684583993,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":95.684600478,"data":"Exception encountered at \"In [9]\":\n"}
+,{"stream_name":"stderr","time":95.684605626,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":95.684610153,"data":"TimeoutExpired                            Traceback (most recent call last)\n"}
+,{"stream_name":"stderr","time":95.684623803,"data":"/tmp/ipykernel_24/1204489303.py in \u003ccell line: 0\u003e()\n"}
+,{"stream_name":"stderr","time":95.684627464,"data":"     48 if HOSTENGINE is not None:\n"}
+,{"stream_name":"stderr","time":95.684630896,"data":"     49     print(sh(\"nv-hostengine -t; sleep 2\", \"dcgm/hostengine-stop.txt\"))\n"}
+,{"stream_name":"stderr","time":95.684634483,"data":"---\u003e 50     HOSTENGINE.wait(30)\n"}
+,{"stream_name":"stderr","time":95.684646206,"data":"\n"}
+,{"stream_name":"stderr","time":95.684648879,"data":"/usr/lib/python3.13/subprocess.py in wait(self, timeout)\n"}
+,{"stream_name":"stderr","time":95.684651876,"data":"   1278             endtime = _time() + timeout\n"}
+,{"stream_name":"stderr","time":95.684654153,"data":"   1279         try:\n"}
+,{"stream_name":"stderr","time":95.684656251,"data":"-\u003e 1280             return self._wait(timeout=timeout)\n"}
+,{"stream_name":"stderr","time":95.684658513,"data":"   1281         except KeyboardInterrupt:\n"}
+,{"stream_name":"stderr","time":95.684660679,"data":"   1282             # https://bugs.python.org/issue25942\n"}
+,{"stream_name":"stderr","time":95.684662841,"data":"\n"}
+,{"stream_name":"stderr","time":95.684665018,"data":"/usr/lib/python3.13/subprocess.py in _wait(self, timeout)\n"}
+,{"stream_name":"stderr","time":95.684667259,"data":"   2075                     remaining = self._remaining_time(endtime)\n"}
+,{"stream_name":"stderr","time":95.684669748,"data":"   2076                     if remaining \u003c= 0:\n"}
+,{"stream_name":"stderr","time":95.684671993,"data":"-\u003e 2077                         raise TimeoutExpired(self.args, timeout)\n"}
+,{"stream_name":"stderr","time":95.684674364,"data":"   2078                     delay = min(delay * 2, remaining, .05)\n"}
+,{"stream_name":"stderr","time":95.684676643,"data":"   2079                     time.sleep(delay)\n"}
+,{"stream_name":"stderr","time":95.684678837,"data":"\n"}
+,{"stream_name":"stderr","time":95.684681384,"data":"TimeoutExpired: Command '['nv-hostengine', '-n', '--log-level', 'DEBUG', '-f', '/kaggle/working/results/dcgm/nv-hostengine.log']' timed out after 30 seconds\n"}
+,{"stream_name":"stderr","time":95.68469589,"data":"\n"}
+,{"stream_name":"stderr","time":97.725618196,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":97.725642974,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":97.876583853,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":97.876609332,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":98.579721472,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":98.66489695,"data":"[NbConvertApp] Writing 257039 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":101.091272773,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":101.751343884,"data":"[NbConvertApp] Writing 902491 bytes to __results__.html\n"}
+]

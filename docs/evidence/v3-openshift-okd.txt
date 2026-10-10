@@ -1,0 +1,127 @@
+v3 item 8 evidence: the OpenShift path on OKD via OpenShift Local (crc), preset okd, no Red Hat account.
+All times UTC, 2026-10-10 unless stated. Host: Windows 11 Pro, 16 logical CPUs, 63 GB RAM (as recorded in docs/PLAN.md environment facts), Hyper-V, Git Bash.
+The compose stack ran the whole time and was not touched. Other agents worked on the host at the same time.
+Script: scripts/okd-up.sh. Pins: docs/VERSIONS.md ("v3 OKD via OpenShift Local").
+
+Raw logs are in docs/evidence/v3-openshift-okd/ (byte-exact; the kubeadmin password lines in the crc start logs are
+replaced by "Password: REDACTED"). Every number below cites one of them, or is marked "observed, no raw log kept":
+those were read off the terminal during the first session and not saved to a file.
+  session1-*  first session (06:4x to 08:15): crc start logs, ArgoCD status transitions, verification capture,
+              two okd-up.sh re-runs, the kind snapshot after it, the root Application patch, download checksums
+  session2-*  second session for this review (08:39 to 08:53): host RAM, crc start, cluster facts and object
+              timestamps, bundle signature check, okd-up.sh run, chat, host port reachability, the okd-up.sh guard
+              test, crc stop and the return to kind
+
+== 1. Versions
+crc 2.64.0+458092 [session2-host.txt]. Installed by the user (admin, UAC) from crc-windows-installer.zip with a
+reboot; the MSI added the user to crc-users and Hyper-V Administrators. Zip sha256 matches the release's
+sha256sum.txt [session1-download-checksums.txt]; MSI and bundle hashes are in docs/VERSIONS.md.
+OKD bundle 4.22.0-okd-scos.10 from quay.io/crcont/okd-bundle (not on mirror.openshift.com: the URL crc builds for it
+returned 404, observed, no raw log kept). Layer sha256 OK [session1-download-checksums.txt]; the bundle's PGP
+signature is good against crc's bundle key B84655BFAC1C8E067FD9CA87DC7EAC400A1BFDFB [session2-bundle-signature.txt].
+oc client and server 4.22.0-okd-scos.10, Kubernetes v1.35.6; node crc: CentOS Stream CoreOS 10.0.20260806-0,
+kernel 6.12.0-254.el10.x86_64, cri-o 1.35.5, kubelet v1.35.5, allocatable cpu 5800m, memory 15909396Ki
+[session2-cluster.txt].
+ArgoCD: community argocd-operator.v0.19.0 [session2-cluster.txt, session1-verify.txt], which runs ArgoCD v3.4.4
+(observed with `argocd version --client` in the argocd-server pod, no raw log kept). kind runs upstream v3.5.4.
+Upstream install.yaml was not used: its redis pins UID 999, which restricted-v2 rejects.
+KEDA: Helm chart kedacore/keda 2.21.0 as on kind [session1-verify.txt, session2-cluster.txt]. The catalog's
+community-operator-index:v4.22 [session2-cluster.txt] offers KEDA 2.7.1 (observed, no raw log kept).
+
+== 2. Resources
+crc config: preset okd, cpus 6, memory 16384 MiB, disk-size 60 GB, consent-telemetry no, host-network-access true
+[session2-host.txt].
+Free host RAM, second session: 18.8 GB with kind running, 20.8 GB 20 s after stopping the kind containers
+[session2-host.txt], 21.5 GB after crc stop and kind start [session2-back-to-kind.log]. First session: 12.1 GB on
+2026-10-09, 18 GB before and 21.5 GB after stopping kind (observed, no raw log kept). Compose stayed up.
+Node requests with the whole stack: cpu 4731m (81%), memory 14722Mi (94%) of allocatable [session1-verify.txt for
+cpu; session2-cluster.txt for both]. While the ingest Job ran it held a 1Gi memory request, and rag-api's 1Gi did not
+fit: the scheduler reported "0/1 nodes are available: 1 Insufficient memory" (observed, no raw log kept; Kubernetes
+events expire after an hour).
+
+== 3. First session: timeline (done step by step; okd-up.sh was written from these commands afterwards)
+crc setup --bundle: 5m12s (observed, no raw log kept).
+crc start -b, first boot: 06:50:37 to 07:00:26, real 9m48.853s [session1-start.log].
+ArgoCD operator: Subscription created 07:03:46, InstallPlan 07:04:03, CSV first Succeeded 07:05:13
+  [session2-cluster.txt, object timestamps]. 63 s from approval to Succeeded (observed, no raw log kept).
+ArgoCD instance: CR created 07:05:24, pods created 07:05:26 [session2-cluster.txt]; phase Available after 268 s
+  (observed, no raw log kept).
+KEDA: Helm revision 1 at 12:10:04 PKT = 07:10:04Z, Deployments created 07:10:12 [session2-cluster.txt]; rolled out
+  after 121 s (observed, no raw log kept).
+rag image: build 4 s (cached) and skopeo push 70 s (observed, no raw log kept); ImageStream tag 0.1.0 created
+  07:14:48 with sha256:c23f152b... [session2-cluster.txt].
+ArgoCD in the VM could not reach the git daemon on the host: `git ls-remote` from the repo-server pod failed with
+  "fatal: unable to connect to host.crc.testing ... errno=Connection refused" (observed, no raw log kept). crc's
+  user-mode network forwards VM to host only with host-network-access=true, which the crc daemon reads at start (crc
+  says "only applied during 'crc setup'"; crc cleanup would also delete the VM). Done instead: crc stop (72 s,
+  observed, no raw log kept), stop the crc daemon process, crc setup (starts the daemon task again), crc start:
+  07:19:07 to 07:23:01, real 3m54.456s [session1-start2.log]. The VM and its state were kept.
+Root Application applied with the patch in session1-root-patch.json (branch okd = HEAD 262ac6e then); created
+  07:23:18 [session2-cluster.txt]. ArgoCD status transitions [session1-sync.log]; all four Synced/Healthy at 08:02:15,
+  38m57s after the root was created. Most of that: image pulls in the VM (observed in pod events, no raw log kept), the 1.1 GB model download, and the ingest Job: 17m, "indexed 9 documents, 3129
+  chunks in 992s" [session1-verify.txt].
+rag-api showed Degraded at 07:54:12 [session1-sync.log] while its pod was Pending for memory (above); it went
+  Healthy by itself once scheduled.
+Sync waves: child Applications created platform-deps 07:23:25 (wave 0), llamacpp 07:23:27 (wave 1), rag-api 07:43:17
+  (wave 2); creation times [session2-cluster.txt], wave numbers from deploy/argocd/apps values (the WAVE column
+  in session2-cluster.txt is empty: wrong jsonpath). Wave 2 waited for wave 1, but wave 1 started 2 s after wave 0, and at 07:23:33
+  llamacpp was already Synced/Degraded while platform-deps was Progressing [session1-sync.log]. Why ArgoCD moved on to
+  wave 1 is unexplained; it was not investigated further. No harm here: llamacpp does not need platform-deps.
+okd-up.sh re-runs on the running cluster (HEAD c055b40): 1m52s each, exit 0, same rag digest, nothing rolled
+  [session1-rerun.log, session1-rerun2.log].
+Back to kind: crc stop 74 s (observed, no raw log kept); kind containers started 08:15:25. session1-kind-back.log is
+  only a snapshot at 08:15:38 (pods 0/1, ArgoCD status still cached as Healthy). The "Ready again after 46 s" read
+  then has no raw log; see the second session for a raw one.
+
+== 4. Second session (review re-capture)
+Stop kind, crc start of the existing VM: 252 s, exit 0 [session2-host.txt, session2-crc-start.log].
+okd-up.sh with the review fixes (HEAD a224d5d, script uncommitted at the time): exit 0 after 117 s, same rag digest,
+  all four Synced/Healthy, nothing rolled [session2-okd-up.log].
+Chat through the rag-api Route, TLS verified with the router CA: cited answer "NIST uses a coverage factor of 2 ...
+  [1]", NIST TN 1297 p.17, HTTP 200 [session2-checks.txt].
+okd-up.sh guard (host-network-access off while the crc daemon runs): the first try did not fire (tasklist got '//FI'
+  because the script sets MSYS_NO_PATHCONV=1) and the script ran through, exit 0; fixed to '/FI', the second try
+  stopped with exit 1 and printed the restart steps [session2-checks.txt].
+crc stop: 74 s. kind containers started 08:50:59; every llm pod Ready by 08:51:56 (57 s), all four apps Synced/Healthy,
+  rag-api /healthz 200 [session2-back-to-kind.log; its first wait line is wrong and is corrected in the file].
+
+== 5. Chart and securityContext changes OpenShift needed: none
+values-openshift.yaml was deployed as committed; only comments changed ("not tested" to "tested on OKD 4.22").
+Expected problems that did not occur on this cluster:
+- RWX model PVC: the default class crc-csi-hostpath-provisioner (single node) bound llamacpp-models as RWX
+  [session1-verify.txt; class in session2-cluster.txt]. A multi-node cluster still needs a real RWX class.
+- Elasticsearch vm.max_map_count: 262144 on the node [session2-cluster.txt, `oc debug node/crc -q -- chroot /host
+  sysctl vm.max_map_count`; the same value was seen in the first session]. So mmap stays on. A restricted-v2 pod
+  cannot set this sysctl; a cluster without it would need it set on the nodes, or node.store.allow_mmap=false.
+- Images without a non-root USER (llama.cpp, postgres) ran as the assigned UID with group 0 [session1-verify.txt].
+What OpenShift needed outside the charts (in scripts/okd-up.sh, not in deploy/): the llm namespace labelled
+argocd.argoproj.io/managed-by=argocd (the operator's ArgoCD only manages labelled namespaces), the llm-secrets Secret,
+the rag image in the internal registry, the Application health check as spec.resourceHealthChecks in the ArgoCD CR
+(the operator owns argocd-cm), and crc host-network-access for the git daemon.
+
+== 6. Verification [session1-verify.txt, session2-checks.txt]
+- Namespace llm UID range 1000670000/10000. Every pod: annotation openshift.io/scc: restricted-v2, container
+  runAsUser 1000670000, fsGroup 1000670000, runAsNonRoot, seccomp RuntimeDefault, capabilities drop ALL; `id` in the
+  pods: uid=1000670000 gid=0. ArgoCD and KEDA pods are restricted-v2 too (observed, no raw log kept).
+- Routes rag-api-llm.apps-crc.testing and llamacpp-llm.apps-crc.testing (edge TLS): HTTP 302 to HTTPS, /healthz 200,
+  /v1/models 200, TLS verified with the router CA; crc's daemon added both hosts to the Windows hosts file.
+- Chat through the Route: cited answer, HTTP 200 (first session 24.9 s, then 3.9 s; second session 24.0 s).
+- Migrate PreSync hook Job Succeeded, alembic_version 0001; ingest Job Complete, index count 3129.
+- KEDA ScaledObject llamacpp Ready, external metric s0-prometheus served (0 at idle). Not load-tested on OKD.
+
+== 7. Security: host-network-access opens the host's loopback to the VM
+With host-network-access=true, the rag-api pod reached host.crc.testing ports 9418 (okd-git), 5432 (compose
+Postgres), 9200 (compose Elasticsearch), 3000 (Grafana), 8080 (compose llama.cpp), 9090 (Prometheus) and 3100 (Loki);
+6379 and 22 were refused (nothing listening) [session2-checks.txt]. Every pod in the VM can do the same. Documented
+in deploy/README.md and docs/LIMITATIONS.md; left on because ArgoCD keeps polling git.
+
+== 8. What was tested and what was not
+Tested on OKD 4.22.0-okd-scos.10 (single node, OpenShift Local): the three charts with values-openshift.yaml through
+the ArgoCD app-of-apps (env=openshift); SCC restricted-v2 with UIDs from the namespace range; Routes from the host
+with verified TLS; a cited chat through the rag-api Route; the llama.cpp API through its Route; the migrate and ingest
+Jobs; the KEDA ScaledObject Ready with its metric; okd-up.sh re-runs on the running cluster; its host-network-access
+guard.
+Not tested: Red Hat OpenShift (OCP); multi-node scheduling and a real RWX storage class; OpenShift GitOps and the
+Custom Metrics Autoscaler operator; KEDA scaling under load on OKD; Red Hat supported postgres and elasticsearch
+images; okd-up.sh end to end on a fresh machine (the first deployment was done step by step); okd-up.sh's restart
+steps after the guard fires (the same steps were done by hand in the first session).

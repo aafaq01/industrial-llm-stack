@@ -1,0 +1,175 @@
+[{"stream_name":"stderr","time":10.181839869,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.181892217,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.181896335,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.181898945,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":10.921550327,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.921579662,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.921584715,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.921588984,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":12.3898805,"data":"wrote 14 files to /kaggle/working/bench\n"}
+,{"stream_name":"stdout","time":13.350500596,"data":"Sat Oct 10 09:30:10 2026       \n"}
+,{"stream_name":"stdout","time":13.35052819,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":13.350536995,"data":"| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |\n"}
+,{"stream_name":"stdout","time":13.35053973,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":13.350542111,"data":"| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n"}
+,{"stream_name":"stdout","time":13.350544504,"data":"| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n"}
+,{"stream_name":"stdout","time":13.350546745,"data":"|                                         |                        |               MIG M. |\n"}
+,{"stream_name":"stdout","time":13.350548911,"data":"|=========================================+========================+======================|\n"}
+,{"stream_name":"stdout","time":13.350551092,"data":"|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":13.350553465,"data":"| N/A   49C    P8             10W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":13.35055565,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":13.35055781,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":13.350560001,"data":"|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n"}
+,{"stream_name":"stdout","time":13.350562235,"data":"| N/A   52C    P8             16W /   70W |       0MiB /  15360MiB |      0%      Default |\n"}
+,{"stream_name":"stdout","time":13.350564423,"data":"|                                         |                        |                  N/A |\n"}
+,{"stream_name":"stdout","time":13.3505666,"data":"+-----------------------------------------+------------------------+----------------------+\n"}
+,{"stream_name":"stdout","time":13.350579718,"data":"\n"}
+,{"stream_name":"stdout","time":13.350582012,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":13.350584305,"data":"| Processes:                                                                              |\n"}
+,{"stream_name":"stdout","time":13.350595176,"data":"|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n"}
+,{"stream_name":"stdout","time":13.350597668,"data":"|        ID   ID                                                               Usage      |\n"}
+,{"stream_name":"stdout","time":13.350599863,"data":"|=========================================================================================|\n"}
+,{"stream_name":"stdout","time":13.350602051,"data":"|  No running processes found                                                             |\n"}
+,{"stream_name":"stdout","time":13.350605182,"data":"+-----------------------------------------------------------------------------------------+\n"}
+,{"stream_name":"stdout","time":13.350607471,"data":"\n"}
+,{"stream_name":"stdout","time":16.654454199,"data":"GPU_COUNT = 2\n"}
+,{"stream_name":"stdout","time":17.286226412,"data":"preflight OK: 2 GPU(s), reachable: https://pypi.org/simple/, https://pypi.nvidia.com/tensorrt-cu12/, https://github.com, https://huggingface.co, http://images.cocodataset.org/val2017/000000000139.jpg\n"}
+,{"stream_name":"stdout","time":22.600903095,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.0/27.0 MB 66.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":22.6009542,"data":"uv 0.11.32 (x86_64-unknown-linux-gnu)\n"}
+,{"stream_name":"stdout","time":22.600959268,"data":"\n"}
+,{"stream_name":"stdout","time":33.430687865,"data":"install-base: 16s\n"}
+,{"stream_name":"stdout","time":33.454503336,"data":"dcgm not run: DCGM profiling fails on Kaggle for every field with 'DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root'; basic fields worked. Evidence: benchmark/results/raw/kaggle-20261010-v3a/results/dcgm/ (notebook built at 19ccae8)\n"}
+,{"stream_name":"stdout","time":33.454525238,"data":"vllm-t4-1.5b-fp16-dcgm not run: DCGM profiling fails on Kaggle for every field with 'DCGMError_RequiresRoot: This operation is not supported when the host engine is running as non root'; basic fields worked. Evidence: benchmark/results/raw/kaggle-20261010-v3a/results/dcgm/ (notebook built at 19ccae8)\n"}
+,{"stream_name":"stdout","time":176.915992391,"data":"\n"}
+,{"stream_name":"stdout","time":189.45434181,"data":"Creating new Ultralytics Settings v0.0.8 file ✅ \n"}
+,{"stream_name":"stdout","time":189.454392283,"data":"View Ultralytics Settings with 'yolo settings' or at '/root/.config/Ultralytics/settings.json'\n"}
+,{"stream_name":"stdout","time":189.454398652,"data":"Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.\n"}
+,{"stream_name":"stdout","time":189.454404152,"data":"2.13.0+cu129 12.9 (7, 5) 10.16.1.11 1.26.0 ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'] 8.4.174\n"}
+,{"stream_name":"stdout","time":189.454409251,"data":"\n"}
+,{"stream_name":"stdout","time":189.454413811,"data":"vision-install: 156s\n"}
+,{"stream_name":"stdout","time":224.547217761,"data":"500 images (sha256 ok), 496 with labels, 3504 boxes -\u003e /tmp/data/coco500\n"}
+,{"stream_name":"stdout","time":224.547248899,"data":"\n"}
+,{"stream_name":"stdout","time":224.935563086,"data":"vision-data: 35s\n"}
+,{"stream_name":"stdout","time":961.161068333,"data":"10/10/2026-09:42:02] [TRT] [I] Domain:           \n"}
+,{"stream_name":"stdout","time":961.161125818,"data":"[10/10/2026-09:42:02] [TRT] [I] Model version:    0\n"}
+,{"stream_name":"stdout","time":961.161132426,"data":"[10/10/2026-09:42:02] [TRT] [I] Doc string:       \n"}
+,{"stream_name":"stdout","time":961.161153874,"data":"[10/10/2026-09:42:02] [TRT] [I] ----------------------------------------------------------------\n"}
+,{"stream_name":"stdout","time":961.161158134,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m input \"images\" with shape(32, 3, 640, 640) DataType.FLOAT\n"}
+,{"stream_name":"stdout","time":961.161163103,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m output \"output0\" with shape(32, 84, 8400) DataType.FLOAT\n"}
+,{"stream_name":"stdout","time":961.161167133,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m building FP16 engine as /kaggle/working/results/models/work/yolov8n.engine\n"}
+,{"stream_name":"stdout","time":961.161170933,"data":"[10/10/2026-09:42:02] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.\n"}
+,{"stream_name":"stdout","time":961.161174631,"data":"[10/10/2026-09:42:02] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -119, GPU +0, now: CPU 1718, GPU 1940 (MiB)\n"}
+,{"stream_name":"stdout","time":961.161178218,"data":"[10/10/2026-09:42:02] [TRT] [I] BuilderFlag::kTF32 is set but hardware does not support TF32. Disabling TF32.\n"}
+,{"stream_name":"stdout","time":961.161181636,"data":"[10/10/2026-09:42:02] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.\n"}
+,{"stream_name":"stdout","time":961.161185119,"data":"[10/10/2026-09:45:56] [TRT] [I] Detected 1 inputs and 3 output network tensors.\n"}
+,{"stream_name":"stdout","time":961.161188541,"data":"[10/10/2026-09:45:57] [TRT] [I] Total Host Persistent Memory: 325136 bytes\n"}
+,{"stream_name":"stdout","time":961.161192074,"data":"[10/10/2026-09:45:57] [TRT] [I] Total Device Persistent Memory: 1091072 bytes\n"}
+,{"stream_name":"stdout","time":961.161195254,"data":"[10/10/2026-09:45:57] [TRT] [I] Max Scratch Memory: 0 bytes\n"}
+,{"stream_name":"stdout","time":961.161198709,"data":"[10/10/2026-09:45:57] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 118 steps to complete.\n"}
+,{"stream_name":"stdout","time":961.161202463,"data":"[10/10/2026-09:45:57] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 7.48312ms to assign 9 blocks to 118 nodes requiring 311297536 bytes.\n"}
+,{"stream_name":"stdout","time":961.161206136,"data":"[10/10/2026-09:45:57] [TRT] [I] Total Activation Memory: 311296000 bytes\n"}
+,{"stream_name":"stdout","time":961.161210074,"data":"[10/10/2026-09:45:57] [TRT] [I] Total Weights Memory: 6379680 bytes\n"}
+,{"stream_name":"stdout","time":961.161214196,"data":"[10/10/2026-09:45:57] [TRT] [I] Engine generation completed in 234.92 seconds.\n"}
+,{"stream_name":"stdout","time":961.161218421,"data":"[10/10/2026-09:45:57] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 800 MiB\n"}
+,{"stream_name":"stdout","time":961.161222589,"data":"\u001b[34m\u001b[1mTensorRT:\u001b[0m export success ✅ 236.5s, saved as '/kaggle/working/results/models/work/yolov8n.engine' (7.5 MB)\n"}
+,{"stream_name":"stdout","time":961.161227203,"data":"\n"}
+,{"stream_name":"stdout","time":961.161230414,"data":"Export complete (236.8s)\n"}
+,{"stream_name":"stdout","time":961.161240579,"data":"Results saved to \u001b[1m/kaggle/working/results/models/work/yolov8n.engine\u001b[0m\n"}
+,{"stream_name":"stdout","time":961.161244778,"data":"Predict:         yolo predict task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 quantize=16\n"}
+,{"stream_name":"stdout","time":961.161248331,"data":"Validate:        yolo val task=detect model=/kaggle/working/results/models/work/yolov8n.engine imgsz=640 data=coco.yaml quantize=16 \n"}
+,{"stream_name":"stdout","time":961.161252104,"data":"Visualize:       https://netron.app\n"}
+,{"stream_name":"stdout","time":961.161260163,"data":"{\n"}
+,{"stream_name":"stdout","time":961.161263561,"data":" \"yolov8n-fp32-opset17.onnx\": {\n"}
+,{"stream_name":"stdout","time":961.161267133,"data":"  \"sha256\": \"c3a4c32fa3939177778425a9384c75d2202473cce75d1afefc2ca54d684d7eb4\",\n"}
+,{"stream_name":"stdout","time":961.161271206,"data":"  \"precision\": \"fp32\",\n"}
+,{"stream_name":"stdout","time":961.161274914,"data":"  \"batch\": \"dynamic\"\n"}
+,{"stream_name":"stdout","time":961.161278518,"data":" },\n"}
+,{"stream_name":"stdout","time":961.161282403,"data":" \"yolov8n-fp16-b1.engine\": {\n"}
+,{"stream_name":"stdout","time":961.161286331,"data":"  \"sha256\": \"0b5ffbf7dbfd479d1d356f20c937580bc1ce6bbc822ad142a4f059072bbd4712\",\n"}
+,{"stream_name":"stdout","time":961.161290473,"data":"  \"precision\": \"fp16\",\n"}
+,{"stream_name":"stdout","time":961.161294349,"data":"  \"batch\": 1\n"}
+,{"stream_name":"stdout","time":961.161298238,"data":" },\n"}
+,{"stream_name":"stdout","time":961.161302173,"data":" \"yolov8n-fp16-b8.engine\": {\n"}
+,{"stream_name":"stdout","time":961.161306199,"data":"  \"sha256\": \"8c149845a7fef6f888db7881731c3fa97e8d7734d0ddb307e8b7928741ef913a\",\n"}
+,{"stream_name":"stdout","time":961.161310316,"data":"  \"precision\": \"fp16\",\n"}
+,{"stream_name":"stdout","time":961.161313968,"data":"  \"batch\": 8\n"}
+,{"stream_name":"stdout","time":961.161317593,"data":" },\n"}
+,{"stream_name":"stdout","time":961.161320734,"data":" \"yolov8n-fp16-b32.engine\": {\n"}
+,{"stream_name":"stdout","time":961.161324269,"data":"  \"sha256\": \"e965fb4fcc89802a7164f7752299c7dbc9ca1c8257b5b0f047b869e3d7d87cb9\",\n"}
+,{"stream_name":"stdout","time":961.161328164,"data":"  \"precision\": \"fp16\",\n"}
+,{"stream_name":"stdout","time":961.161331778,"data":"  \"batch\": 32\n"}
+,{"stream_name":"stdout","time":961.161335286,"data":" }\n"}
+,{"stream_name":"stdout","time":961.161338583,"data":"}\n"}
+,{"stream_name":"stdout","time":961.16134194,"data":"\n"}
+,{"stream_name":"stdout","time":961.161345281,"data":"vision-export: 736s\n"}
+,{"stream_name":"stdout","time":1006.193681689,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r1-20261010T094601Z.json: ok 640/640 images/s 160.8 p50 6.11 ms p99 7.84 ms\n"}
+,{"stream_name":"stdout","time":1006.193713714,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r2-20261010T094605Z.json: ok 640/640 images/s 163.0 p50 6.12 ms p99 6.28 ms\n"}
+,{"stream_name":"stdout","time":1006.193719892,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r3-20261010T094610Z.json: ok 640/640 images/s 163.0 p50 6.12 ms p99 6.27 ms\n"}
+,{"stream_name":"stdout","time":1006.193724581,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r1-20261010T094614Z.json: ok 80/80 images/s 187.3 p50 42.48 ms p99 44.88 ms\n"}
+,{"stream_name":"stdout","time":1006.193729189,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r2-20261010T094618Z.json: ok 80/80 images/s 186.9 p50 42.59 ms p99 44.58 ms\n"}
+,{"stream_name":"stdout","time":1006.193733749,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r3-20261010T094623Z.json: ok 80/80 images/s 186.9 p50 42.60 ms p99 44.81 ms\n"}
+,{"stream_name":"stdout","time":1006.193737998,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r1-20261010T094627Z.json: ok 20/20 images/s 179.9 p50 177.36 ms p99 182.01 ms\n"}
+,{"stream_name":"stdout","time":1006.193742511,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r2-20261010T094632Z.json: ok 20/20 images/s 180.5 p50 177.27 ms p99 179.46 ms\n"}
+,{"stream_name":"stdout","time":1006.193746991,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r3-20261010T094638Z.json: ok 20/20 images/s 181.0 p50 176.60 ms p99 183.86 ms\n"}
+,{"stream_name":"stdout","time":1006.193752094,"data":"\n"}
+,{"stream_name":"stdout","time":1006.193765229,"data":"vision-t4-yolov8n-onnx-fp32-ortcuda: 45s\n"}
+,{"stream_name":"stdout","time":1017.707261921,"data":"[10/10/2026-09:46:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.\n"}
+,{"stream_name":"stdout","time":1017.707295995,"data":"vision-t4-yolov8n-trt-fp16-b1-r1-20261010T094647Z.json: ok 640/640 images/s 291.3 p50 3.35 ms p99 4.39 ms\n"}
+,{"stream_name":"stdout","time":1017.70730158,"data":"vision-t4-yolov8n-trt-fp16-b1-r2-20261010T094649Z.json: ok 640/640 images/s 296.3 p50 3.33 ms p99 3.77 ms\n"}
+,{"stream_name":"stdout","time":1017.707305983,"data":"vision-t4-yolov8n-trt-fp16-b1-r3-20261010T094652Z.json: ok 640/640 images/s 297.6 p50 3.34 ms p99 3.57 ms\n"}
+,{"stream_name":"stdout","time":1017.707310034,"data":"\n"}
+,{"stream_name":"stdout","time":1028.233345028,"data":"[10/10/2026-09:46:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.\n"}
+,{"stream_name":"stdout","time":1028.233385808,"data":"vision-t4-yolov8n-trt-fp16-b8-r1-20261010T094658Z.json: ok 80/80 images/s 384.8 p50 20.56 ms p99 22.45 ms\n"}
+,{"stream_name":"stdout","time":1028.233391533,"data":"vision-t4-yolov8n-trt-fp16-b8-r2-20261010T094701Z.json: ok 80/80 images/s 394.5 p50 20.18 ms p99 21.13 ms\n"}
+,{"stream_name":"stdout","time":1028.233395253,"data":"vision-t4-yolov8n-trt-fp16-b8-r3-20261010T094703Z.json: ok 80/80 images/s 391.9 p50 20.33 ms p99 21.40 ms\n"}
+,{"stream_name":"stdout","time":1028.233398929,"data":"\n"}
+,{"stream_name":"stdout","time":1045.649835105,"data":"[10/10/2026-09:47:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.\n"}
+,{"stream_name":"stdout","time":1045.649867589,"data":"vision-t4-yolov8n-trt-fp16-b32-r1-20261010T094709Z.json: ok 20/20 images/s 228.2 p50 139.65 ms p99 147.18 ms\n"}
+,{"stream_name":"stdout","time":1045.649875204,"data":"vision-t4-yolov8n-trt-fp16-b32-r2-20261010T094713Z.json: ok 20/20 images/s 231.6 p50 138.04 ms p99 140.05 ms\n"}
+,{"stream_name":"stdout","time":1045.649879796,"data":"vision-t4-yolov8n-trt-fp16-b32-r3-20261010T094718Z.json: ok 20/20 images/s 223.1 p50 138.57 ms p99 189.68 ms\n"}
+,{"stream_name":"stdout","time":1045.649884779,"data":"\n"}
+,{"stream_name":"stdout","time":1045.649889202,"data":"vision-t4-yolov8n-trt-fp16: 39s\n"}
+,{"stream_name":"stdout","time":1055.649327898,"data":"vision-triton FAILED, see results/FAILED-vision-triton.txt\n"}
+,{"stream_name":"stdout","time":1055.649364698,"data":"vision-triton: 10s\n"}
+,{"stream_name":"stdout","time":1062.424961038,"data":"map-pt-fp32 FAILED, see results/FAILED-map-pt-fp32.txt\n"}
+,{"stream_name":"stdout","time":1062.425006043,"data":"map-pt-fp32: 7s\n"}
+,{"stream_name":"stdout","time":1066.894002614,"data":"map-onnx-fp32 FAILED, see results/FAILED-map-onnx-fp32.txt\n"}
+,{"stream_name":"stdout","time":1066.894065365,"data":"map-onnx-fp32: 4s\n"}
+,{"stream_name":"stdout","time":1071.301446649,"data":"map-trt-fp16 FAILED, see results/FAILED-map-trt-fp16.txt\n"}
+,{"stream_name":"stdout","time":1071.301477966,"data":"map-trt-fp16: 5s\n"}
+,{"stream_name":"stdout","time":1071.502258096,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r1-20261010T094601Z.json {\"requests\": 640, \"ok\": 640, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.9796549999999997, \"images\": 640, \"images_s\": 160.81796035083445, \"latency_ms\": {\"mean\": 6.209128125, \"p50\": 6.108000000000002, \"p95\": 6.384749999999969, \"p99\": 7.842610000000033}}\n"}
+,{"stream_name":"stdout","time":1071.502299087,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r2-20261010T094605Z.json {\"requests\": 640, \"ok\": 640, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.926925, \"images\": 640, \"images_s\": 162.97739325299057, \"latency_ms\": {\"mean\": 6.127149999999999, \"p50\": 6.121999999999961, \"p95\": 6.22899999999984, \"p99\": 6.278830000000122}}\n"}
+,{"stream_name":"stdout","time":1071.502311608,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b1-r3-20261010T094610Z.json {\"requests\": 640, \"ok\": 640, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.92542, \"images\": 640, \"images_s\": 163.03987853529048, \"latency_ms\": {\"mean\": 6.125112500000007, \"p50\": 6.124999999999998, \"p95\": 6.218000000000004, \"p99\": 6.266609999999919}}\n"}
+,{"stream_name":"stdout","time":1071.502315201,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r1-20261010T094627Z.json {\"requests\": 20, \"ok\": 20, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.5577849999999995, \"images\": 640, \"images_s\": 179.8872051009266, \"latency_ms\": {\"mean\": 177.87355000000008, \"p50\": 177.36499999999978, \"p95\": 181.13530000000029, \"p99\": 182.0062600000002}}\n"}
+,{"stream_name":"stdout","time":1071.502318504,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r2-20261010T094632Z.json {\"requests\": 20, \"ok\": 20, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.544972, \"images\": 640, \"images_s\": 180.53739211480374, \"latency_ms\": {\"mean\": 177.2335, \"p50\": 177.26549999999986, \"p95\": 179.29320000000058, \"p99\": 179.46344000000008}}\n"}
+,{"stream_name":"stdout","time":1071.502323049,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b32-r3-20261010T094638Z.json {\"requests\": 20, \"ok\": 20, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.535513, \"images\": 640, \"images_s\": 181.02040637384164, \"latency_ms\": {\"mean\": 176.76275000000004, \"p50\": 176.60200000000015, \"p95\": 178.83635000000004, \"p99\": 183.8576699999999}}\n"}
+,{"stream_name":"stdout","time":1071.502326129,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r1-20261010T094614Z.json {\"requests\": 80, \"ok\": 80, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.4176909999999996, \"images\": 640, \"images_s\": 187.26093143002106, \"latency_ms\": {\"mean\": 42.70547499999999, \"p50\": 42.47699999999999, \"p95\": 44.57250000000004, \"p99\": 44.882349999999995}}\n"}
+,{"stream_name":"stdout","time":1071.502329149,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r2-20261010T094618Z.json {\"requests\": 80, \"ok\": 80, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.423641, \"images\": 640, \"images_s\": 186.93548768693915, \"latency_ms\": {\"mean\": 42.78397500000001, \"p50\": 42.594500000000096, \"p95\": 44.420100000000005, \"p99\": 44.57987000000009}}\n"}
+,{"stream_name":"stdout","time":1071.502332121,"data":"raw/vision-t4-yolov8n-onnx-fp32-ortcuda/vision-t4-yolov8n-onnx-fp32-ortcuda-b8-r3-20261010T094623Z.json {\"requests\": 80, \"ok\": 80, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 3.424792, \"images\": 640, \"images_s\": 186.87266263177443, \"latency_ms\": {\"mean\": 42.79983749999998, \"p50\": 42.59599999999997, \"p95\": 44.60914999999996, \"p99\": 44.81122000000001}}\n"}
+,{"stream_name":"stdout","time":1071.502335135,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b1-r1-20261010T094647Z.json {\"requests\": 640, \"ok\": 640, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 2.196885, \"images\": 640, \"images_s\": 291.321575776611, \"latency_ms\": {\"mean\": 3.4245671875000014, \"p50\": 3.349999999999964, \"p95\": 4.336150000000006, \"p99\": 4.394000000000009}}\n"}
+,{"stream_name":"stdout","time":1071.502341397,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b1-r2-20261010T094649Z.json {\"requests\": 640, \"ok\": 640, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 2.159959, \"images\": 640, \"images_s\": 296.30192054571404, \"latency_ms\": {\"mean\": 3.3669109374999993, \"p50\": 3.3310000000001394, \"p95\": 3.5964999999999883, \"p99\": 3.7734400000000186}}\n"}
+,{"stream_name":"stdout","time":1071.502360398,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b1-r3-20261010T094652Z.json {\"requests\": 640, \"ok\": 640, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 2.1506000000000003, \"images\": 640, \"images_s\": 297.5913698502743, \"latency_ms\": {\"mean\": 3.352689062499997, \"p50\": 3.341999999999977, \"p95\": 3.4369999999999123, \"p99\": 3.565750000000084}}\n"}
+,{"stream_name":"stdout","time":1071.502366288,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b32-r1-20261010T094709Z.json {\"requests\": 20, \"ok\": 20, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 2.8043950000000004, \"images\": 640, \"images_s\": 228.2132153280832, \"latency_ms\": {\"mean\": 140.2068, \"p50\": 139.6489999999997, \"p95\": 142.32164999999998, \"p99\": 147.18033000000003}}\n"}
+,{"stream_name":"stdout","time":1071.502371931,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b32-r2-20261010T094713Z.json {\"requests\": 20, \"ok\": 20, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 2.7632340000000006, \"images\": 640, \"images_s\": 231.61266834441088, \"latency_ms\": {\"mean\": 138.14605000000003, \"p50\": 138.0440000000005, \"p95\": 139.82100000000008, \"p99\": 140.04900000000006}}\n"}
+,{"stream_name":"stdout","time":1071.502377329,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b32-r3-20261010T094718Z.json {\"requests\": 20, \"ok\": 20, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 2.8681340000000004, \"images\": 640, \"images_s\": 223.14159659206993, \"latency_ms\": {\"mean\": 143.39034999999996, \"p50\": 138.57199999999992, \"p95\": 165.77869999999965, \"p99\": 189.68373999999966}}\n"}
+,{"stream_name":"stdout","time":1071.502382199,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b8-r1-20261010T094658Z.json {\"requests\": 80, \"ok\": 80, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 1.6630670000000003, \"images\": 640, \"images_s\": 384.8311583357735, \"latency_ms\": {\"mean\": 20.779099999999993, \"p50\": 20.563, \"p95\": 22.025800000000082, \"p99\": 22.445179999999947}}\n"}
+,{"stream_name":"stdout","time":1071.502386985,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b8-r2-20261010T094701Z.json {\"requests\": 80, \"ok\": 80, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 1.622334, \"images\": 640, \"images_s\": 394.493365731101, \"latency_ms\": {\"mean\": 20.27031249999999, \"p50\": 20.17749999999996, \"p95\": 20.859500000000015, \"p99\": 21.127430000000007}}\n"}
+,{"stream_name":"stdout","time":1071.50239223,"data":"raw/vision-t4-yolov8n-trt-fp16/vision-t4-yolov8n-trt-fp16-b8-r3-20261010T094703Z.json {\"requests\": 80, \"ok\": 80, \"errors\": 0, \"error_rate\": 0.0, \"wall_s\": 1.632876, \"images\": 640, \"images_s\": 391.94647970819585, \"latency_ms\": {\"mean\": 20.403, \"p50\": 20.332000000000015, \"p95\": 20.924949999999995, \"p99\": 21.396629999999966}}\n"}
+,{"stream_name":"stdout","time":1071.502396978,"data":"/kaggle/working/results/FAILED-map-onnx-fp32.txt\n"}
+,{"stream_name":"stdout","time":1071.502400338,"data":"/kaggle/working/results/FAILED-map-pt-fp32.txt\n"}
+,{"stream_name":"stdout","time":1071.502403543,"data":"/kaggle/working/results/FAILED-map-trt-fp16.txt\n"}
+,{"stream_name":"stdout","time":1071.502406882,"data":"/kaggle/working/results/FAILED-vision-triton.txt\n"}
+,{"stream_name":"stdout","time":1071.502410165,"data":"/kaggle/working/results/NOT_RUN-dcgm.txt\n"}
+,{"stream_name":"stdout","time":1071.50241673,"data":"/kaggle/working/results/NOT_RUN-vllm-t4-1.5b-fp16-dcgm.txt\n"}
+,{"stream_name":"stdout","time":1071.502421831,"data":"\n"}
+,{"stream_name":"stdout","time":1071.502428209,"data":"summary: 0s\n"}
+,{"stream_name":"stdout","time":1071.654235825,"data":"session used 1054 s of the 4800 s budget\n"}
+,{"stream_name":"stderr","time":1074.818810849,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1074.818844492,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1075.059561699,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1075.059590356,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1075.862035659,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1075.955087516,"data":"[NbConvertApp] Writing 249475 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1078.44603178,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1079.119474785,"data":"[NbConvertApp] Writing 867943 bytes to __results__.html\n"}
+]

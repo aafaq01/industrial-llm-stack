@@ -1,0 +1,445 @@
+name: industrial-llm-platform
+
+# Secrets come from .env (cp .env.example .env). Image tags: docs/VERSIONS.md.
+
+services:
+  model-init:
+    image: curlimages/curl:8.22.0
+    user: "0"  # fresh named volume is root-owned
+    environment:
+      MODEL_URL: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/qwen2.5-1.5b-instruct-q4_k_m.gguf
+      MODEL_FILE: /models/qwen2.5-1.5b-instruct-q4_k_m.gguf
+      MODEL_SHA256: 6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        if [ -f "$$MODEL_FILE" ]; then echo "model present"; exit 0; fi
+        curl -fL --retry 3 -o "$$MODEL_FILE.part" "$$MODEL_URL"
+        echo "$$MODEL_SHA256  $$MODEL_FILE.part" | sha256sum -c -
+        mv "$$MODEL_FILE.part" "$$MODEL_FILE"
+    volumes:
+      - models:/models
+
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-b11459
+    depends_on:
+      model-init:
+        condition: service_completed_successfully
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --metrics
+      - -m
+      - /models/qwen2.5-1.5b-instruct-q4_k_m.gguf
+      - --ctx-size
+      - "4096"
+      - --parallel
+      - "2"
+      - --threads
+      - "4"
+    volumes:
+      - models:/models:ro
+    ports:
+      - 127.0.0.1:8080:8080
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+
+  postgres:
+    image: postgres:18.6-alpine3.24
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres:/var/lib/postgresql
+    ports:
+      - 127.0.0.1:5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  elasticsearch:
+    image: elasticsearch:9.5.5
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "true"
+      xpack.security.http.ssl.enabled: "false"
+      xpack.security.transport.ssl.enabled: "false"
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?set ELASTIC_PASSWORD in .env}
+      ES_JAVA_OPTS: -Xms1g -Xmx1g
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - 127.0.0.1:9200:9200
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs -u elastic:$$ELASTIC_PASSWORD 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=2s'"]  # gitleaks:allow (env var, not a secret)
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    # 31d retention + a volume so the 30d SLO windows actually hold 30 days; lifecycle enables POST /-/reload.
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=31d
+      - --web.enable-lifecycle
+    volumes:
+      - ./observability/prometheus:/etc/prometheus:ro
+      - prometheus:/prometheus
+    ports:
+      - 127.0.0.1:9090:9090
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  grafana:
+    image: grafana/grafana:13.2.3
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - 127.0.0.1:3000:3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  # Tempo and the collector are distroless: no healthcheck possible, smoke.sh checks them.
+  tempo:
+    image: grafana/tempo:3.1.0
+    command: ["-target=all", "-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./observability/tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo:/var/tempo
+    ports:
+      - 127.0.0.1:3200:3200
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    depends_on:
+      - tempo
+    # Second --config is config-langfuse.yaml when LANGFUSE_OTEL_ENDPOINT is set, else config.yaml again (a no-op merge).
+    command:
+      - --config=/etc/otelcol-contrib/config.yaml
+      - --config=/etc/otelcol-contrib/config${LANGFUSE_OTEL_ENDPOINT:+-langfuse}.yaml
+    environment:
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_OTEL_ENDPOINT: ${LANGFUSE_OTEL_ENDPOINT:-}
+    volumes:
+      - ./observability/otel-collector:/etc/otelcol-contrib:ro
+    ports:
+      - 127.0.0.1:4317:4317
+      - 127.0.0.1:4318:4318
+      - 127.0.0.1:8888:8888
+
+  # Logs: Alloy tails every container of this compose project through the Docker socket and pushes to Loki.
+  # Loki is distroless (no healthcheck possible); Alloy has bash but no curl/wget.
+  loki:
+    image: grafana/loki:3.7.8
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    volumes:
+      - ./observability/loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki:/loki
+    ports:
+      - 127.0.0.1:3100:3100
+
+  alloy:
+    image: grafana/alloy:v1.20.1
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "--storage.path=/var/lib/alloy/data", "/etc/alloy/config.alloy"]
+    depends_on:
+      - loki
+    volumes:
+      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy:/var/lib/alloy/data
+    ports:
+      - 127.0.0.1:12345:12345
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/12345 && printf 'GET /-/ready HTTP/1.0\r\n\r\n' >&3 && grep -q '200 OK' <&3"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  # Phase 3 RAG. One image for the API, migrations and ingest; see README.md.
+  rag-migrate:
+    build: ./rag
+    image: industrial-llm-platform/rag:0.1.0
+    command: ["alembic", "upgrade", "head"]
+    environment: &rag-env
+      DATABASE_URL: postgresql+psycopg://postgres:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/postgres
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?set ELASTIC_PASSWORD in .env}
+      ES_URL: http://elasticsearch:9200
+      LLM_BASE_URL: http://llamacpp:8080/v1
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_SERVICE_NAME: rag-api
+      OMP_NUM_THREADS: "4"  # leave CPU for llama.cpp
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  rag-api:
+    build: ./rag
+    image: industrial-llm-platform/rag:0.1.0
+    environment: *rag-env
+    depends_on:
+      rag-migrate:
+        condition: service_completed_successfully
+      rag-ingest:
+        condition: service_completed_successfully
+      elasticsearch:
+        condition: service_healthy
+      llamacpp:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    ports:
+      - 127.0.0.1:8000:8000
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  # Downloads the corpus (sha256-checked) and builds the index on first `up`; skipped when the index is already filled.
+  # Force a full rebuild: docker compose run --rm -e INGEST_SKIP_IF_PRESENT=0 rag-ingest
+  rag-ingest:
+    build: ./rag
+    image: industrial-llm-platform/rag:0.1.0
+    command: ["python", "-m", "app.ingest"]
+    environment:
+      <<: *rag-env
+      OMP_NUM_THREADS: "8"
+      INGEST_SKIP_IF_PRESENT: "1"
+    volumes:
+      - rag-corpus:/data/corpus
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  # Eval-only judge model (profile eval): docker compose --profile eval up -d --wait llamacpp-judge
+  judge-init:
+    image: curlimages/curl:8.22.0
+    profiles: [eval]
+    user: "0"
+    environment:
+      BASE: https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/bb5d59e06d9551d752d08b292a50eb208b07ab1f
+      F1: qwen2.5-7b-instruct-q4_k_m-00001-of-00002.gguf
+      S1: dfce12e3862a5283ccfb88221b48480e58745165de856439950d0f22590580db
+      F2: qwen2.5-7b-instruct-q4_k_m-00002-of-00002.gguf
+      S2: 539cf93f78e887edea1c04e2d7d8cdaca9d01dae9c9025bcb8accbe29df3d72a
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        get() {
+          if [ -f "/models/$$1" ]; then echo "$$1 present"; return; fi
+          curl -fL --retry 10 --retry-all-errors -C - -o "/models/$$1.part" "$$BASE/$$1"
+          echo "$$2  /models/$$1.part" | sha256sum -c -
+          mv "/models/$$1.part" "/models/$$1"
+        }
+        get "$$F1" "$$S1"
+        get "$$F2" "$$S2"
+    volumes:
+      - models:/models
+
+  llamacpp-judge:
+    image: ghcr.io/ggml-org/llama.cpp:server-b11459
+    profiles: [eval]
+    depends_on:
+      judge-init:
+        condition: service_completed_successfully
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - -m
+      - /models/qwen2.5-7b-instruct-q4_k_m-00001-of-00002.gguf
+      - --ctx-size
+      - "8192"
+      - --parallel
+      - "1"
+      - --threads
+      - "8"
+    volumes:
+      - models:/models:ro
+    ports:
+      - 127.0.0.1:8081:8080
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 60s
+
+  # Langfuse v4 (LLM tracing UI), off by default: docker compose --profile langfuse up -d --wait
+  # Layout follows langfuse/langfuse docker-compose.yml (v4.56.0) with pinned images, no host ports except the UI,
+  # and secrets from .env. Setup and key generation: .env.example. Traces arrive from otel-collector, not from rag/.
+  langfuse-worker:
+    image: langfuse/langfuse-worker:4.56.0
+    profiles: [langfuse]
+    depends_on: &langfuse-deps
+      langfuse-postgres:
+        condition: service_healthy
+      langfuse-minio:
+        condition: service_healthy
+      langfuse-redis:
+        condition: service_healthy
+      langfuse-clickhouse:
+        condition: service_healthy
+    environment: &langfuse-env
+      HOSTNAME: 0.0.0.0  # Next.js/Express bind to $HOSTNAME (the container id) otherwise; healthchecks use 127.0.0.1
+      NEXTAUTH_URL: http://localhost:3001
+      DATABASE_URL: postgresql://postgres:${LANGFUSE_DB_PASSWORD:-}@langfuse-postgres:5432/postgres
+      SALT: ${LANGFUSE_SALT:-}
+      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-}
+      TELEMETRY_ENABLED: "false"
+      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
+      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      REDIS_HOST: langfuse-redis
+      REDIS_PORT: "6379"
+      REDIS_AUTH: ${LANGFUSE_REDIS_AUTH:-}
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-}
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-}
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: media/
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3030/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  langfuse-web:
+    image: langfuse/langfuse:4.56.0
+    profiles: [langfuse]
+    depends_on: *langfuse-deps
+    environment:
+      <<: *langfuse-env
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-}
+      # Headless init: org, project with the API keys below, and one admin user.
+      LANGFUSE_INIT_ORG_ID: industrial-llm-platform
+      LANGFUSE_INIT_ORG_NAME: industrial-llm-platform
+      LANGFUSE_INIT_PROJECT_ID: rag
+      LANGFUSE_INIT_PROJECT_NAME: rag
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-}
+      LANGFUSE_INIT_USER_NAME: admin
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
+    ports:
+      - 127.0.0.1:3001:3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/public/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  langfuse-postgres:
+    image: postgres:18.6-alpine3.24
+    profiles: [langfuse]
+    environment:
+      POSTGRES_PASSWORD: ${LANGFUSE_DB_PASSWORD:-}
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      - langfuse-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  langfuse-clickhouse:
+    image: clickhouse/clickhouse-server:25.12.11.4
+    profiles: [langfuse]
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-}
+    volumes:
+      - langfuse-clickhouse:/var/lib/clickhouse
+      - langfuse-clickhouse-logs:/var/log/clickhouse-server
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # cgr.dev/chainguard/minio publishes only :latest, so it is pinned by digest (minio RELEASE.2026-09-22T19-25-18Z).
+  langfuse-minio:
+    image: cgr.dev/chainguard/minio@sha256:6476f81b9739912fa9f50ceae2bb049a30336527cccd24beccfbeb4145f8f696
+    profiles: [langfuse]
+    entrypoint: sh
+    command: -c 'mkdir -p /data/langfuse && minio server --address ":9000" --console-address ":9001" /data'
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: ${LANGFUSE_MINIO_PASSWORD:-}
+    volumes:
+      - langfuse-minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  langfuse-redis:
+    image: redis:7.4.11-alpine
+    profiles: [langfuse]
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_AUTH\" --maxmemory-policy noeviction"]
+    environment:
+      REDIS_AUTH: ${LANGFUSE_REDIS_AUTH:-}
+    volumes:
+      - langfuse-redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_AUTH\" --no-auth-warning ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  models:
+  postgres:
+  elasticsearch:
+  tempo:
+  prometheus:
+  rag-corpus:
+  loki:
+  alloy:
+  langfuse-postgres:
+  langfuse-clickhouse:
+  langfuse-clickhouse-logs:
+  langfuse-minio:
+  langfuse-redis:

@@ -1,0 +1,1 @@
+not run: Triton's TensorRT-LLM backend ships only in the NGC tritonserver:<ver>-trtllm-python-py3 container image, which needs Docker; Kaggle has no Docker. TensorRT-LLM is served with its own OpenAI server instead (inference/trtllm/serve.py)

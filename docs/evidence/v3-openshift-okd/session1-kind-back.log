@@ -1,0 +1,9 @@
+08:15:38 llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy 
+NAME                          READY   STATUS      RESTARTS      AGE
+elasticsearch-0               0/1     Running     2 (11s ago)   16h
+llamacpp-7c44466945-r92nx     0/1     Unknown     1 (94m ago)   16h
+postgres-0                    1/1     Running     2 (11s ago)   16h
+prometheus-84d4d5d7cd-zbq86   1/1     Running     2 (11s ago)   16h
+rag-api-6dd655797c-qvkz4      0/1     Running     2 (11s ago)   15h
+rag-ingest-k4gr5              0/1     Completed   0             15h
+08:15:38 end

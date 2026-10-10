@@ -1,0 +1,59 @@
+2026-10-09T06:23:56Z
+Deleting cluster "llm" ...
+Deleted nodes: ["llm-control-plane"]
+[06:24:07Z] kind cluster llm, kind-registry and kind-git removed
+DOWN_RC=0
+2026-10-09T06:24:07Z
+[06:24:08Z] kind v0.33.0, context kind-llm, git source worktree
+Creating cluster "llm" ...
+ • Ensuring node image (kindest/node:v1.36.4) 🖼️  ...
+ ✓ Ensuring node image (kindest/node:v1.36.4) 🖼️
+ • Preparing nodes 📦   ...
+ ✓ Preparing nodes 📦
+ • Writing configuration 📜  ...
+ ✓ Writing configuration 📜
+ • Starting control-plane 🕹️  ...
+ ✓ Starting control-plane 🕹️
+ • Installing CNI 🔌  ...
+ ✓ Installing CNI 🔌
+ • Installing StorageClass 💾  ...
+ ✓ Installing StorageClass 💾
+ • Waiting ≤ 2m0s for control-plane = Ready ⏳  ...
+ ✓ Waiting ≤ 2m0s for control-plane = Ready ⏳
+ • Ready after 14s 💚
+Set kubectl context to "kind-llm"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-llm
+
+Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
+[06:24:46Z] building and pushing the rag image
+[06:24:55Z] git://kind-git/industrial-llm-platform main = eaa9e2131bf24ad1b64d0df19e868ab97181c239
+[06:24:59Z] installing KEDA 2.21.0 and Traefik chart 41.6.1
+[06:28:31Z] installing ArgoCD v3.5.4
+[06:30:55Z] waiting for root, platform-deps, llamacpp, rag-api to be Synced and Healthy
+[06:30:55Z] root=/
+[06:31:11Z] platform-deps=Synced/Progressing root=OutOfSync/Progressing
+[06:38:39Z] llamacpp=Synced/Progressing platform-deps=Synced/Healthy root=OutOfSync/Progressing
+[06:49:44Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=OutOfSync/Missing root=Synced/Healthy
+[06:50:15Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Progressing root=Synced/Progressing
+[07:03:11Z] llamacpp=Synced/Healthy platform-deps=Synced/Healthy rag-api=Synced/Healthy root=Synced/Healthy
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+NAME                          READY   STATUS      RESTARTS   AGE
+elasticsearch-0               1/1     Running     0          32m
+llamacpp-685c695698-54cjd     1/1     Running     0          24m
+postgres-0                    1/1     Running     0          32m
+prometheus-84d4d5d7cd-nrfzv   1/1     Running     0          32m
+rag-api-547c49cdfb-2jc8c      1/1     Running     0          13m
+rag-ingest-lxdfv              0/1     Completed   0          13m
+[07:03:12Z] done in 39m5s
+rag-api:  curl -N http://rag-api.localhost:8090/chat -H 'Content-Type: application/json' -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
+llamacpp: http://127.0.0.1:8090/v1  (OpenAI API; KEDA scales it 1..3 on in-flight requests)
+ArgoCD:   kubectl --context kind-llm -n argocd port-forward svc/argocd-server 8443:443
+          password: kubectl --context kind-llm -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+UP_RC=0 WALL=2345s
+2026-10-09T07:03:12Z

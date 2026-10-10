@@ -1,0 +1,4 @@
+# bench: attention workspace 2550211328 bytes
+/tmp/venvs/trtllm/bin/trtllm-build --checkpoint_dir /tmp/trtllm/ckpt-fp16 --output_dir /tmp/trtllm/engine-fp16-bench --gemm_plugin float16 --gpt_attention_plugin float16 --context_fmha disable --remove_input_padding enable --kv_cache_type paged --max_num_tokens 8192 --workers 1 --max_batch_size 32 --max_input_len 1024 --max_seq_len 1152
+# gsm8k: attention workspace 2550205184 bytes
+/tmp/venvs/trtllm/bin/trtllm-build --checkpoint_dir /tmp/trtllm/ckpt-fp16 --output_dir /tmp/trtllm/engine-fp16-gsm8k --gemm_plugin float16 --gpt_attention_plugin float16 --context_fmha disable --remove_input_padding enable --kv_cache_type paged --max_num_tokens 8192 --workers 1 --max_batch_size 8 --max_input_len 2048 --max_seq_len 2304

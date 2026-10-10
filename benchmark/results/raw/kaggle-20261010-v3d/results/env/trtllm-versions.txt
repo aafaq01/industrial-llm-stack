@@ -1,0 +1,23 @@
+/tmp/venvs/trtllm/lib/python3.10/site-packages/torch/cuda/__init__.py:58: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/__init__.py", line 32, in <module>
+    import tensorrt_llm.functional as functional
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/functional.py", line 37, in <module>
+    from .quantization import QuantMode
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/quantization/__init__.py", line 17, in <module>
+    from .quantize_by_modelopt import quantize_and_export, quantize_nemo_and_export
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/tensorrt_llm/quantization/quantize_by_modelopt.py", line 30, in <module>
+    from datasets import load_dataset
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/datasets/__init__.py", line 22, in <module>
+    from .arrow_dataset import Dataset
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 67, in <module>
+    from .arrow_writer import ArrowWriter, OptimizedTypedSequence
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/datasets/arrow_writer.py", line 27, in <module>
+    from .features import Features, Image, Value
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/datasets/features/__init__.py", line 18, in <module>
+    from .features import Array2D, Array3D, Array4D, Array5D, ClassLabel, Features, Sequence, Value
+  File "/tmp/venvs/trtllm/lib/python3.10/site-packages/datasets/features/features.py", line 634, in <module>
+    class _ArrayXDExtensionType(pa.PyExtensionType):
+AttributeError: module 'pyarrow' has no attribute 'PyExtensionType'. Did you mean: 'ExtensionType'?

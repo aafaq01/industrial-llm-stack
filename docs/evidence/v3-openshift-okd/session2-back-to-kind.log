@@ -1,0 +1,57 @@
+# 2026-10-10T08:49:45Z $ crc stop
+Stopped the instance
+# crc stop took 74 s
+$ docker rm -f okd-git
+okd-git
+# 2026-10-10T08:50:59Z $ docker start kind-registry kind-git llm-control-plane
+kind-registry
+kind-git
+llm-control-plane
+# 2026-10-10T08:51:08Z all llm pods 1/1 after 7 s
+NAME                          READY   STATUS      RESTARTS      AGE
+elasticsearch-0               0/1     Unknown     3 (15m ago)   17h
+llamacpp-7c44466945-r92nx     0/1     Unknown     3 (15m ago)   17h
+postgres-0                    0/1     Unknown     3 (15m ago)   17h
+prometheus-84d4d5d7cd-zbq86   0/1     Unknown     3 (15m ago)   17h
+rag-api-6dd655797c-qvkz4      1/1     Running     3 (15m ago)   15h
+rag-ingest-k4gr5              0/1     Completed   0             15h
+# 2026-10-10T08:52:38Z (90 s later, so ArgoCD has re-evaluated)
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
+$ curl -s -o /dev/null -w "%{http_code}" http://rag-api.localhost:8090/healthz --resolve rag-api.localhost:8090:127.0.0.1
+200
+$ kubectl config current-context
+kind-llm
+free physical memory GB 21.5
+
+# CORRECTION: the "all llm pods 1/1 after 7 s" line above is wrong: the wait loop's check also passed on an empty pod list (API server not up yet), and the table under it shows 4 pods 0/1 Unknown. The ArgoCD table at 08:52:38 is likely cached status. Proper capture:
+# 2026-10-10T08:52:50Z
+NAME                          READY   STATUS      RESTARTS       AGE
+elasticsearch-0               1/1     Running     4 (109s ago)   17h
+llamacpp-7c44466945-r92nx     1/1     Running     4 (109s ago)   17h
+postgres-0                    1/1     Running     4 (109s ago)   17h
+prometheus-84d4d5d7cd-zbq86   1/1     Running     4 (109s ago)   17h
+rag-api-6dd655797c-qvkz4      1/1     Running     4 (109s ago)   15h
+rag-ingest-k4gr5              0/1     Completed   0              15h
+$ kubectl -n llm get pods -o jsonpath=<container name, ready, state.running.startedAt>
+elasticsearch ready=true started=2026-10-10T08:51:11Z
+llama-server ready=true started=2026-10-10T08:51:20Z
+postgres ready=true started=2026-10-10T08:51:11Z
+prometheus ready=true started=2026-10-10T08:51:11Z
+rag-api ready=true started=2026-10-10T08:51:11Z
+ingest ready=false started=
+$ kubectl -n llm get pods -o jsonpath=<pod, Ready condition lastTransitionTime>
+elasticsearch-0 True 2026-10-10T08:51:56Z
+llamacpp-7c44466945-r92nx True 2026-10-10T08:51:26Z
+postgres-0 True 2026-10-10T08:51:11Z
+prometheus-84d4d5d7cd-zbq86 True 2026-10-10T08:51:13Z
+rag-api-6dd655797c-qvkz4 True 2026-10-10T08:51:39Z
+rag-ingest-k4gr5 False 2026-10-09T17:07:34Z
+NAME            SYNC STATUS   HEALTH STATUS
+llamacpp        Synced        Healthy
+platform-deps   Synced        Healthy
+rag-api         Synced        Healthy
+root            Synced        Healthy
