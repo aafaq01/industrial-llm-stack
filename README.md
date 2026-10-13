@@ -193,8 +193,12 @@ bash scripts/smoke.sh                   # PASS/FAIL per check
 
 curl -N http://127.0.0.1:8000/chat -H 'Content-Type: application/json'   -d '{"message": "What coverage factor does NIST use for expanded uncertainty?"}'
 # follow-up: add "session_id": "<id from the first event>"
-# Grafana: http://127.0.0.1:3000   Prometheus: http://127.0.0.1:9090
+# Chat page: http://127.0.0.1:8000/   Grafana: http://127.0.0.1:3000   Prometheus: http://127.0.0.1:9090
 ```
+
+The chat page (`rag/app/static/index.html`, one file, no dependencies) streams the answer, turns `[n]` into buttons that
+open the cited source, and restores the last session on reload. It is served by `rag-api` at `/`, so the kind and OKD
+ingress would serve it too (not checked there).
 
 The first start downloads the model, images and corpus, then indexes it (measured: about 66 min for the stack
 cold and 19 min for the index on the dev laptop). Later starts skip both and take under a minute.

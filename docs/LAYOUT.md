@@ -24,7 +24,7 @@ All ports bind to 127.0.0.1.
 | Service | Port | Notes |
 |---------|------|-------|
 | llamacpp | 8080 | `/v1/chat/completions`, `/health`, `/metrics` |
-| rag-api | 8000 | `POST /chat` (SSE), `GET /sessions/{id}/messages`, `/healthz`, `/metrics` |
+| rag-api | 8000 | chat page at `/`; `POST /chat` (SSE), `GET /sessions/{id}/messages`, `/healthz`, `/metrics` |
 | postgres | 5432 | user `postgres`, password `POSTGRES_PASSWORD` |
 | elasticsearch | 9200 | user `elastic`, password `ELASTIC_PASSWORD`, plain HTTP |
 | prometheus | 9090 | alerts at `/alerts`; no Alertmanager |

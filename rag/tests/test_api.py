@@ -130,3 +130,10 @@ def test_metrics(client):
         "rag_stage_duration_seconds_bucket" in body
         and 'rag_llm_tokens_total{kind="completion"}' in body
     )
+
+
+def test_chat_page(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/html")
+    assert "Content-Security-Policy" in r.text and "/chat" in r.text

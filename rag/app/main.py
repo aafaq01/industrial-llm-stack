@@ -1,4 +1,4 @@
-"""RAG chat API: POST /chat (SSE), GET /sessions/{id}/messages, GET /healthz, GET /metrics."""
+"""RAG chat API: GET / (chat page), POST /chat (SSE), GET /sessions/{id}/messages, GET /healthz, GET /metrics."""
 
 import json
 import logging
@@ -8,10 +8,11 @@ import threading
 import time
 import uuid
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from app import db
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import Response, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from opentelemetry import context as otel_context
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -201,6 +202,11 @@ def run_chat(
         out.put(sse("error", {"detail": str(e)}))
     finally:
         out.put(None)
+
+
+@app.get("/", include_in_schema=False)
+def ui() -> FileResponse:
+    return FileResponse(Path(__file__).parent / "static" / "index.html")
 
 
 @app.post("/chat")

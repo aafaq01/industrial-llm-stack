@@ -17,3 +17,4 @@ graphify-out/.graphify_root
 graphify-out/cache/
 graphify-out/cost.json
 docs/private/
+.playwright-mcp/
