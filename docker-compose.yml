@@ -227,6 +227,7 @@ services:
       <<: *rag-env
       OMP_NUM_THREADS: "8"
       INGEST_SKIP_IF_PRESENT: "1"
+      DEMO_CORPUS: ${DEMO_CORPUS:-1}  # 0 = start empty and add your own documents in the chat page
     volumes:
       - rag-corpus:/data/corpus
     depends_on:

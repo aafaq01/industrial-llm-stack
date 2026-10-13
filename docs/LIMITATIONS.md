@@ -72,7 +72,16 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
 - **No index during a re-index.** A changed rag image recreates the ingest Job, which deletes the `corpus` index and
   builds a new one. In build #1's rollout the index was deleted at 13:10:55Z and recreated at 13:20:05Z: about 9
   minutes with no index to retrieve from. An alias swap would avoid it but needs a change in `rag/app/ingest.py`; not
-  made. [docs/evidence/phase5b-ci.txt; deploy/README.md]
+  made. Since 2026-10-13 the Job deletes only the demo documents' passages, not the whole index, so documents added
+  from the chat page survive; the 9 minute gap above was measured with the old behavior and not re-measured.
+  [docs/evidence/phase5b-ci.txt; deploy/README.md]
+- **Your own documents (chat page).** Not run on kind or OKD, only on compose. Formats are PDF, TXT, MD and HTML
+  (no DOCX, no OCR for scanned PDFs). One item is indexed at a time, and the job list lives in the memory of the
+  rag-api process that took the request, so it is lost on restart and not shared between replicas. The page stores
+  nothing about who added a document, and anyone who can reach rag-api can add, remove or wipe documents (turn it
+  off with `DOCS_WRITE=0`). Web pages are fetched by the server: only public addresses are allowed by default, but a
+  host name that changes its address between the check and the fetch is not caught. Quality of answers on your own
+  documents was not measured; the RAG evaluation covers the demo corpus only.
 - **Same digest only through a shared build cache.** kind-up and `ci/run.sh` now build the rag image from
   `git archive`, and build #3 pushed the same digest kind-up built (rag@sha256:6f10a3e7...). That equality relies on the
   shared BuildKit cache of the one Docker engine: the RUN steps (uv sync, model download) are not bit-reproducible on

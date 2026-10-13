@@ -202,7 +202,22 @@ ingress would serve it too (not checked there).
 
 The first start downloads the model, images and corpus, then indexes it (measured: about 66 min for the stack
 cold and 19 min for the index on the dev laptop). Later starts skip both and take under a minute.
-Force a full re-index with `docker compose run --rm -e INGEST_SKIP_IF_PRESENT=0 rag-ingest`.
+Re-index the demo documents with `docker compose run --rm -e INGEST_SKIP_IF_PRESENT=0 rag-ingest`. It replaces only
+the demo documents, not ones you added.
+
+### Use your own documents
+
+The chat page has a **Documents** button. You can add PDF, TXT, MD and HTML files (drop them in or choose them) and
+web page addresses, watch them being read and indexed, remove single documents, or **Start from scratch**. Answers
+then cite your documents. To start with nothing at all instead of the demo documents:
+
+```bash
+echo DEMO_CORPUS=0 >> .env && docker compose up -d --wait   # empty library, no 19 minute demo index
+```
+
+Indexing runs on the CPU: a one-page text file takes seconds, a 2 MB PDF (359 passages) took 148 s on the
+dev laptop with the rest of the stack idle. Only public web addresses are fetched unless you set `ALLOW_PRIVATE_URLS=1`.
+`DOCS_WRITE=0` turns adding and removing off. See [SECURITY.md](SECURITY.md) before exposing the page.
 
 Optional parts, each with its own command:
 

@@ -1,7 +1,9 @@
 """Download the corpus (sha256-checked, cached) and rebuild the Elasticsearch index.
 
 Run: docker compose up (first start), or force a rebuild: docker compose run --rm -e INGEST_SKIP_IF_PRESENT=0 rag-ingest
-Under `docker compose up` it sets INGEST_SKIP_IF_PRESENT=1 and leaves an existing, non-empty index alone.
+Under `docker compose up` it sets INGEST_SKIP_IF_PRESENT=1 and leaves an existing index alone, even an empty one,
+so a reset from the chat page sticks. DEMO_CORPUS=0 skips the demo documents and starts with an empty index.
+Only the demo documents are replaced, so documents added from the chat page survive a forced re-ingest.
 """
 
 import hashlib
@@ -52,24 +54,32 @@ def fetch(src: dict) -> Path:
 
 
 def main() -> None:
+    if os.environ.get("DEMO_CORPUS", "1") == "0":
+        print(
+            "DEMO_CORPUS=0: not indexing the demo documents. Add your own from the chat page."
+        )
+        return
     es = Elasticsearch(ES_URL, basic_auth=("elastic", os.environ["ELASTIC_PASSWORD"]))
     if os.environ.get("INGEST_SKIP_IF_PRESENT") == "1" and es.indices.exists(
         index=ES_INDEX
     ):
-        n = es.count(index=ES_INDEX)["count"]
-        if n > 0:
-            print(
-                f"index {ES_INDEX} already has {n} chunks, skipping (force: INGEST_SKIP_IF_PRESENT=0)"
-            )
-            return
+        print(
+            f"index {ES_INDEX} already exists, skipping (force: INGEST_SKIP_IF_PRESENT=0)"
+        )
+        return
     sources = json.loads(SOURCES.read_text())
     CACHE.mkdir(parents=True, exist_ok=True)
     paths = [fetch(s) for s in sources]
     print(f"corpus ok: {len(paths)} files, sha256 verified")
 
-    es.indices.delete(
-        index=ES_INDEX, ignore_unavailable=True
-    )  # full rebuild keeps the index consistent
+    if es.indices.exists(
+        index=ES_INDEX
+    ):  # replace the demo documents, keep what the user added
+        es.delete_by_query(
+            index=ES_INDEX,
+            query={"terms": {"doc_id": [s["id"] for s in sources]}},
+            refresh=True,
+        )
     store = document_store()
     # not "source_id": DocumentSplitter overwrites that key with the parent document id
     meta = [{"doc_id": s["id"], "title": s["title"], "url": s["url"]} for s in sources]

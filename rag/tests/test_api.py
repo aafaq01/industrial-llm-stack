@@ -137,3 +137,44 @@ def test_chat_page(client):
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/html")
     assert "Content-Security-Policy" in r.text and "/chat" in r.text
+
+
+def test_documents_list_and_guards(client, monkeypatch):
+    from app import library
+
+    monkeypatch.setattr(
+        library,
+        "list_documents",
+        lambda: [{"doc_id": "a", "title": "A", "url": None, "chunks": 3}],
+    )
+    body = client.get("/documents").json()
+    assert body["chunks"] == 3 and body["writable"] is True
+
+    assert client.delete("/documents").status_code == 400  # needs ?confirm=yes
+    seen = []
+    monkeypatch.setattr(library, "delete_all", lambda: seen.append("all"))
+    assert client.delete("/documents?confirm=yes").status_code == 200 and seen == [
+        "all"
+    ]
+
+    monkeypatch.setattr(library, "MAX_BYTES", 10)
+    assert (
+        client.post("/documents/files?filename=a.txt", content=b"x" * 11).status_code
+        == 413
+    )
+    assert (
+        client.post("/documents/files?filename=a.txt", content=b"").status_code == 400
+    )
+
+    monkeypatch.setattr(library, "WRITABLE", False)
+    assert (
+        client.post("/documents/files?filename=a.txt", content=b"x").status_code == 403
+    )
+    assert client.delete("/documents/a").status_code == 403
+
+
+def test_url_job_rejects_private_address(client):
+    r = client.post("/documents/urls", json={"urls": ["http://127.0.0.1:9200/"]})
+    assert r.status_code == 202
+    job = r.json()["jobs"][0]
+    assert job["status"] == "error" and "public internet" in job["error"]

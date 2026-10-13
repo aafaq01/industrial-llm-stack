@@ -145,12 +145,18 @@ def source_label(doc: Document) -> dict:
     }
 
 
+def _page(d: Document) -> str:
+    """', page N' for PDFs; text and web pages have no page numbers."""
+    n = d.meta.get("page_number")
+    return f", page {n}" if n is not None else ""
+
+
 def build_messages(
     question: str, docs: list[Document], history: list[tuple[str, str]]
 ) -> list[ChatMessage]:
     """Prompt build: numbered sources in the system prompt, prior turns, then the question."""
     sources = "\n\n".join(
-        f"[{i}] {d.meta.get('title')}, page {d.meta.get('page_number')}:\n{d.content.strip()}"
+        f"[{i}] {d.meta.get('title')}{_page(d)}:\n{d.content.strip()}"
         for i, d in enumerate(docs, 1)
     )
     msgs = [ChatMessage.from_system(SYSTEM_PROMPT.format(sources=sources))]
@@ -178,6 +184,7 @@ class Rag:
 
     def __init__(self) -> None:
         store = document_store()
+        store.count_documents()  # creates the index when missing, so an empty start can be searched
         self.retrieval = retrieval_pipeline(store)
         self.generation = generation_pipeline()
         self.retrieval.warm_up()

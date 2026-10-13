@@ -1,4 +1,4 @@
-"""RAG chat API: GET / (chat page), POST /chat (SSE), GET /sessions/{id}/messages, GET /healthz, GET /metrics."""
+"""RAG chat API: GET / (chat page), POST /chat (SSE), /documents (add, list, remove), GET /sessions/{id}/messages, GET /healthz, GET /metrics."""
 
 import json
 import logging
@@ -10,8 +10,8 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from app import db
-from fastapi import FastAPI, HTTPException, Request
+from app import db, library
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from opentelemetry import context as otel_context
 from opentelemetry import trace
@@ -207,6 +207,95 @@ def run_chat(
 @app.get("/", include_in_schema=False)
 def ui() -> FileResponse:
     return FileResponse(Path(__file__).parent / "static" / "index.html")
+
+
+def _writable() -> None:
+    if not library.WRITABLE:
+        raise HTTPException(
+            403, "Adding and removing documents is turned off (DOCS_WRITE=0)."
+        )
+
+
+def _rejected(e: library.Rejected) -> HTTPException:
+    return HTTPException(400, str(e))
+
+
+class UrlsRequest(BaseModel):
+    urls: list[str] = Field(min_length=1, max_length=20)
+
+
+@app.get("/documents")
+def documents() -> dict:
+    docs = library.list_documents()
+    jobs = sorted(library.JOBS.values(), key=lambda j: j["created"], reverse=True)
+    return {
+        "documents": docs,
+        "chunks": sum(d["chunks"] for d in docs),
+        "jobs": jobs[:20],
+        "writable": library.WRITABLE,
+        "max_upload_mb": library.MAX_MB,
+        "formats": library.FORMATS,
+    }
+
+
+@app.post("/documents/files", status_code=202)
+async def add_file(
+    request: Request, filename: str = Query(min_length=1, max_length=255)
+) -> dict:
+    """The file is the raw request body (no multipart), one file per request."""
+    _writable()
+    if int(request.headers.get("content-length") or 0) > library.MAX_BYTES:
+        raise HTTPException(413, f"Files can be up to {library.MAX_MB} MB.")
+    data = await request.body()
+    if len(data) > library.MAX_BYTES:
+        raise HTTPException(413, f"Files can be up to {library.MAX_MB} MB.")
+    if not data:
+        raise HTTPException(400, "The file is empty.")
+    try:
+        return library.submit(
+            "file", os.path.basename(filename.replace("\\", "/")), data
+        )
+    except library.Rejected as e:
+        raise _rejected(e) from None
+
+
+@app.post("/documents/urls", status_code=202)
+def add_urls(req: UrlsRequest) -> dict:
+    _writable()
+    jobs = []
+    for u in dict.fromkeys(x.strip() for x in req.urls if x.strip()):
+        try:
+            library.check_url(
+                u
+            )  # fail fast on a bad address; redirects are checked again when fetching
+            jobs.append(library.submit("url", u))
+        except library.Rejected as e:
+            failed = {
+                "id": uuid.uuid4().hex[:12],
+                "kind": "url",
+                "name": u,
+                "status": "error",
+                "error": str(e),
+                "created": time.time(),
+            }
+            library.JOBS[failed["id"]] = failed
+            jobs.append(failed)
+    return {"jobs": jobs}
+
+
+@app.delete("/documents/{doc_id}")
+def remove_document(doc_id: str) -> dict:
+    _writable()
+    return {"removed_chunks": library.delete_document(doc_id)}
+
+
+@app.delete("/documents")
+def remove_all(confirm: str = "") -> dict:
+    _writable()
+    if confirm != "yes":
+        raise HTTPException(400, "Add ?confirm=yes to remove every document.")
+    library.delete_all()
+    return {"removed": "all"}
 
 
 @app.post("/chat")
