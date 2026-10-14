@@ -39,6 +39,35 @@ uv run --python 3.12 --group eval python eval/judge_run.py RUN_ID --ids 1,4,7,10
 uv run --python 3.12 --group eval python eval/judge_run.py RUN_ID --summarize judge-<ts> --contradicted 11:answer_relevancy
 ```
 
+## Your own documents
+
+`run_uploads_eval.py` checks the path a person uses: it adds a PDF as a file and a web page by address (both public
+documents that are not in the demo corpus, listed with hashes in `uploads/manifest.json`), then asks the 19 questions
+in `uploads/questions.jsonl`: 16 with an answer in the documents (10 on the NIST Cybersecurity Framework 2.0 PDF, 6 on
+RFC 8259) and 3 whose answer is not there. The questions were written from the text by the same agent that ran the
+evaluation, no second reviewer. Standard library only, no judge model. It needs an empty library, so run it against a
+scratch instance with its own index (see the docstring), never your real one.
+
+Run `results/uploads-20261014T051604Z/` (Qwen2.5-1.5B Q4_K_M on CPU, rag code at commit 68a4487; see the note in its
+`config.json` about two files that were not yet committed):
+
+| Metric | Value | n |
+|--------|-------|---|
+| recall@5 (PDF: page level; web page: document level) | 1.000 | 16 |
+| doc recall@5 | 1.000 | 16 |
+| answer contains the key words | 0.812 (13 of 16; 95% interval 0.57 to 0.93) | 16 |
+| answer cites a source from the right document | 1.000 | 16 |
+| said it did not know, when the answer is not in the documents | 0.333 (1 of 3) | 3 |
+| indexing both documents (110 passages) | 78.6 s | |
+| median time to a full answer | 45.6 s | 19 |
+
+The keyword rule and a full read of the answers (`manual_review.md` in the run folder) agree on all 16. The three wrong
+answers are generation failures, not retrieval: the right page was retrieved each time, and the 1.5B model still
+invented six "functions" for question 1, gave the wrong reason in question 7, and named the wrong RFC in question 16.
+On the three out-of-scope questions it said it did not know once; one of the other two is a flaw in the question (the
+document says its resources are "publicly available"). 16 questions over two documents is small, and the numbers say
+nothing about other kinds of documents (tables, scans, long manuals, other languages). A larger model was not tried.
+
 ## Current results
 
 Run `results/20261008T113955Z/` (9-document corpus), judge sample `results/20261008T113955Z/judge-20261008T120952Z/`:

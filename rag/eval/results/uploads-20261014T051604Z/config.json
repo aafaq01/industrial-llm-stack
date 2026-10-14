@@ -1,0 +1,41 @@
+{
+  "date_utc": "2026-10-14T05:32:12+00:00",
+  "api": "http://127.0.0.1:8002",
+  "git_commit": "68a4487c64d68687a1afc3efab80873a42a3191f",
+  "git_dirty": true,
+  "host": "Windows-11-10.0.26200-SP0",
+  "documents": {
+    "csf": {
+      "doc_id": "file-87b2df35c0",
+      "title": "NIST.CSWP.29.pdf",
+      "chunks": 79,
+      "sha256_fetched": "3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c"
+    },
+    "rfc8259": {
+      "doc_id": "url-fe4dd29822",
+      "title": "rfc8259.html",
+      "chunks": 31,
+      "sha256_fetched": "5302d6ccb6cf221817bdd1f8cd7221661d4519372e0ac0b4cf641e11e8037de7"
+    }
+  },
+  "summary": {
+    "answerable_n": 16,
+    "recall_at_5": 1.0,
+    "doc_recall_at_5": 1.0,
+    "answer_has_keys": 0.812,
+    "cites_gold": 1.0,
+    "pdf": {
+      "recall_at_5": 1.0,
+      "answer_has_keys": 0.8
+    },
+    "web_page": {
+      "recall_at_5": 1.0,
+      "answer_has_keys": 0.833
+    },
+    "unanswerable_n": 3,
+    "abstained": 0.333,
+    "index_seconds": 78.6,
+    "median_latency_s": 45.55
+  },
+  "provenance_note": "Corrected after the run. The runner printed git_dirty=false because it checked a path that did not exist from its working directory (fixed in run_uploads_eval.py). When the run started, run_uploads_eval.py, uploads/questions.jsonl and uploads/manifest.json were not yet committed, so git_commit does not contain them; they were committed unchanged afterwards. The rag service code was at git_commit."
+}

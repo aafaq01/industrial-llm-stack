@@ -88,8 +88,10 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
   rag-api process that took the request, so it is lost on restart and not shared between replicas. The page stores
   nothing about who added a document, and anyone who can reach rag-api can add, remove or wipe documents (turn it
   off with `DOCS_WRITE=0`). Web pages are fetched by the server: only public addresses are allowed by default, but a
-  host name that changes its address between the check and the fetch is not caught. Quality of answers on your own
-  documents was not measured; the RAG evaluation covers the demo corpus only.
+  host name that changes its address between the check and the fetch is not caught. Answer quality on added documents was measured once, on two public
+  documents (a 32 page PDF and a web page) with 16 answerable questions: retrieval found the right document and page
+  every time, 13 of 16 answers were right, and the model said "I do not know" on 1 of 3 questions whose answer is not
+  in the documents. Small, one author, English text only. [rag/eval/README.md, rag/eval/results/uploads-20261014T051604Z]
 - **Same digest only through a shared build cache.** kind-up and `ci/run.sh` now build the rag image from
   `git archive`, and build #3 pushed the same digest kind-up built (rag@sha256:6f10a3e7...). That equality relies on the
   shared BuildKit cache of the one Docker engine: the RUN steps (uv sync, model download) are not bit-reproducible on

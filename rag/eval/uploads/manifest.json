@@ -1,0 +1,20 @@
+{
+  "note": "Public documents that are not in the demo corpus. The PDF is uploaded as a file and the web page through the address box, so both paths are exercised. Nothing here is committed except these names, addresses and hashes.",
+  "documents": [
+    {
+      "id": "csf",
+      "kind": "file",
+      "filename": "NIST.CSWP.29.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf",
+      "sha256": "3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c",
+      "title": "NIST CSWP 29, The NIST Cybersecurity Framework (CSF) 2.0 (US government work, public domain)"
+    },
+    {
+      "id": "rfc8259",
+      "kind": "url",
+      "url": "https://www.rfc-editor.org/rfc/rfc8259.html",
+      "sha256": "5302d6ccb6cf221817bdd1f8cd7221661d4519372e0ac0b4cf641e11e8037de7",
+      "title": "RFC 8259, The JavaScript Object Notation (JSON) Data Interchange Format (IETF Trust, reproduction allowed with notice)"
+    }
+  ]
+}
