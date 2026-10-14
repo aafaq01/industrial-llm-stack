@@ -17,6 +17,9 @@ FROM python:3.12.15-slim-trixie
 # Adds tesseract and poppler (about 100 MB plus language data); packages come from the Debian release of the base image.
 ARG WITH_OCR=0
 ARG OCR_PACKAGES="tesseract-ocr-eng"
+# Not pinned on purpose: Debian drops old versions when it ships a security fix, so an exact pin would break the build.
+# The versions that were installed are recorded in docs/VERSIONS.md.
+# hadolint ignore=DL3008
 RUN if [ "$WITH_OCR" = "1" ]; then \
       apt-get update && apt-get install -y --no-install-recommends tesseract-ocr poppler-utils $OCR_PACKAGES \
       && rm -rf /var/lib/apt/lists/*; \

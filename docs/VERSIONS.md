@@ -56,7 +56,13 @@ haystack-ai 2.31.0 (latest 2.x; 3.x exists but the plan specifies 2.x), elastics
 (pulls elasticsearch-py 8.19.3, talks to the 9.5.5 server through REST compatibility), sentence-transformers 5.6.1,
 torch 2.14.1 (CPU wheel index), pypdf 6.19.0, fastapi 0.142.2, uvicorn 0.54.0, sqlalchemy 2.1.3, alembic 1.20.0,
 psycopg 3.3.6, opentelemetry-sdk and -exporter-otlp-proto-grpc 1.45.1, prometheus-client 0.26.0.
+Added with sign-in: pyjwt 2.15.1 with the crypto extra (cryptography 50.0.2, cffi 2.1.1, pycparser 3.11).
 Dev group: pytest 9.1.1, httpx 0.28.1. Eval group: deepeval 4.2.8.
+
+Optional sign-in overlay (`docker-compose.auth.yml`): Keycloak 26.8.1 (`quay.io/keycloak/keycloak`) and oauth2-proxy v7.15.5, alpine variant, from quay.io.
+Optional OCR build (`docker-compose.ocr.yml`, `WITH_OCR=1`): Debian trixie packages from the base image's release, not pinned
+(see the Dockerfile comment). Installed when recorded 2026-10-14: tesseract-ocr 5.5.0-1+b1, tesseract-ocr-eng 1:4.1.0-2,
+poppler-utils 25.03.0-5+deb13u4.
 hadolint `hadolint/hadolint:v2.15.1` was first run by hand on `rag/Dockerfile`; it now runs as a pre-commit local hook (`.pre-commit-config.yaml`) and in `ci/run.sh lint`.
 
 ## pre-commit
