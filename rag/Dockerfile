@@ -13,6 +13,14 @@ d('BAAI/bge-small-en-v1.5', revision='5c38ec7c405ec4b44b94cc5a9bb96e735b38267a',
 d('cross-encoder/ms-marco-MiniLM-L6-v2', revision='233902d25c440f23af6f7d6e94d2946bac0bee0a', local_dir='/opt/models/ms-marco-MiniLM-L6-v2', allow_patterns=['*.json', '*.txt', 'model.safetensors'])"
 
 FROM python:3.12.15-slim-trixie
+# Optional text recognition for scanned PDFs: docker compose -f docker-compose.yml -f docker-compose.ocr.yml build
+# Adds tesseract and poppler (about 100 MB plus language data); packages come from the Debian release of the base image.
+ARG WITH_OCR=0
+ARG OCR_PACKAGES="tesseract-ocr-eng"
+RUN if [ "$WITH_OCR" = "1" ]; then \
+      apt-get update && apt-get install -y --no-install-recommends tesseract-ocr poppler-utils $OCR_PACKAGES \
+      && rm -rf /var/lib/apt/lists/*; \
+    fi
 # Any UID works (OpenShift): files are group 0 and /data/corpus is group-writable.
 RUN useradd --uid 1001 --gid 0 --no-create-home --home-dir /tmp app \
     && mkdir -p /data/corpus && chown 1001:0 /data/corpus && chmod 2775 /data/corpus

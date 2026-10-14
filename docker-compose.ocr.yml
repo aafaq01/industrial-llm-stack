@@ -1,0 +1,26 @@
+# Optional: read scanned PDFs (text recognition with Tesseract). Builds a bigger image, tagged -ocr.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.ocr.yml up -d --build --wait
+#
+# Languages: set OCR_PACKAGES to the Debian packages and OCR_LANGS to the Tesseract codes, for example
+#   OCR_PACKAGES="tesseract-ocr-eng tesseract-ocr-ara" OCR_LANGS=eng+ara
+# Note the embedding model (bge-small-en) is English only, so non-English text is found poorly even when it is read.
+# Combine with the sign-in overlay by listing both files after docker-compose.yml.
+x-ocr-build: &ocr-build
+  context: ./rag
+  args:
+    WITH_OCR: "1"
+    OCR_PACKAGES: ${OCR_PACKAGES:-tesseract-ocr-eng}
+
+services:
+  rag-migrate:
+    build: *ocr-build
+    image: industrial-llm-platform/rag:0.1.0-ocr
+  rag-ingest:
+    build: *ocr-build
+    image: industrial-llm-platform/rag:0.1.0-ocr
+  rag-api:
+    build: *ocr-build
+    image: industrial-llm-platform/rag:0.1.0-ocr
+    environment:
+      OCR_LANGS: ${OCR_LANGS:-eng}

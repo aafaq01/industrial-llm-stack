@@ -220,7 +220,7 @@ instead of Keycloak. Details and what to harden first: [SECURITY.md](SECURITY.md
 
 ### Use your own documents
 
-The chat page has a **Documents** button. You can add PDF, TXT, MD and HTML files (drop them in or choose them) and
+The chat page has a **Documents** button. You can add PDF, Word (DOCX), TXT, MD and HTML files (drop them in or choose them) and
 web page addresses, watch them being read and indexed, remove single documents, or **Start from scratch**. Answers
 then cite your documents. To start with nothing at all instead of the demo documents:
 
@@ -230,7 +230,17 @@ echo DEMO_CORPUS=0 >> .env && docker compose up -d --wait   # empty library, no 
 
 Indexing runs on the CPU: a one-page text file takes seconds, a 2 MB PDF (359 passages) took 148 s on the
 dev laptop with the rest of the stack idle. Only public web addresses are fetched unless you set `ALLOW_PRIVATE_URLS=1`.
-`DOCS_WRITE=0` turns adding and removing off. See [SECURITY.md](SECURITY.md) before exposing the page.
+`DOCS_WRITE=0` turns adding and removing off.
+
+Scanned PDFs (pictures of pages, no text layer) need text recognition, which is an opt-in build because it adds
+Tesseract and poppler to the image (about 50 MB for English; the image grew from 632 MB to 682 MB):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.ocr.yml up -d --build --wait
+```
+
+Pages are read at 200 dpi, the first 100 pages at most (`OCR_MAX_PAGES`). Other languages: see the header of
+`docker-compose.ocr.yml`, but the search model is English only, so non-English text is found poorly even when it is read. See [SECURITY.md](SECURITY.md) before exposing the page.
 
 Optional parts, each with its own command:
 

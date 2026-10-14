@@ -289,6 +289,7 @@ def test_oidc_roles(client, idp, monkeypatch):
         "auth": "oidc",
         "user": "alice",
         "can_edit": False,
+        "logout_url": "/oauth2/sign_out",
     }
     assert client.get("/me", headers=bearer(admin)).json()["can_edit"] is True
 

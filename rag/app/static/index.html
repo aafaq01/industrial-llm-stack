@@ -136,7 +136,7 @@ a.btn { font: inherit; color: var(--text); background: var(--panel); border: 1px
     <div id="docs-add">
       <h3>Add files</h3>
       <label class="drop" id="drop">Choose files or drop them here<br>
-        <input id="files" type="file" multiple accept=".pdf,.txt,.md,.markdown,.html,.htm,.csv,.log,text/plain,application/pdf">
+        <input id="files" type="file" multiple accept=".pdf,.docx,.txt,.md,.markdown,.html,.htm,.csv,.log,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
       </label>
       <p class="hint" id="docs-formats"></p>
       <h3>Add web pages</h3>
@@ -372,8 +372,8 @@ async function ask() {
 }
 
 // ---- documents panel ----
-const ACTIVE = ["queued", "fetching", "reading", "indexing"];
-const STATUS = { queued: "Waiting", fetching: "Downloading", reading: "Reading", indexing: "Indexing (slow on a CPU)" };
+const ACTIVE = ["queued", "fetching", "reading", "ocr", "indexing"];
+const STATUS = { queued: "Waiting", fetching: "Downloading", reading: "Reading", ocr: "Recognising text in scanned pages (slow)", indexing: "Indexing (slow on a CPU)" };
 const jobsActive = () => !!lib && lib.jobs.some((j) => ACTIVE.includes(j.status));
 
 function updateChatState() {
@@ -411,7 +411,7 @@ function renderDocs() {
   for (const j of lib.jobs.filter((x) => mine.has(x.id) || ACTIVE.includes(x.status))) {
     const li = el("li", j.status === "error" ? "bad" : null);
     const d = el("div", null, j.title || j.name);
-    d.append(el("small", null, j.status === "error" ? j.error : j.status === "done" ? "Added, " + j.chunks + " passages" : STATUS[j.status] || j.status));
+    d.append(el("small", null, j.status === "error" ? j.error : j.status === "done" ? "Added, " + j.chunks + " passages" + (j.note ? ". " + j.note : "") : STATUS[j.status] || j.status));
     li.append(d); jobs.append(li);
   }
 

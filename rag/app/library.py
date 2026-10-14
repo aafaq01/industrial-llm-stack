@@ -8,14 +8,21 @@ import hashlib
 import ipaddress
 import os
 import queue
+import shutil
 import socket
+import subprocess
+import tempfile
 import threading
 import time
 import urllib.error
 import urllib.request
 import uuid
+import zipfile
 from html.parser import HTMLParser
+from io import BytesIO
+from pathlib import Path
 from urllib.parse import urlsplit
+from xml.etree import ElementTree
 
 from app.rag import (
     EMBED_MODEL,
@@ -36,7 +43,11 @@ WRITABLE = os.environ.get("DOCS_WRITE", "1") == "1"
 MAX_MB = int(os.environ.get("MAX_UPLOAD_MB", "25"))
 MAX_BYTES = MAX_MB * 1024 * 1024
 ALLOW_PRIVATE_URLS = os.environ.get("ALLOW_PRIVATE_URLS") == "1"
-FORMATS = "PDF, TXT, MD, HTML"
+FORMATS = "PDF, DOCX, TXT, MD, HTML"
+# Scanned PDFs: only when the image was built with WITH_OCR=1 (docker-compose.ocr.yml).
+OCR = bool(shutil.which("tesseract") and shutil.which("pdftoppm"))
+OCR_LANGS = os.environ.get("OCR_LANGS", "eng")
+OCR_MAX_PAGES = int(os.environ.get("OCR_MAX_PAGES", "100"))
 
 JOBS: dict[str, dict] = {}  # newest last; trimmed to 50
 _queue: queue.Queue = queue.Queue(maxsize=20)
@@ -168,12 +179,101 @@ def _decode(data: bytes) -> str:
         return data.decode("latin-1")
 
 
+_W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+
+def _docx_text(data: bytes) -> str:
+    """Paragraph text of a Word file (body, tables, text boxes). No styles, headers or comments."""
+    try:
+        z = zipfile.ZipFile(BytesIO(data))
+        info = z.getinfo("word/document.xml")
+    except (zipfile.BadZipFile, KeyError):
+        raise Rejected(f"That file type is not supported. Use {FORMATS}.") from None
+    if info.file_size > 8 * MAX_BYTES:  # a small zip can expand enormously
+        raise Rejected("That Word file is too large once unpacked.")
+    try:
+        root = ElementTree.fromstring(z.read(info))
+    except ElementTree.ParseError:
+        raise Rejected("That Word file could not be read. It may be damaged.") from None
+
+    def para_text(para) -> str:
+        parts = []
+        for node in para.iter():
+            if node.tag == _W + "t":
+                parts.append(node.text or "")
+            elif node.tag == _W + "tab":
+                parts.append("\t")
+            elif node.tag in (_W + "br", _W + "cr"):
+                parts.append("\n")
+        return "".join(parts)
+
+    lines, done = [], set()
+    for node in (
+        root.iter()
+    ):  # document order; a table row comes before the paragraphs inside it
+        if node in done:
+            continue
+        if node.tag == _W + "tr":  # keep a row together: "Seal kit | ZK-4471"
+            cells = [
+                " ".join(para_text(p) for p in tc.iter(_W + "p"))
+                for tc in node.iter(_W + "tc")
+            ]
+            lines.append(" | ".join(cells))
+            done.update(node.iter())
+        elif node.tag == _W + "p":
+            lines.append(para_text(node))
+    return "\n".join(lines)
+
+
+def ocr_pdf(data: bytes) -> str:
+    """Recognises the text of the first OCR_MAX_PAGES pages. Pages are joined with form feeds like a normal PDF."""
+    with tempfile.TemporaryDirectory() as tmp:
+        pdf = Path(tmp) / "in.pdf"
+        pdf.write_bytes(data)
+        try:
+            subprocess.run(
+                [
+                    "pdftoppm",
+                    "-r",
+                    "200",
+                    "-l",
+                    str(OCR_MAX_PAGES),
+                    "-gray",
+                    "-png",
+                    str(pdf),
+                    str(Path(tmp) / "p"),
+                ],
+                check=True,
+                capture_output=True,
+                timeout=900,
+            )
+            pages = sorted(Path(tmp).glob("p-*.png"))
+            return "\f".join(
+                subprocess.run(
+                    ["tesseract", str(img), "stdout", "-l", OCR_LANGS],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=300,
+                ).stdout
+                for img in pages
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            raise Rejected(
+                "Text recognition failed on that PDF. It may be damaged or password protected."
+            ) from None
+
+
 def extract(name: str, data: bytes, ctype: str = "") -> tuple[str, str, bool]:
     """Returns (title, text, is_pdf). PDF text keeps form feeds so page numbers survive."""
     if data[:5] == b"%PDF-":
         docs = PyPDFToDocument().run(sources=[ByteStream(data=data)])["documents"]
         return name, "\f".join(d.content or "" for d in docs), True
-    if b"\x00" in data[:4096] or data[:2] == b"PK":
+    if (
+        data[:2] == b"PK"
+    ):  # Word files are zips; other zips (xlsx, pptx, archives) are refused
+        return name, _docx_text(data), False
+    if b"\x00" in data[:4096]:
         raise Rejected(f"That file type is not supported. Use {FORMATS}.")
     text = _decode(data)
     head = text[:1024].lower()
@@ -209,7 +309,9 @@ def index_text(
     """Replaces any earlier version of doc_id, then chunks, embeds and writes. Returns the chunk count."""
     global _embedder
     if not text.replace("\f", "").strip():
-        raise Rejected("No text was found in it. A scanned PDF needs OCR first.")
+        raise Rejected(
+            "No text was found in it. A scanned PDF needs the OCR build (see the README, docker-compose.ocr.yml)."
+        )
     meta = {"doc_id": doc_id, "title": title, "url": url}
     chunks = splitter().run(
         cleaner().run([Document(content=text, meta=meta)])["documents"]
@@ -244,6 +346,11 @@ def _process(job: dict, kind: str, name: str, data: bytes | None) -> None:
         doc_id = "file-" + hashlib.sha256(name.encode()).hexdigest()[:10]
     job["status"] = "reading"
     title, text, is_pdf = extract(label, data, ctype)
+    if is_pdf and not text.replace("\f", "").strip() and OCR:  # a scan: no text layer
+        job["status"] = "ocr"
+        text = ocr_pdf(data)
+        if text.count("\f") + 1 >= OCR_MAX_PAGES:
+            job["note"] = f"Only the first {OCR_MAX_PAGES} pages were read."
     job["status"] = "indexing"
     job["chunks"] = index_text(
         doc_id, title, link, text if is_pdf else _clean_text(text), is_pdf
