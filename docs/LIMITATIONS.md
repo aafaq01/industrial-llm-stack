@@ -66,9 +66,12 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
 
 - **Single replica dependencies.** Postgres, Elasticsearch and Prometheus in `platform-deps` are single instances with no
   HA and no backups. Only llama.cpp autoscales. [deploy/README.md]
-- **No session access control.** Anyone who can reach rag-api can read any `session_id`, and `user` is whatever the
-  caller sends. Acceptable only because compose binds it to 127.0.0.1 and the kind ingress listens on 127.0.0.1:8090;
-  add auth before exposing it. [docker-compose.yml; infra/kind/cluster.yaml]
+- **No session access control by default.** Anyone who can reach rag-api can read any `session_id`, and `user` is
+  whatever the caller sends. Acceptable only because compose binds it to 127.0.0.1 and the kind ingress listens on
+  127.0.0.1:8090. The optional sign-in overlay (`docker-compose.auth.yml`, Keycloak plus oauth2-proxy) fixes this on
+  Docker Compose only: sessions become owner-only and document changes need the `rag-admins` group. Checked with
+  real Keycloak tokens and a browser login; not on kind or OKD, not with another identity provider, and not under
+  TLS. The document library is shared by all signed-in users. [docker-compose.auth.yml; SECURITY.md]
 - **No index during a re-index.** A changed rag image recreates the ingest Job, which deletes the `corpus` index and
   builds a new one. In build #1's rollout the index was deleted at 13:10:55Z and recreated at 13:20:05Z: about 9
   minutes with no index to retrieve from. An alias swap would avoid it but needs a change in `rag/app/ingest.py`; not

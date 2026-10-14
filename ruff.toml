@@ -6,3 +6,7 @@ target-version = "py312"
 select = ["E", "F", "W", "I", "B", "UP"]
 # E501: line length is left to `ruff format`.
 ignore = ["E501"]
+
+[lint.flake8-bugbear]
+# FastAPI reads Depends() and Query() from argument defaults by design.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]

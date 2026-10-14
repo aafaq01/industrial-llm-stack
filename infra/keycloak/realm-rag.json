@@ -1,0 +1,76 @@
+{
+  "realm": "rag",
+  "displayName": "Ask your documents",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "accessTokenLifespan": 900,
+  "ssoSessionIdleTimeout": 28800,
+  "groups": [{ "name": "rag-admins" }, { "name": "rag-users" }],
+  "clients": [
+    {
+      "clientId": "rag-web",
+      "name": "Ask your documents",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "${OIDC_CLIENT_SECRET}",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://127.0.0.1:4180/oauth2/callback"],
+      "webOrigins": ["http://127.0.0.1:4180"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://127.0.0.1:4180/*"
+      },
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "basic", "email"],
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-rag-web",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "rag-web",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin-demo",
+      "enabled": true,
+      "email": "admin-demo@example.com",
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "Admin",
+      "groups": ["rag-admins"],
+      "credentials": [{ "type": "password", "value": "${DEMO_ADMIN_PASSWORD}", "temporary": false }]
+    },
+    {
+      "username": "user-demo",
+      "enabled": true,
+      "email": "user-demo@example.com",
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "User",
+      "groups": ["rag-users"],
+      "credentials": [{ "type": "password", "value": "${DEMO_USER_PASSWORD}", "temporary": false }]
+    }
+  ]
+}

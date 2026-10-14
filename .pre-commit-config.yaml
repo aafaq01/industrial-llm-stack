@@ -9,7 +9,7 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-yaml
-        args: [--allow-multiple-documents]
+        args: [--allow-multiple-documents, --unsafe]  # --unsafe: Compose files use the !reset tag
         exclude: &helm-templates ^deploy/(helm/[^/]+|argocd/apps)/templates/  # Go templates, not YAML
       - id: check-json
       - id: check-added-large-files

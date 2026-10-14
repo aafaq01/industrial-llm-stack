@@ -72,6 +72,15 @@ def get_or_create_session(
     return s
 
 
+def session_owner(db: Session, session_id: uuid.UUID) -> str | None:
+    """Name of the user who owns the session, or None when it does not exist."""
+    return db.scalar(
+        select(User.name)
+        .join(ChatSession, ChatSession.user_id == User.id)
+        .where(ChatSession.id == session_id)
+    )
+
+
 def history(db: Session, session_id: uuid.UUID, limit: int) -> list[Message]:
     rows = db.scalars(
         select(Message)

@@ -1,10 +1,18 @@
-# Default rules plus one narrow allowlist: vLLM server logs print the public Hugging Face
-# tokenizer revision sha (listed in docs/VERSIONS.md), which gitleaks flags as generic-api-key.
+# Default rules plus two narrow allowlists. Each one names exactly what it allows.
 [extend]
 useDefault = true
 
-[allowlist]
+# vLLM server logs print the public Hugging Face tokenizer revision sha (listed in docs/VERSIONS.md),
+# which gitleaks flags as generic-api-key.
+[[allowlists]]
 description = "public HF tokenizer revision shas in vLLM server logs"
 # "match" (not "line"): only the revision itself is allowlisted, so other secrets on the same log line still fire.
 regexTarget = "match"
 regexes = ['''^tokenizer_revision['"]: ['"][0-9a-f]{40}['"]$''']
+
+# The oauth2-proxy image line in docker-compose.auth.yml trips generic-api-key. Only that exact line is allowed.
+[[allowlists]]
+description = "oauth2-proxy image line"
+targetRules = ["generic-api-key"]
+regexTarget = "line"
+regexes = ['''^\s*image: quay\.io/oauth2-proxy/oauth2-proxy:v[0-9.]+-alpine\s*$''']

@@ -92,6 +92,8 @@ textarea {
 .panel h2 { font-size: 1.1rem; margin: 0; flex: 1; }
 .panel h3 { font-size: .95rem; margin: 18px 0 6px; }
 .panel-head { display: flex; align-items: center; gap: 8px; }
+a.btn { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; text-decoration: none; }
+#who { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 12ch; }
 .hint, .muted { color: var(--muted); font-size: .85rem; margin: 4px 0; }
 .drop { display: block; border: 2px dashed var(--line); border-radius: 10px; padding: 14px; text-align: center; color: var(--muted); }
 .drop.over { border-color: var(--accent); background: var(--cite); }
@@ -112,6 +114,8 @@ textarea {
 <body>
 <header>
   <h1>Ask your documents<small>Answers cite the numbered sources they were built from</small></h1>
+  <span id="who" class="muted" hidden></span>
+  <a id="signout" class="btn" href="/oauth2/sign_out" hidden>Sign out</a>
   <button id="docsbtn" type="button">Documents</button>
   <button id="theme" type="button" aria-label="Toggle dark mode">Theme</button>
   <button id="new" type="button">New chat</button>
@@ -157,7 +161,24 @@ const EXAMPLES = [
   "How many times does the NASA SE engine cycle from Pre-Phase A through Phase D?",
 ];
 let sessionId = null, controller = null;
-let lib = null, pollTimer = null;
+let lib = null, pollTimer = null, me = null;
+const httpMessage = (status) =>
+  status === 401 ? "Your sign-in has expired. Reload this page to sign in again."
+  : status === 403 ? "Your account is not allowed to do that."
+  : status === 404 ? "That was not found. If it is an old chat, start a new one."
+  : "The server answered " + status;
+
+async function loadMe() {
+  try {
+    const r = await fetch("/me", { headers: { Accept: "application/json" } });
+    if (!r.ok) return;
+    me = await r.json();
+  } catch (e) { return; }
+  if (me.user) {
+    $("who").textContent = me.user; $("who").title = "Signed in as " + me.user; $("who").hidden = false;
+    $("signout").href = me.logout_url; $("signout").hidden = false;
+  }
+}
 const mine = new Set(), localErrors = [];
 try { sessionId = localStorage.getItem("rag.session"); } catch (e) {}
 
@@ -302,11 +323,11 @@ async function ask() {
   let answer = "", retrieved = [];
   try {
     const res = await fetch("/chat", {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json", Accept: "text/event-stream, application/json" },
       body: JSON.stringify({ message: text, session_id: sessionId || undefined }),
       signal: controller.signal,
     });
-    if (!res.ok) throw new Error("The server answered " + res.status);
+    if (!res.ok) throw new Error(httpMessage(res.status));
     for await (const [name, d] of events(res)) {
       if (name === "session") {
         sessionId = d.session_id;
@@ -379,7 +400,9 @@ function renderDocs() {
   const n = lib.documents.length;
   $("docs-summary").textContent = n ? n + " document" + (n === 1 ? "" : "s") + ", " + lib.chunks + (lib.chunks === 1 ? " passage" : " passages") : "The library is empty.";
   $("docs-formats").textContent = "Accepted: " + lib.formats + ". Up to " + lib.max_upload_mb + " MB each. Large files take a while to index on a CPU.";
-  $("docs-add").hidden = !lib.writable; $("danger").hidden = !lib.writable; $("docs-off").hidden = lib.writable;
+  const edit = lib.writable && (!me || me.can_edit);
+  $("docs-add").hidden = !edit; $("danger").hidden = !edit; $("docs-off").hidden = edit;
+  $("docs-off").textContent = lib.writable ? "Only administrators can add or remove documents." : "Adding and removing documents is turned off on this server.";
 
   const jobs = $("jobs"); jobs.replaceChildren();
   for (const t of localErrors) {
@@ -400,7 +423,7 @@ function renderDocs() {
     else box.append(document.createTextNode(d.title));
     box.append(el("small", null, d.chunks + (d.chunks === 1 ? " passage" : " passages")));
     li.append(box);
-    if (lib.writable) {
+    if (edit) {
       const b = el("button", null, "Remove"); b.type = "button";
       twoStep(b, "Confirm", async () => { await call("DELETE", "/documents/" + encodeURIComponent(d.doc_id)); loadDocs(); });
       li.append(b);
@@ -413,7 +436,7 @@ function renderDocs() {
 async function loadDocs() {
   clearTimeout(pollTimer);
   try {
-    const r = await fetch("/documents");
+    const r = await fetch("/documents", { headers: { Accept: "application/json" } });
     if (!r.ok) throw new Error(String(r.status));
     lib = await r.json();
   } catch (e) { return; }
@@ -426,10 +449,10 @@ async function call(method, url, body, raw) {
   const res = await fetch(url, {
     method,
     body: raw ? body : body && JSON.stringify(body),
-    headers: body && !raw ? { "Content-Type": "application/json" } : undefined,
+    headers: { Accept: "application/json", ...(body && !raw ? { "Content-Type": "application/json" } : {}) },
   });
   if (!res.ok) {
-    let msg = "The server answered " + res.status;
+    let msg = httpMessage(res.status);
     try { const j = await res.json(); if (j.detail) msg = j.detail; } catch (e) {}
     throw new Error(msg);
   }
@@ -481,7 +504,7 @@ twoStep($("reset"), "Click again to remove everything", async () => {
 async function restore() {
   if (!sessionId) return empty();
   try {
-    const res = await fetch("/sessions/" + encodeURIComponent(sessionId) + "/messages");
+    const res = await fetch("/sessions/" + encodeURIComponent(sessionId) + "/messages", { headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error(String(res.status));
     const rows = await res.json();
     if (!rows.length) return empty();
@@ -520,7 +543,7 @@ $("theme").onclick = () => {
   const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   r.dataset.theme = dark ? "light" : "dark";
 };
-loadDocs().then(restore);
+loadMe().then(loadDocs).then(restore);
 </script>
 </body>
 </html>

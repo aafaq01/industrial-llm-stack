@@ -1,4 +1,6 @@
-"""RAG chat API: GET / (chat page), POST /chat (SSE), /documents (add, list, remove), GET /sessions/{id}/messages, GET /healthz, GET /metrics."""
+"""RAG chat API: GET / (chat page), POST /chat (SSE), /documents (add, list, remove), GET /me, GET /sessions/{id}/messages, GET /healthz, GET /metrics.
+
+With AUTH_MODE=oidc every route except /, /healthz and /metrics needs a bearer token (see app/auth.py)."""
 
 import json
 import logging
@@ -10,8 +12,8 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from app import db, library
-from fastapi import FastAPI, HTTPException, Query, Request
+from app import auth, db, library
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from opentelemetry import context as otel_context
 from opentelemetry import trace
@@ -120,7 +122,7 @@ def sse(event: str, data) -> str:
 
 
 def run_chat(
-    rag, req: ChatRequest, out: queue.Queue, ctx: otel_context.Context
+    rag, req: ChatRequest, user: str, out: queue.Queue, ctx: otel_context.Context
 ) -> None:
     """Runs in a worker thread; `ctx` parents rag.chat under the POST /chat request span."""
     from app.rag import build_messages, cited, source_label
@@ -129,7 +131,7 @@ def run_chat(
     try:
         with tracer.start_as_current_span("rag.chat", context=ctx) as root:
             with Session(db.engine) as s:
-                sid = db.get_or_create_session(s, req.session_id, req.user).id
+                sid = db.get_or_create_session(s, req.session_id, user).id
                 past = [(m.role, m.content) for m in db.history(s, sid, HISTORY_TURNS)]
                 # stored at receipt, so its timestamp is the question time
                 s.add(db.Message(session_id=sid, role="user", content=req.message))
@@ -225,7 +227,7 @@ class UrlsRequest(BaseModel):
 
 
 @app.get("/documents")
-def documents() -> dict:
+def documents(_: auth.Identity = Depends(auth.identity)) -> dict:
     docs = library.list_documents()
     jobs = sorted(library.JOBS.values(), key=lambda j: j["created"], reverse=True)
     return {
@@ -240,7 +242,9 @@ def documents() -> dict:
 
 @app.post("/documents/files", status_code=202)
 async def add_file(
-    request: Request, filename: str = Query(min_length=1, max_length=255)
+    request: Request,
+    filename: str = Query(min_length=1, max_length=255),
+    _: auth.Identity = Depends(auth.require_admin),
 ) -> dict:
     """The file is the raw request body (no multipart), one file per request."""
     _writable()
@@ -260,7 +264,7 @@ async def add_file(
 
 
 @app.post("/documents/urls", status_code=202)
-def add_urls(req: UrlsRequest) -> dict:
+def add_urls(req: UrlsRequest, _: auth.Identity = Depends(auth.require_admin)) -> dict:
     _writable()
     jobs = []
     for u in dict.fromkeys(x.strip() for x in req.urls if x.strip()):
@@ -284,13 +288,17 @@ def add_urls(req: UrlsRequest) -> dict:
 
 
 @app.delete("/documents/{doc_id}")
-def remove_document(doc_id: str) -> dict:
+def remove_document(
+    doc_id: str, _: auth.Identity = Depends(auth.require_admin)
+) -> dict:
     _writable()
     return {"removed_chunks": library.delete_document(doc_id)}
 
 
 @app.delete("/documents")
-def remove_all(confirm: str = "") -> dict:
+def remove_all(
+    confirm: str = "", _: auth.Identity = Depends(auth.require_admin)
+) -> dict:
     _writable()
     if confirm != "yes":
         raise HTTPException(400, "Add ?confirm=yes to remove every document.")
@@ -298,22 +306,56 @@ def remove_all(confirm: str = "") -> dict:
     return {"removed": "all"}
 
 
+def _own_session(session_id: uuid.UUID | None, ident: auth.Identity) -> None:
+    """With sign-in on, a session can only be used by the person who started it (404, so ids do not leak)."""
+    if ident.user is None or session_id is None:
+        return
+    with Session(db.engine) as s:
+        owner = db.session_owner(s, session_id)
+    if owner is not None and owner != ident.user:
+        raise HTTPException(404, "session not found")
+
+
+@app.get("/me")
+def me(ident: auth.Identity = Depends(auth.identity)) -> dict:
+    return {
+        "auth": auth.MODE,
+        "user": ident.user,
+        "can_edit": library.WRITABLE and ident.is_admin,
+        "logout_url": auth.LOGOUT_URL,
+    }
+
+
 @app.post("/chat")
-def chat(req: ChatRequest, request: Request) -> StreamingResponse:
+def chat(
+    req: ChatRequest,
+    request: Request,
+    ident: auth.Identity = Depends(auth.identity),
+) -> StreamingResponse:
+    _own_session(req.session_id, ident)
     out: queue.Queue = queue.Queue()
     threading.Thread(
         target=run_chat,
-        args=(request.app.state.rag, req, out, otel_context.get_current()),
+        args=(
+            request.app.state.rag,
+            req,
+            ident.user or req.user,
+            out,
+            otel_context.get_current(),
+        ),
         daemon=True,
     ).start()
     return StreamingResponse(iter(out.get, None), media_type="text/event-stream")
 
 
 @app.get("/sessions/{session_id}/messages")
-def messages(session_id: uuid.UUID) -> list[dict]:
+def messages(
+    session_id: uuid.UUID, ident: auth.Identity = Depends(auth.identity)
+) -> list[dict]:
     with Session(db.engine) as s:
         if s.get(db.ChatSession, session_id) is None:
             raise HTTPException(404, "session not found")
+        _own_session(session_id, ident)
         rows = db.history(s, session_id, limit=1000)
         return [
             {

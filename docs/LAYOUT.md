@@ -35,6 +35,8 @@ All ports bind to 127.0.0.1.
 | alloy | 12345 | log shipper UI (Docker socket to Loki) |
 | langfuse-web | 3001 | profile `langfuse` only; Langfuse UI, login `LANGFUSE_INIT_USER_EMAIL` / `LANGFUSE_INIT_USER_PASSWORD` |
 | llamacpp-judge | 8081 | profile `eval` only |
+| oauth2-proxy | 4180 | overlay `docker-compose.auth.yml` only; the sign-in front door (rag-api is not published in that mode) |
+| keycloak | 8180 | overlay `docker-compose.auth.yml` only; login pages and admin console (`admin`, `KEYCLOAK_ADMIN_PASSWORD`) |
 
 kind: rag-api at `http://rag-api.localhost:8090`, llama.cpp at `http://127.0.0.1:8090` (Traefik ingress). Jenkins UI:
 `http://127.0.0.1:8088`. Details: [deploy/README.md](../deploy/README.md), [ci/jenkins/README.md](../ci/jenkins/README.md).

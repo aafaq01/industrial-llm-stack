@@ -205,6 +205,19 @@ cold and 19 min for the index on the dev laptop). Later starts skip both and tak
 Re-index the demo documents with `docker compose run --rm -e INGEST_SKIP_IF_PRESENT=0 rag-ingest`. It replaces only
 the demo documents, not ones you added.
 
+### Sign-in (optional)
+
+By default anyone who can reach the page can use it. To require a login (Keycloak plus oauth2-proxy, Compose only):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.auth.yml up -d --wait
+# open http://127.0.0.1:4180/ , sign in as admin-demo or user-demo (passwords in .env)
+```
+
+`admin-demo` (group `rag-admins`) can add and remove documents; `user-demo` can chat and read. Chats are private to
+each person. The API checks the tokens itself and works with any OpenID Connect provider, so a company can use its own
+instead of Keycloak. Details and what to harden first: [SECURITY.md](SECURITY.md).
+
 ### Use your own documents
 
 The chat page has a **Documents** button. You can add PDF, TXT, MD and HTML files (drop them in or choose them) and
