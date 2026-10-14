@@ -72,6 +72,9 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
   Docker Compose only: sessions become owner-only and document changes need the `rag-admins` group. Checked with
   real Keycloak tokens and a browser login; not on kind or OKD, not with another identity provider, and not under
   TLS. The document library is shared by all signed-in users. [docker-compose.auth.yml; SECURITY.md]
+- **Chat page browsers.** Checked in Playwright's Chromium, Firefox and WebKit on Windows (39 checks, all passed):
+  upload, indexing, streamed answer, citation chip, theme, reload, phone-width layout. Not checked in real Safari, on a
+  real phone or tablet, in old browsers, or with a screen reader. [docs/evidence/chat-page-browsers.txt]
 - **No index during a re-index.** A changed rag image recreates the ingest Job, which deletes the `corpus` index and
   builds a new one. In build #1's rollout the index was deleted at 13:10:55Z and recreated at 13:20:05Z: about 9
   minutes with no index to retrieve from. An alias swap would avoid it but needs a change in `rag/app/ingest.py`; not

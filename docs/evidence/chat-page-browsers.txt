@@ -1,0 +1,49 @@
+Chat page, cross-browser check. Run on 2026-10-14 against a scratch rag-api (own empty index; the rest of the default compose stack).
+Script: rag/tests/browser/check.mjs (the committed file, unmodified). Playwright 1.64.0; builds: Chromium 1248, Firefox 157.0 (1555), WebKit 2370 (Playwright's WebKit, not Safari itself).
+Model: Qwen2.5-1.5B Q4_K_M on CPU. Command: node check.mjs chromium firefox webkit
+Result: 39 PASS, 0 FAIL.
+
+== chromium ==
+PASS  empty state shows the call to action
+PASS  question box disabled while empty
+PASS  panel opens
+PASS  file uploaded and indexed
+PASS  private address refused with a reason
+PASS  Escape closes the panel
+PASS  question box enabled after adding
+PASS  answer streamed and mentions 16 bar  [The maximum operating pressure of the Zephyr-9 pump is 16 bar 1.]
+PASS  citation chip opens and highlights the source
+PASS  theme toggle works  [dark]
+PASS  chat is restored after reload
+PASS  no sideways scrolling at phone width
+PASS  no console errors
+
+== firefox ==
+PASS  empty state shows the call to action
+PASS  question box disabled while empty
+PASS  panel opens
+PASS  file uploaded and indexed
+PASS  private address refused with a reason
+PASS  Escape closes the panel
+PASS  question box enabled after adding
+PASS  answer streamed and mentions 16 bar  [The maximum operating pressure of the Zephyr-9 pump is 16 bar 1.]
+PASS  citation chip opens and highlights the source
+PASS  theme toggle works  [dark]
+PASS  chat is restored after reload
+PASS  no sideways scrolling at phone width
+PASS  no console errors
+
+== webkit ==
+PASS  empty state shows the call to action
+PASS  question box disabled while empty
+PASS  panel opens
+PASS  file uploaded and indexed
+PASS  private address refused with a reason
+PASS  Escape closes the panel
+PASS  question box enabled after adding
+PASS  answer streamed and mentions 16 bar  [The maximum operating pressure of the Zephyr-9 pump is 16 bar 1.]
+PASS  citation chip opens and highlights the source
+PASS  theme toggle works  [dark]
+PASS  chat is restored after reload
+PASS  no sideways scrolling at phone width
+PASS  no console errors
