@@ -4,7 +4,7 @@
 #   bash scripts/okd-up.sh        # from a normal, non-admin Git Bash on Windows (Hyper-V bundle). Re-runnable.
 #   crc stop                      # stop; the VM and everything in it is kept
 # One-time admin steps (not done here): install the crc MSI, be in the crc-users and Hyper-V Administrators
-# groups, reboot. RAM: crc takes 16 GB; free it first if short (docker stop llm-control-plane kind-registry kind-git).
+# groups, reboot. RAM: crc takes 20 GB; free it first if short (docker stop llm-control-plane kind-registry kind-git).
 # ArgoCD reads the committed HEAD, pushed to branch okd of the bare repo kind-up.sh uses, served by a git daemon
 # container on 127.0.0.1:9418 that the VM reaches as host.crc.testing (crc host-network-access). That option lets
 # every pod in the VM reach every port on the host's loopback (compose Postgres, Elasticsearch, Grafana, ...), not
@@ -50,7 +50,7 @@ if ! crc config get host-network-access 2>/dev/null | grep -q true && tasklist /
   log "This check fires once (the option is now set): do the restart steps before re-running."
   exit 1
 fi
-for kv in preset=okd cpus=6 memory=16384 disk-size=60 consent-telemetry=no host-network-access=true; do
+for kv in preset=okd cpus=6 memory=20480 disk-size=60 consent-telemetry=no host-network-access=true; do
   crc config set "${kv%%=*}" "${kv#*=}" >/dev/null
 done
 crc setup --bundle "$(cygpath -w "$bundle")"

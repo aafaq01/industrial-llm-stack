@@ -103,7 +103,7 @@ rag-api Route returned a cited answer, and the migrate and ingest Jobs completed
 but KEDA was not load-tested on OKD. Evidence and what was not tested: `docs/evidence/v3-openshift-okd.txt`.
 
 ```bash
-bash scripts/okd-up.sh   # crc (16 GB, 6 vCPU), ArgoCD operator, KEDA, rag image, app-of-apps; waits for Synced/Healthy
+bash scripts/okd-up.sh   # crc (20 GB, 6 vCPU), ArgoCD operator, KEDA, rag image, app-of-apps; waits for Synced/Healthy
 crc stop
 ```
 

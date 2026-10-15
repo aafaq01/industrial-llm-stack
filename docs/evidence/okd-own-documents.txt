@@ -1,0 +1,28 @@
+Chat page, own documents and the deployment on OKD 4.22.0-okd-scos.10 via OpenShift Local (crc 2.64.0, preset okd), 2026-10-15.
+Commit deployed: 62d904a (bash scripts/okd-up.sh). Host: Windows 11, 63 GB RAM. Other kind clusters (hub, dr, prod) were not touched;
+this project's kind cluster "llm" was stopped to free RAM and started again afterwards.
+
+What happened, in order (nothing hidden)
+  1. The saved crc VM (created 2026-10-10) had been stopped for days. crc start failed: kubelet serving certificate expired and could not be
+     renewed ("still expired (x58)"). I ran crc delete and let okd-up.sh create a fresh VM from the cached bundle (the VM only held this project).
+  2. Fresh start worked (about 15 min). okd-up.sh then stopped at "timed out: has_installplan" after 5 min: the operator catalog was still unpacking.
+     Re-running the script was enough.
+  3. The ArgoCD repo-server image pull inside the VM took 12m15s; Elasticsearch, llama.cpp and the 1.1 GB model took until 08:26Z (about 36 min after sync).
+  4. The root Application's sync used up its 5 retries while wave 1 was still pulling, so rag-api was never created. I re-triggered the sync by patching
+     an operation onto the root Application (revision 62d904a). Not done by the script; a script fix is not made.
+  5. The ingest pod stayed Pending ("Insufficient memory": node requests 94% of 16 GB). I raised the VM to 20 GB (crc config set memory 20480, stop,
+     start) and changed okd-up.sh to set memory=20480. The earlier OKD run in docs/evidence/v3-openshift-okd.txt fitted in 16 GB; why this one did not
+     was not investigated (more pods requesting memory since then is one guess).
+  6. After the manual crc start my ~/.kube/config had no crc context. I merged crc's own kubeconfig (backup at ~/.kube/config.bak-before-crc-merge), then
+     logged in as kubeadmin (token) and named the context crc-admin, which the script expects. okd-up.sh then finished: "done in 13m8s", exit 0,
+     all four ArgoCD apps Synced/Healthy.
+
+Checks through the Route (https://rag-api-llm.apps-crc.testing, edge TLS, router CA .tools/okd/ingress-ca.crt, curl --resolve)
+  GET /            200 text/html (the chat page)
+  GET /me          {"auth":"off","user":null,"can_edit":true,...}
+  POST /documents/files (okd-zephyr.txt, 3 lines) -> job done, 1 passage (arbitrary UID, SCC restricted-v2, no changes to the chart)
+  POST /chat "What is the seal kit part number of the Zephyr-9 pump?" -> "ZK-4471. [1]", cited to okd-zephyr.txt
+  rag-ingest Job Complete (39 min wall time including the memory wait); library 9 demo documents, 3129 passages; with the test document 3130
+  DELETE of the test document -> 9 documents, 3129 passages
+
+Not checked on OKD: the chat page in a browser (curl only), the sign-in overlay (Compose only), the OCR build, KEDA scaling, a multi-node cluster.

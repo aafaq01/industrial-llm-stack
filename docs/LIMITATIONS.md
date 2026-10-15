@@ -7,8 +7,11 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
 - **OpenShift:** `values-openshift.yaml` (Routes, no fixed UID, RWX model PVC) is tested on OKD 4.22 via OpenShift
   Local (single node, through the ArgoCD app-of-apps); not tested on Red Hat OpenShift, multi-node or with a real RWX
   storage class, and KEDA scaling under load was not run there. The first deployment was done step by step;
-  `scripts/okd-up.sh` was not run end to end on a fresh machine (only re-runs on the running cluster).
-  [deploy/README.md; docs/evidence/v3-openshift-okd.txt]
+  `scripts/okd-up.sh` was run again on 2026-10-15 on a freshly created VM, with the chat page and own
+  documents (upload, cited chat, demo re-index keeps them) working through the Route, but it needed hand fixes: the
+  root sync had to be re-triggered after its 5 retries ran out during slow image pulls, and the VM needed 20 GB
+  instead of 16 GB (script updated). A VM left stopped for days had expired certificates and had to be deleted.
+  [deploy/README.md; docs/evidence/okd-own-documents.txt; docs/evidence/v3-openshift-okd.txt]
 - **GitHub Actions:** runs on the private GitHub repo; the first run (lint, charts, test, build, Trivy) passed. Push, chart bump and ArgoCD sync are skipped there by design: a hosted runner cannot reach the local cluster. [docs/evidence/v3-github-actions.txt]
 - **Bitbucket Pipelines:** not written (stretch). [docs/PLAN.md]
 - **TensorRT-LLM:** run on one T4 against a same-session vLLM control (run v3i): one session, 3 repeats, fixed
@@ -81,7 +84,7 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
   made. Since 2026-10-13 the Job deletes only the demo documents' passages, not the whole index, so documents added
   from the chat page survive; the 9 minute gap above was measured with the old behavior and not re-measured.
   [docs/evidence/phase5b-ci.txt; deploy/README.md]
-- **Your own documents (chat page).** Run on compose and, with curl through the ingress, on kind (upload, chat, survives a demo re-index; [docs/evidence/kind-own-documents.txt]). Not run on OKD. Formats are PDF, DOCX, TXT, MD and HTML
+- **Your own documents (chat page).** Run on compose and, with curl through the ingress, on kind and OKD (upload, chat, survives a demo re-index; [docs/evidence/kind-own-documents.txt, docs/evidence/okd-own-documents.txt]); not opened in a browser on either. Formats are PDF, DOCX, TXT, MD and HTML
   (scanned PDFs only with the opt-in OCR build `docker-compose.ocr.yml`, checked on one generated 2 page English scan, not on
   real scans, handwriting or other languages; DOCX is read as plain text, so headers, footers, comments and images are
   skipped, and it was checked with files made by python-docx, not ones saved by Word). One item is indexed at a time, and the job list lives in the memory of the
