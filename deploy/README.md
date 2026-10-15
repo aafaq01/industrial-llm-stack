@@ -112,7 +112,7 @@ run from a normal, non-admin shell. Stop the kind containers first if RAM is sho
 (`docker stop llm-control-plane kind-registry kind-git`; `docker start` them afterwards). The first deployment was
 done step by step with the same commands (with a manual crc daemon restart in between): about 39 minutes from the
 root Application to Healthy (image pulls in the VM, model download, ingest), plus crc setup and first boot. Re-runs
-of `okd-up.sh` on the running cluster took about 2 minutes. `okd-up.sh` was not run end to end on a fresh machine.
+of `okd-up.sh` on the running cluster took about 2 minutes. A VM left stopped for days can have expired certificates: `crc start` then fails with "kubelet serving certificate ... still expired". The fix is `crc delete -f` and a fresh `bash scripts/okd-up.sh` (it recreates everything; about 1.5 hours on a slow link, see docs/evidence/okd-own-documents.txt). `okd-up.sh` was not run end to end on a fresh machine.
 
 How it differs from kind:
 - ArgoCD is the community `argocd-operator` (v0.19.0, ArgoCD v3.4.4) instead of upstream `install.yaml`, whose redis
