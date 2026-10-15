@@ -1,0 +1,20 @@
+Own documents and the chat page on the kind cluster "llm" (single node), 2026-10-14 to 2026-10-15.
+Commit deployed: 676e61b (by bash scripts/kind-up.sh, GIT_SOURCE=head). Other kind clusters on the machine (hub, dr, prod) were not touched.
+
+Deploy
+  05:35:20Z to 05:53:46Z  rag image build and push (18 min; the dependency layer rebuilt because PyJWT was added)
+  05:55:22Z               ArgoCD: rag-api OutOfSync, new pods rolling
+  kind-up.sh then waited for Synced/Healthy and TIMED OUT (exit 1) at 10:37Z. Cause seen afterwards: the migrate pod's image pull
+  sat in "Pulling" for 4h42m while the node already held the image (crictl pull on the node returned "up to date" at once).
+  The machine may have slept in that window; not reproduced, root cause not established. ArgoCD finished the rollout on its own
+  (new rag-api and rag-ingest pods, all four apps Synced/Healthy). I did not need to change anything.
+
+Checks through the Traefik ingress (http://rag-api.localhost:8090, curl --resolve)
+  GET /            200 text/html  (the chat page)
+  GET /me          {"auth":"off","user":null,"can_edit":true,...}
+  POST /documents/files (kind-zephyr.txt, 3 lines)  -> job done, 1 passage, during the demo re-index
+  POST /chat "What is the seal kit part number of the Zephyr-9 pump?" -> "ZK-4471. [1]", cited to kind-zephyr.txt
+  rag-ingest Job (new image): "indexed 9 documents, 3129 chunks in 763s", "index count: 3130" (3129 demo + 1 uploaded)
+  GET /documents -> 10 documents, 3130 passages; DELETE of the test document -> 9 documents, 3129 passages
+
+Not checked on kind: sign-in overlay (Compose only), OCR build, the browser UI (only curl), KEDA scaling with uploads, a slow-network first run.

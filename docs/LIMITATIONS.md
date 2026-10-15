@@ -81,7 +81,7 @@ What this repo does not show, and where its numbers are weak. Sources in bracket
   made. Since 2026-10-13 the Job deletes only the demo documents' passages, not the whole index, so documents added
   from the chat page survive; the 9 minute gap above was measured with the old behavior and not re-measured.
   [docs/evidence/phase5b-ci.txt; deploy/README.md]
-- **Your own documents (chat page).** Not run on kind or OKD, only on compose. Formats are PDF, DOCX, TXT, MD and HTML
+- **Your own documents (chat page).** Run on compose and, with curl through the ingress, on kind (upload, chat, survives a demo re-index; [docs/evidence/kind-own-documents.txt]). Not run on OKD. Formats are PDF, DOCX, TXT, MD and HTML
   (scanned PDFs only with the opt-in OCR build `docker-compose.ocr.yml`, checked on one generated 2 page English scan, not on
   real scans, handwriting or other languages; DOCX is read as plain text, so headers, footers, comments and images are
   skipped, and it was checked with files made by python-docx, not ones saved by Word). One item is indexed at a time, and the job list lives in the memory of the
